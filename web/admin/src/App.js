@@ -26,13 +26,15 @@ fbc.initializeAppWithSimpleBackend()
 
 //const publicUsersRef = () => fbc.database.public.usersRef()
 const adminableUsersRef = () => fbc.database.private.adminableUsersRef()
-const categoriesRef = () => fbc.database.public.adminRef()
+const categoriesRef = () => fbc.database.public.adminRef('categories')
+const codesRef = () => fbc.database.public.adminRef('codes')
 
 export default class App extends Component {
   state = {
     attendees: [],
     admins: [],
-    categories: []
+    categories: [],
+    codes: [],
   }
 
   componentDidMount() {
@@ -40,15 +42,6 @@ export default class App extends Component {
     .then(user => {
       client.getUsers().then(attendees => {
         this.setState({attendees: attendees.sort(sortPlayers)})
-        // publicUsersRef().on('child_added', data => {
-        //   var player = attendees.find(a => a.id === data.key)
-        //   if (player){
-        //     this.setState(state => ({players: [...state.players, {...data.val(), id: data.key}].sort(sortPlayers)}))
-        //   }
-        // })
-        // publicUsersRef().on('child_removed', data => {
-        //   this.setState(state => ({players: state.players.filter(p => p.id !== data.key)}))
-        // })
 
         adminableUsersRef().on('value', data => {
           const users = data.val() || {}
@@ -56,20 +49,22 @@ export default class App extends Component {
         })
       })
 
-      categoriesRef().on('child_added', data => {
-        this.setState(state => ({categories: [...state.categories, {...data.val(), id: data.key}].sort(sortCategories)}))
-      })
-      categoriesRef().on('child_changed', data => {
-        this.setState(state => ({categories: [...state.categories.filter(c => c.id !== data.key), {...data.val(), id: data.key}].sort(sortCategories)}))
-      })
-      categoriesRef().on('child_removed', data => {
-        this.setState(state => ({categories: state.categories.filter(c => c.id !== data.key)}))
-      })
+      const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
+      const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
+      const onChildRemoved = stateProp => data => this.setState(state => ({[stateProp]: state[stateProp].filter(c => c.id !== data.key)}))
+
+      categoriesRef().on('child_added', onChildAdded('categories', sortByName))
+      categoriesRef().on('child_changed', onChildChanged('categories', sortByName))
+      categoriesRef().on('child_removed', onChildRemoved('categories'))
+
+      codesRef().on('child_added', onChildAdded('codes', sortByName))
+      codesRef().on('child_changed', onChildChanged('codes', sortByName))
+      codesRef().on('child_removed', onChildRemoved('codes'))
     })
   }
 
   render() {
-    const {attendees, categories} = this.state
+    const {attendees, categories, codes} = this.state
     return (
       <div className="App">
         { attendees
@@ -77,6 +72,12 @@ export default class App extends Component {
               <h2>QR Code Categories <button onClick={this.newCategory} className="add">Add New</button></h2>
               <ul className="categoryList">
                 { categories.map(this.renderCategory) }
+              </ul>
+
+              <h2>QR Codes</h2>
+              <span>(Attendees marked as admins can add new codes from the app)</span>
+              <ul className="qrCodeList">
+                { codes.map(this.renderCode) }
               </ul>
 
               <h2>Attendees</h2>
@@ -95,9 +96,23 @@ export default class App extends Component {
     return (
       <li key={id}>
         <button className="remove" onClick={this.removeCategory(category)}>Remove</button>&nbsp;
-        <input type="text" value={name} placeholder="Category Name" onChange={e => categoriesRef().child(category.id).child('name').set(e.target.value)} />
+        <input type="text" value={name} placeholder="Category Name" onChange={e => categoriesRef().child(id).child('name').set(e.target.value)} />
       </li>
-    )    
+    )
+  }
+
+  renderCode = code => {
+    const { categoryId, id, name, value } = code
+    return (
+      <li key={id}>
+        <button className="remove" onClick={this.removeCode(code)}>Remove</button>&nbsp;
+        <input type="text" value={name} placeholder="QR Code Name" onChange={e => codesRef().child(id).child('name').set(e.target.value)} />&nbsp;
+        <select value={categoryId} onChange={e => codesRef().child(id).child('categoryId').set(e.target.value)}>
+          { this.state.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
+        </select>
+        <span className="payload" title={value}>{value}</span>
+      </li>
+    )
   }
 
   renderUser = user => {
@@ -121,6 +136,12 @@ export default class App extends Component {
   removeCategory = category => () => {
     if (window.confirm(`Are you sure you want to remove the QR code category '${category.name}'?`)) {
       categoriesRef().child(category.id).remove()
+    }
+  }
+
+  removeCode = code => () => {
+    if (window.confirm(`Are you sure you want to remove the QR code '${code.name}'?`)) {
+      codesRef().child(code.id).remove()
     }
   }
 
@@ -152,6 +173,6 @@ function sortPlayers(a, b) {
     return aLast < bLast ? -1 : 1
 }
 
-function sortCategories(a, b) {
+function sortByName(a, b) {
   return (a.name || '').toLowerCase() < (b.name || '').toLowerCase() ? -1 : 1
 }
