@@ -19,6 +19,8 @@ import ReactNative, {
   ScrollView, Text, View
 } from 'react-native'
 
+import Checkmark from './Checkmark'
+
 import md5 from 'md5'
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
@@ -75,9 +77,12 @@ export default class HomeView extends Component {
           { categories.filter(cat => cat.scansRequired).map(cat => (
             <View key={cat.id} style={s.categoryContainer}>
               <Text style={s.category}>{cat.name}</Text>
-              { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
-                <View key={code.id}><Text>{code.name}</Text></View>
-              ))}
+              { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (<View key={code.id} style={s.scan}>
+                <View style={[s.circle, s.completeCircle]}>
+                  <Checkmark size={circleSize * 0.6} />
+                </View>
+                <Text>{code.name}</Text>
+              </View>))}
               { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
             </View>
           )) }
@@ -89,7 +94,10 @@ export default class HomeView extends Component {
   renderScanPlaceholders(numScanned, numRequired) {
     const placeholders = []
     for (let i = numScanned || 0; i < numRequired; i++) {
-      placeholders.push(<View key={i}><Text>Scan #{i+1}</Text></View>)
+      placeholders.push(<View key={i} style={s.scan}>
+        <View style={[s.circle, s.placeholderCircle]} />
+        <Text style={s.placeholderText}>Scan #{i+1}</Text>
+      </View>)
     }
     return placeholders
   }
@@ -99,6 +107,9 @@ function sortByName(a, b) {
   return (a.name || '').toLowerCase() < (b.name || '').toLowerCase() ? -1 : 1
 }
 
+const circleSize = 24
+const green = '#61b53d'
+const gray = '#a0a0a0'
 const s = ReactNative.StyleSheet.create({
   container: {
     flex: 1,
@@ -115,5 +126,28 @@ const s = ReactNative.StyleSheet.create({
   },
   categoryContainer: {
     marginBottom: 30,
-  }
+  },
+  scan: {
+    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  circle: {
+    height: circleSize,
+    width: circleSize,
+    borderRadius: circleSize / 2,
+    marginRight: 10,
+  },
+  completeCircle: {
+    backgroundColor: green,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderCircle: {
+    borderColor: gray,
+    borderWidth: 1
+  },
+  placeholderText: {
+    color: gray
+  },
 })
