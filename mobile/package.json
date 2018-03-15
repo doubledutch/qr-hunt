@@ -12,6 +12,7 @@
     "@doubledutch/firebase-connector": "^3.3.1",
     "@doubledutch/rn-client": "^3.1.0",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "md5": "^2.2.1",
     "react": "~16.0.0-alpha.12",
     "react-addons-update": "~15.6.0",
     "react-native": "0.46.4",

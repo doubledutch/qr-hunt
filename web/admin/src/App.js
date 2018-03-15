@@ -92,11 +92,12 @@ export default class App extends Component {
   }
 
   renderCategory = category => {
-    const { id, name } = category
+    const { id, name, scansRequired } = category
     return (
       <li key={id}>
         <button className="remove" onClick={this.removeCategory(category)}>Remove</button>&nbsp;
-        <input type="text" value={name} placeholder="Category Name" onChange={e => categoriesRef().child(id).child('name').set(e.target.value)} />
+        <input type="text" value={name} placeholder="Category Name" onChange={e => categoriesRef().child(id).child('name').set(e.target.value)} />&nbsp;
+        <input type="number" value={scansRequired || 0} onChange={e => categoriesRef().child(id).child('scansRequired').set(+e.target.value)} min={0} max={100} />
       </li>
     )
   }

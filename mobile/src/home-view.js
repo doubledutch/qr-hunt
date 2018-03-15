@@ -19,6 +19,7 @@ import ReactNative, {
   ScrollView, Text, View
 } from 'react-native'
 
+import md5 from 'md5'
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
 const fbc = FirebaseConnector(client, 'qrhunt')
@@ -26,6 +27,8 @@ const fbc = FirebaseConnector(client, 'qrhunt')
 fbc.initializeAppWithSimpleBackend()
 
 const scansRef = () => fbc.database.private.adminableUserRef('scans')
+const categoriesRef = () => fbc.database.public.adminRef('categories')
+const codesRef = () => fbc.database.public.adminRef('codes')
 
 export default class HomeView extends Component {
   constructor() {
@@ -36,33 +39,66 @@ export default class HomeView extends Component {
       .catch(err => console.error(err))
   }
 
-  state = {scans: []}
+  state = {scans: {}, categories: [], codes: []}
 
   componentDidMount() {
     this.signin.then(() => {
-      scansRef().on('child_added', data => {
-        this.setState(state => ({ scans: [...state.scans, {...data.val(), key: data.key }] }))
-      })
-      scansRef().on('child_removed', data => {
-        this.setState(state => ({ scans: state.scans.filter(x => x.key !== data.key) }))
-      })
+      scansRef().on('value', data => this.setState({scans: data.val() || {}}))
+
+      const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
+      const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
+      const onChildRemoved = stateProp => data => this.setState(state => ({[stateProp]: state[stateProp].filter(c => c.id !== data.key)}))
+
+      categoriesRef().on('child_added', onChildAdded('categories', sortByName))
+      categoriesRef().on('child_changed', onChildChanged('categories', sortByName))
+      categoriesRef().on('child_removed', onChildRemoved('categories'))
+
+      codesRef().on('child_added', onChildAdded('codes', sortByName))
+      codesRef().on('child_changed', onChildChanged('codes', sortByName))
+      codesRef().on('child_removed', onChildRemoved('codes'))
     })
   }
 
   render() {
-    const { scans } = this.state
+    const {categories, codes, scans} = this.state
+    const codesByCategory = codes.reduce((cbc, code) => {
+      if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
+      const isScanned = scans[code.id]
+      cbc[code.categoryId][code.id] = {...code, isScanned}
+      if (isScanned) cbc[code.categoryId].count++
+      return cbc
+    }, {})
     return (
       <View style={s.container}>
         <TitleBar title="Challenge" client={client} signin={this.signin} />
         <ScrollView style={s.scroll}>
-          <Text>TODO</Text>
+          { categories.filter(cat => cat.scansRequired).map(cat => (
+            <View key={cat.id} style={s.categoryContainer}>
+              <Text style={s.category}>{cat.name}</Text>
+              { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
+                <View key={code.id}><Text>{code.name}</Text></View>
+              ))}
+              { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
+            </View>
+          )) }
         </ScrollView>
       </View>
     )
   }
+
+  renderScanPlaceholders(numScanned, numRequired) {
+    const placeholders = []
+    for (let i = numScanned || 0; i < numRequired; i++) {
+      placeholders.push(<View key={i}><Text>Scan #{i+1}</Text></View>)
+    }
+    return placeholders
+  }
 }
 
-const fontSize = 18
+function sortByName(a, b) {
+  return (a.name || '').toLowerCase() < (b.name || '').toLowerCase() ? -1 : 1
+}
+
 const s = ReactNative.StyleSheet.create({
   container: {
     flex: 1,
@@ -71,5 +107,13 @@ const s = ReactNative.StyleSheet.create({
   scroll: {
     flex: 1,
     padding: 15
+  },
+  category: {
+    fontSize: 20,
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  categoryContainer: {
+    marginBottom: 30,
   }
 })
