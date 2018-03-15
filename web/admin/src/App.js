@@ -97,7 +97,7 @@ export default class App extends Component {
       <li key={id}>
         <button className="remove" onClick={this.removeCategory(category)}>Remove</button>&nbsp;
         <input type="text" value={name} placeholder="Category Name" onChange={e => categoriesRef().child(id).child('name').set(e.target.value)} />&nbsp;
-        <input type="number" value={scansRequired || 0} onChange={e => categoriesRef().child(id).child('scansRequired').set(+e.target.value)} min={0} max={100} />
+        <input type="number" value={scansRequired || 0} onChange={e => categoriesRef().child(id).child('scansRequired').set(+e.target.value)} min={0} max={100} />&nbsp;scans required
       </li>
     )
   }
@@ -109,8 +109,9 @@ export default class App extends Component {
         <button className="remove" onClick={this.removeCode(code)}>Remove</button>&nbsp;
         <input type="text" value={name} placeholder="QR Code Name" onChange={e => codesRef().child(id).child('name').set(e.target.value)} />&nbsp;
         <select value={categoryId} onChange={e => codesRef().child(id).child('categoryId').set(e.target.value)}>
+          <option>--Select category--</option>
           { this.state.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
-        </select>
+        </select>&nbsp;
         <span className="payload" title={value}>{value}</span>
       </li>
     )
@@ -121,7 +122,7 @@ export default class App extends Component {
     return (
       <li key={id}>
         <Avatar user={user} size={30} />
-        <span> {firstName} {lastName}</span>
+        <span className="name"> {firstName} {lastName}</span>
         { this.isAdmin(id)
             ? <button className="remove" onClick={()=>this.setAdmin(id, false)}>Remove admin</button>
             : <button className="add" onClick={()=>this.setAdmin(id, true)}>Make admin</button>

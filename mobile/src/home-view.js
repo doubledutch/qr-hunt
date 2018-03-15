@@ -63,7 +63,7 @@ export default class HomeView extends Component {
         codesRef().on('child_removed', onChildRemoved('codes'))  
       }
 
-      fbc.database.private.adminableUserRef('adminToken').on('value', async data => {
+      fbc.database.private.adminableUserRef('adminToken').once('value', async data => {
         const longLivedToken = data.val()
         if (longLivedToken) {
           console.log('Attendee appears to be admin.  Logging out and logging in w/ admin token.')
@@ -88,6 +88,7 @@ export default class HomeView extends Component {
       if (isScanned) cbc[code.categoryId].count++
       return cbc
     }, {})
+    
     return (
       <View style={s.container}>
         <TitleBar title="Challenge" client={client} signin={this.signin} />
@@ -136,11 +137,17 @@ export default class HomeView extends Component {
 
   scanCode = () => this.setState({
     showScanner: true,
-    onScan: code => scansRef().child(md5(code.data)).set(true)
+    onScan: code => {
+      scansRef().child(md5(code.data)).set(true)
+      this.setState({showScanner: false, onScan: null})
+    }
   })
   addCode = () => this.setState({
     showScanner: true,
-    onScan: code => codesRef().child(md5(code.data)).set({value: code.data, name: 'Added @ ' + new Date().toString()})
+    onScan: code => {
+      codesRef().child(md5(code.data)).set({value: code.data, name: 'Added @ ' + new Date().toString()})
+      this.setState({showScanner: false, onScan: null})
+    }
   })
   cancelScan = () => this.setState({showScanner: false, onScan: null})
 }

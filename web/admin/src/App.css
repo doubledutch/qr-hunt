@@ -56,7 +56,7 @@ ul li {
   align-items: center;
 }
 
-ul li span {
+ul li .name {
   overflow: hidden;
   flex: 1;
   display: flex;
