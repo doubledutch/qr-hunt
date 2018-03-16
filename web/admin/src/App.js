@@ -35,18 +35,14 @@ export default class App extends Component {
     admins: [],
     categories: [],
     codes: [],
+    scansPerUserPerCategory: {},
   }
 
   componentDidMount() {
     fbc.signinAdmin()
     .then(user => {
       client.getUsers().then(attendees => {
-        this.setState({attendees: attendees.sort(sortPlayers)})
-
-        adminableUsersRef().on('value', data => {
-          const users = data.val() || {}
-          this.setState({admins: Object.keys(users).filter(id => users[id].adminToken)})
-        })
+        this.setState({attendees})
       })
 
       const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
@@ -60,6 +56,23 @@ export default class App extends Component {
       codesRef().on('child_added', onChildAdded('codes', sortByName))
       codesRef().on('child_changed', onChildChanged('codes', sortByName))
       codesRef().on('child_removed', onChildRemoved('codes'))
+
+      adminableUsersRef().on('value', data => {
+        const users = data.val() || {}
+        this.setState(state => {
+          const codeToCategory = state.codes.reduce((ctc, code) => { ctc[code.id] = code.categoryId; return ctc }, {})
+          return {
+            admins: Object.keys(users).filter(id => users[id].adminToken),
+            scansPerUserPerCategory: Object.keys(users).reduce((spupc, userId) => {
+              spupc[userId] = Object.keys(users[userId].scans || {}).map(scannedId => codeToCategory[scannedId]).reduce((countPerCat, catId) => {
+                if (catId) countPerCat[catId] = (countPerCat[catId] || 0) + 1
+                return countPerCat
+              }, {})
+              return spupc
+            }, {})
+          }
+        })
+      })
     })
   }
 
@@ -74,7 +87,7 @@ export default class App extends Component {
                 { categories.map(this.renderCategory) }
               </ul>
 
-              <label for="doneDesc">Attendee message when complete: </label>
+              <label htmlFor="doneDesc">Attendee message when complete: </label>
               <input name="doneDesc" value={this.state.doneDesc} onChange={e => doneDescriptionRef().set(e.target.value)} />
 
               <h2>QR Codes</h2>
@@ -85,7 +98,7 @@ export default class App extends Component {
 
               <h2>Attendees</h2>
               <ul className="userList">
-                { attendees.map(this.renderUser) }
+                { attendees.sort(this.sortPlayers).map(this.renderUser) }
               </ul>
             </div>
           : <div>Loading...</div>
@@ -123,9 +136,13 @@ export default class App extends Component {
   renderUser = user => {
     const { id, firstName, lastName } = user
     return (
-      <li key={id}>
+      <li key={id} className={this.isDone(user.id) ? 'is-done' : 'not-done'}>
         <Avatar user={user} size={30} />
         <span className="name"> {firstName} {lastName}</span>
+        { this.state.categories.map(cat => <span className="catScans" key={cat.id}>
+            {cat.name}: {this.categoryScansForUser(cat.id, user.id)}
+          </span>)
+        }
         { this.isAdmin(id)
             ? <button className="remove" onClick={()=>this.setAdmin(id, false)}>Remove admin</button>
             : <button className="add" onClick={()=>this.setAdmin(id, true)}>Make admin</button>
@@ -133,6 +150,9 @@ export default class App extends Component {
       </li>
     )
   }
+
+  categoryScansForUser = (categoryId, userId) => (this.state.scansPerUserPerCategory[userId] || {})[categoryId] || 0
+  isDone = userId => !!this.state.categories.length && !this.state.categories.find(cat => this.categoryScansForUser(cat.id, userId) < (cat.scansRequired || 0))
 
   newCategory = () => {
     categoriesRef().push({name: 'New QR Code Category'})
@@ -164,18 +184,18 @@ export default class App extends Component {
     }
   }
 
-  markComplete(task) {
-    fbc.database.public.allRef('tasks').child(task.key).remove()
-  }
-}
+  sortPlayers = (a, b) => {
+    const isADone = this.isDone(a.id)
+    const isBDone = this.isDone(b.id)
+    if (isADone !== isBDone) return isADone ? -1 : 1
 
-function sortPlayers(a, b) {
-  const aFirst = (a.firstName || '').toLowerCase()
-  const bFirst = (b.firstName || '').toLowerCase()
-  const aLast = (a.lastName || '').toLowerCase()
-  const bLast = (b.lastName || '').toLowerCase()
-  if (aFirst !== bFirst) return aFirst < bFirst ? -1 : 1
-    return aLast < bLast ? -1 : 1
+    const aFirst = (a.firstName || '').toLowerCase()
+    const bFirst = (b.firstName || '').toLowerCase()
+    const aLast = (a.lastName || '').toLowerCase()
+    const bLast = (b.lastName || '').toLowerCase()
+    if (aFirst !== bFirst) return aFirst < bFirst ? -1 : 1
+      return aLast < bLast ? -1 : 1
+  }  
 }
 
 function sortByName(a, b) {

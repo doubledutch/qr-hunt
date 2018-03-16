@@ -73,17 +73,23 @@ button.add {
   font-size: 12px;
   margin-left: 10px;
   height: 20px;
-  margin-top: 5px;
   background-color: #73aaf3;
 }
 
 button.remove {
   background-color: #e97476;
   height: 20px;
-  margin-top: 5px;
+}
+
+.catScans {
+  padding: 0 0.7em;
 }
 
 .payload {
   color: #888;
   font-style: italic;
+}
+
+.is-done {
+  background-color: #58dd63;
 }
