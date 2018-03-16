@@ -22,7 +22,7 @@ import Star from './Star'
 import Scanner from './Scanner'
 
 import md5 from 'md5'
-import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
+import client, { Avatar, Color, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
 import firebase from 'firebase'
 const fbc = FirebaseConnector(client, 'qrhunt')
@@ -33,6 +33,8 @@ const scansRef = () => fbc.database.private.adminableUserRef('scans')
 const categoriesRef = () => fbc.database.public.adminRef('categories')
 const codesRef = () => fbc.database.public.adminRef('codes')
 const doneDescriptionRef = () => fbc.database.public.adminRef('doneDescription')
+const welcomeRef = () => fbc.database.public.adminRef('welcome')
+const titleRef = () => fbc.database.public.adminRef('title')
 
 console.disableYellowBox = true
 
@@ -52,6 +54,8 @@ export default class HomeView extends Component {
       const wireListeners = () => {
         scansRef().on('value', data => this.setState({scans: data.val() || {}}))
         doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
+        welcomeRef().on('value', data => this.setState({welcome: data.val()}))
+        titleRef().on('value', data => this.setState({title: data.val()}))
 
         const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
         const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
@@ -83,7 +87,7 @@ export default class HomeView extends Component {
   }
 
   render() {
-    const {categories, codes, isAdmin, onScan, scans, showScanner} = this.state
+    const {categories, codes, isAdmin, onScan, scans, showScanner, title, welcomeDismissed} = this.state
     const codesByCategory = codes.reduce((cbc, code) => {
       if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
       const isScanned = scans[code.id]
@@ -96,34 +100,36 @@ export default class HomeView extends Component {
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     return (
       <View style={s.container}>
-        <TitleBar title="Challenge" client={client} signin={this.signin} />
-        { showScanner
-          ? <Scanner onScan={onScan} onCancel={this.cancelScan} />
-          : <View style={s.container}>
-              <ScrollView style={s.scroll}>
-                { scans
-                  ? categories.filter(cat => cat.scansRequired).map(cat => (
-                    <View key={cat.id} style={s.categoryContainer}>
-                      <Text style={s.category}>{cat.name}</Text>
-                      { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
-                        <View key={code.id} style={s.scan}>
-                          <View style={[s.circle, s.completeCircle]}>
-                            <Checkmark size={circleSize * 0.6} />
-                          </View>
-                          <Text>{code.name}</Text>
-                        </View>)
-                      )}
-                      { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
-                    </View>
-                  ))
-                  : <Text>Loading...</Text>
-                }
-              </ScrollView>
-              <View style={s.buttons}>
-                <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity>
-                { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
+        <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
+        { !welcomeDismissed && scans && !Object.keys(scans).length
+          ? this.renderWelcome()
+          : showScanner
+            ? <Scanner onScan={onScan} onCancel={this.cancelScan} />
+            : <View style={s.container}>
+                <ScrollView style={s.scroll}>
+                  { scans
+                    ? categories.filter(cat => cat.scansRequired).map(cat => (
+                      <View key={cat.id} style={s.categoryContainer}>
+                        <Text style={s.category}>{cat.name}</Text>
+                        { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
+                          <View key={code.id} style={s.scan}>
+                            <View style={[s.circle, s.completeCircle]}>
+                              <Checkmark size={circleSize * 0.6} />
+                            </View>
+                            <Text>{code.name}</Text>
+                          </View>)
+                        )}
+                        { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
+                      </View>
+                    ))
+                    : <Text>Loading...</Text>
+                  }
+                </ScrollView>
+                <View style={s.buttons}>
+                  <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity>
+                  { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
+                </View>
               </View>
-            </View>
         }
         { isDone && this.renderDone() }
       </View>
@@ -139,6 +145,20 @@ export default class HomeView extends Component {
       </View>)
     }
     return placeholders
+  }
+
+  renderWelcome() {
+    return (
+      <View style={s.container}>
+        <View style={s.welcomeBox}>
+          <Text style={s.welcomeTitle}>{this.state.title}</Text>
+          <Text style={s.welcomeText}>{this.state.welcome}</Text>
+          <View style={s.buttons}>
+            <TouchableOpacity style={s.button} onPress={this.dismissWelcome}><Text style={s.buttonText}>LET'S PLAY!</Text></TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    )
   }
 
   renderDone() {
@@ -177,6 +197,8 @@ export default class HomeView extends Component {
     }
   })
   cancelScan = () => this.setState({showScanner: false, onScan: null})
+
+  dismissWelcome = () => this.setState({welcomeDismissed: true})
 }
 
 function sortByName(a, b) {
@@ -241,6 +263,22 @@ const s = ReactNative.StyleSheet.create({
     fontSize: 20,
     color: '#fff',
     textAlign: 'center',
+  },
+  welcomeBox: {
+    backgroundColor: new Color(client.primaryColor).limitLightness(0.2).rgbString(),
+    margin: 10,
+    borderRadius: 5,
+  },
+  welcomeTitle: {
+    color: '#fff',
+    fontSize: 24,
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  welcomeText: {
+    color: '#fff',
+    fontSize: 16,
+    padding: 10,
   },
   done: {
     position: 'absolute',

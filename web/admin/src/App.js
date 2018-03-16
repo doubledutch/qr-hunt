@@ -29,6 +29,8 @@ const adminableUsersRef = () => fbc.database.private.adminableUsersRef()
 const categoriesRef = () => fbc.database.public.adminRef('categories')
 const codesRef = () => fbc.database.public.adminRef('codes')
 const doneDescriptionRef = () => fbc.database.public.adminRef('doneDescription')
+const welcomeRef = () => fbc.database.public.adminRef('welcome')
+const titleRef = () => fbc.database.public.adminRef('title')
 
 export default class App extends Component {
   state = {
@@ -45,6 +47,10 @@ export default class App extends Component {
       client.getUsers().then(attendees => {
         this.setState({attendees})
       })
+
+      doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
+      welcomeRef().on('value', data => this.setState({welcome: data.val()}))
+      titleRef().on('value', data => this.setState({title: data.val()}))
 
       const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
       const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
@@ -88,8 +94,20 @@ export default class App extends Component {
                 { categories.map(this.renderCategory) }
               </ul>
 
-              <label htmlFor="doneDesc">Attendee message when complete: </label>
-              <input name="doneDesc" value={this.state.doneDesc} onChange={e => doneDescriptionRef().set(e.target.value)} />
+              <div className="field">
+                <label htmlFor="title">Title: </label>
+                <input name="title" value={this.state.title} onChange={e => titleRef().set(e.target.value)} className="titleText" placeholder="Challenge" />
+              </div>
+
+              <div className="field">
+                <div><label htmlFor="welcome">Welcome message</label></div>
+                <textarea name="welcome" value={this.state.welcome} onChange={e => welcomeRef().set(e.target.value)} className="welcomeText"></textarea>
+              </div>
+
+              <div className="field">
+                <label htmlFor="doneDesc">Attendee message when complete: </label>
+                <input name="doneDesc" value={this.state.doneDescription} onChange={e => doneDescriptionRef().set(e.target.value)} className="completeText" />
+              </div>
 
               <h2>QR Codes</h2>
               <span>(Attendees marked as admins can add new codes from the app)</span>
