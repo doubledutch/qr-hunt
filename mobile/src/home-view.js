@@ -15,7 +15,7 @@
  */
 
 import React, { Component } from 'react'
-import ReactNative, {ScrollView, Text, TouchableOpacity, View} from 'react-native'
+import ReactNative, {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native'
 
 import Checkmark from './Checkmark'
 import Scanner from './Scanner'
@@ -88,7 +88,7 @@ export default class HomeView extends Component {
       if (isScanned) cbc[code.categoryId].count++
       return cbc
     }, {})
-    
+
     return (
       <View style={s.container}>
         <TitleBar title="Challenge" client={client} signin={this.signin} />
@@ -138,7 +138,18 @@ export default class HomeView extends Component {
   scanCode = () => this.setState({
     showScanner: true,
     onScan: code => {
-      scansRef().child(md5(code.data)).set(true)
+      const hash = md5(code.data)
+      const namedCode = this.state.codes.find(c => c.id === hash)
+      if (namedCode) {
+        if (this.state.scans[hash]) {
+          Alert.alert('Already scanned', 'It looks like you already scanned this QR code!')
+        } else {
+          scansRef().child(hash).set(true)
+          Alert.alert('Congrats!', `You scanned ${namedCode.name}`)
+        }
+      } else {
+        Alert.alert('Oops!', 'It looks like this QR code is not part of the challenge!')
+      }
       this.setState({showScanner: false, onScan: null})
     }
   })
