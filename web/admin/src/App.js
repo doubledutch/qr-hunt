@@ -24,10 +24,10 @@ const fbc = FirebaseConnector(client, 'qrhunt')
 
 fbc.initializeAppWithSimpleBackend()
 
-//const publicUsersRef = () => fbc.database.public.usersRef()
 const adminableUsersRef = () => fbc.database.private.adminableUsersRef()
 const categoriesRef = () => fbc.database.public.adminRef('categories')
 const codesRef = () => fbc.database.public.adminRef('codes')
+const doneDescriptionRef = () => fbc.database.public.adminRef('doneDescription')
 
 export default class App extends Component {
   state = {
@@ -73,6 +73,9 @@ export default class App extends Component {
               <ul className="categoryList">
                 { categories.map(this.renderCategory) }
               </ul>
+
+              <label for="doneDesc">Attendee message when complete: </label>
+              <input name="doneDesc" value={this.state.doneDesc} onChange={e => doneDescriptionRef().set(e.target.value)} />
 
               <h2>QR Codes</h2>
               <span>(Attendees marked as admins can add new codes from the app)</span>

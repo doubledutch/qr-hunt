@@ -18,6 +18,7 @@ import React, { Component } from 'react'
 import ReactNative, {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native'
 
 import Checkmark from './Checkmark'
+import Star from './Star'
 import Scanner from './Scanner'
 
 import md5 from 'md5'
@@ -31,6 +32,7 @@ fbc.initializeAppWithSimpleBackend()
 const scansRef = () => fbc.database.private.adminableUserRef('scans')
 const categoriesRef = () => fbc.database.public.adminRef('categories')
 const codesRef = () => fbc.database.public.adminRef('codes')
+const doneDescriptionRef = () => fbc.database.public.adminRef('doneDescription')
 
 console.disableYellowBox = true
 
@@ -49,6 +51,7 @@ export default class HomeView extends Component {
     this.signin.then(() => {
       const wireListeners = () => {
         scansRef().on('value', data => this.setState({scans: data.val() || {}}))
+        doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
 
         const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
         const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
@@ -88,7 +91,9 @@ export default class HomeView extends Component {
       if (isScanned) cbc[code.categoryId].count++
       return cbc
     }, {})
-
+    let hasScannedRequiredInAllCategories = true
+    const isDone = scans && !categories.find(cat =>
+      (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     return (
       <View style={s.container}>
         <TitleBar title="Challenge" client={client} signin={this.signin} />
@@ -119,7 +124,8 @@ export default class HomeView extends Component {
                 { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
               </View>
             </View>
-        }        
+        }
+        { isDone && this.renderDone() }
       </View>
     )
   }
@@ -133,6 +139,16 @@ export default class HomeView extends Component {
       </View>)
     }
     return placeholders
+  }
+
+  renderDone() {
+    return (
+      <View style={s.done}>
+        <Star style={s.star} />
+        <Text style={s.doneTitle}>You did it!</Text>
+        <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
+      </View>
+    )
   }
 
   scanCode = () => this.setState({
@@ -225,5 +241,31 @@ const s = ReactNative.StyleSheet.create({
     fontSize: 20,
     color: '#fff',
     textAlign: 'center',
-  }
+  },
+  done: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(0,0,0,0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  doneTitle: {
+    fontSize: 24,
+    color: '#fff',
+    padding: 10,
+    textAlign: 'center',
+  },
+  doneDesc: {
+    fontSize: 16,
+    color: '#fff',
+    padding: 10,
+    textAlign: 'center',
+  },
+  star: {
+    height: 90,
+    width: 90,
+  },
 })
