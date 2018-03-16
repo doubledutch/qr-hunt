@@ -15,6 +15,7 @@
  */
 
 import React, { Component } from 'react'
+import {CSVLink} from 'react-csv'
 import './App.css'
 
 import client from '@doubledutch/admin-client'
@@ -97,6 +98,7 @@ export default class App extends Component {
               </ul>
 
               <h2>Attendees</h2>
+              <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
               <ul className="userList">
                 { attendees.sort(this.sortPlayers).map(this.renderUser) }
               </ul>
