@@ -156,7 +156,7 @@ export default class HomeView extends Component {
           <Text style={s.welcomeTitle}>{this.state.title}</Text>
           <Text style={s.welcomeText}>{this.state.welcome}</Text>
           <View style={s.buttons}>
-            <TouchableOpacity style={s.button} onPress={this.dismissWelcome}><Text style={s.buttonText}>LET'S PLAY!</Text></TouchableOpacity>
+            <TouchableOpacity style={s.button} onPress={this.dismissWelcome}><Text style={s.buttonText}>LET&#39;S PLAY!</Text></TouchableOpacity>
           </View>
         </View>
       </View>
