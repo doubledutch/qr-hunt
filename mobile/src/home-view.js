@@ -87,7 +87,7 @@ export default class HomeView extends Component {
   }
 
   render() {
-    const {categories, codes, isAdmin, onScan, scans, showScanner, title, welcomeDismissed} = this.state
+    const {categories, codes, isAdmin, onScan, scans, showScanner, title, doneDismissed, welcomeDismissed} = this.state
     const codesByCategory = codes.reduce((cbc, code) => {
       if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
       const isScanned = scans[code.id]
@@ -98,40 +98,42 @@ export default class HomeView extends Component {
     let hasScannedRequiredInAllCategories = true
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
+    const anyScans = !!scans && !!Object.keys(scans).length
+
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
-        { !welcomeDismissed && scans && !Object.keys(scans).length
-          ? this.renderWelcome()
-          : showScanner
-            ? <Scanner onScan={onScan} onCancel={this.cancelScan} />
-            : <View style={s.container}>
-                <ScrollView style={s.scroll}>
-                  { scans
-                    ? categories.filter(cat => cat.scansRequired).map(cat => (
-                      <View key={cat.id} style={s.categoryContainer}>
-                        <Text style={s.category}>{cat.name}</Text>
-                        { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
-                          <View key={code.id} style={s.scan}>
-                            <View style={[s.circle, s.completeCircle]}>
-                              <Checkmark size={circleSize * 0.6} />
-                            </View>
-                            <Text>{code.name}</Text>
-                          </View>)
-                        )}
-                        { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
-                      </View>
-                    ))
-                    : <Text>Loading...</Text>
-                  }
-                </ScrollView>
-                <View style={s.buttons}>
-                  <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity>
-                  { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
+        { !scans
+          ? <Text>Loading...</Text>
+          : !welcomeDismissed && !anyScans
+            ? this.renderWelcome()
+            : showScanner
+              ? <Scanner onScan={onScan} onCancel={this.cancelScan} />
+              : <View style={s.container}>
+                  <ScrollView style={s.scroll}>
+                    { categories.filter(cat => cat.scansRequired).map(cat => (
+                        <View key={cat.id} style={s.categoryContainer}>
+                          <Text style={s.category}>{cat.name}</Text>
+                          { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
+                            <View key={code.id} style={s.scan}>
+                              <View style={[s.circle, s.completeCircle]}>
+                                <Checkmark size={circleSize * 0.6} />
+                              </View>
+                              <Text>{code.name}</Text>
+                            </View>)
+                          )}
+                          { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
+                        </View>
+                      ))
+                    }
+                  </ScrollView>
+                  <View style={s.buttons}>
+                    <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity>
+                    { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
+                  </View>
                 </View>
-              </View>
         }
-        { isDone && this.renderDone() }
+        { isDone && anyScans && !doneDismissed && this.renderDone() }
       </View>
     )
   }
@@ -163,11 +165,11 @@ export default class HomeView extends Component {
 
   renderDone() {
     return (
-      <View style={s.done}>
+      <TouchableOpacity style={s.done} onPress={this.dismissDone}>
         <Star style={s.star} />
         <Text style={s.doneTitle}>You did it!</Text>
         <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
-      </View>
+      </TouchableOpacity>
     )
   }
 
@@ -199,6 +201,7 @@ export default class HomeView extends Component {
   cancelScan = () => this.setState({showScanner: false, onScan: null})
 
   dismissWelcome = () => this.setState({welcomeDismissed: true})
+  dismissDone = () => this.setState({doneDismissed: true})
 }
 
 function sortByName(a, b) {
