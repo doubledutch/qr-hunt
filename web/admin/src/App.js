@@ -89,37 +89,45 @@ export default class App extends Component {
       <div className="App">
         { attendees
           ? <div>
-              <h2>QR Code Categories <button onClick={this.newCategory} className="add">Add New</button></h2>
-              <ul className="categoryList">
-                { categories.map(this.renderCategory) }
-              </ul>
 
-              <div className="field">
-                <label htmlFor="title">Title: </label>
-                <input name="title" value={this.state.title} onChange={e => titleRef().set(e.target.value)} className="titleText" placeholder="Challenge" />
+              <div className="sectionContainer">
+                <h2>QR Hunt</h2>
+                <div className="field">
+                  <div><label htmlFor="title">Title </label></div>
+                  <input name="title" value={this.state.title} onChange={e => titleRef().set(e.target.value)} className="titleText" placeholder="Challenge" />
+                </div>
+                <div className="containerRow">
+                  <div className="field">
+                    <div><label htmlFor="welcome">Game Instructions for Attendees</label></div>
+                    <textarea name="welcome" value={this.state.welcome} onChange={e => welcomeRef().set(e.target.value)} className="welcomeText"></textarea>
+                  </div>
+                  <span style={{width: "50px"}}/>
+                  <div className="field">
+                    <label htmlFor="doneDesc">Message to Attendee When Complete</label>
+                    <textarea name="doneDesc" value={this.state.doneDescription} onChange={e => doneDescriptionRef().set(e.target.value)} className="completeText" />
+                  </div>
+                </div>
               </div>
 
-              <div className="field">
-                <div><label htmlFor="welcome">Welcome message</label></div>
-                <textarea name="welcome" value={this.state.welcome} onChange={e => welcomeRef().set(e.target.value)} className="welcomeText"></textarea>
+              <div className="sectionContainer">
+                <h2>QR Code Categories <button onClick={this.newCategory} className="add">Add New</button></h2>
+                <ul className="categoryList">
+                  { categories.map(this.renderCategory) }
+                </ul>
               </div>
 
-              <div className="field">
-                <label htmlFor="doneDesc">Attendee message when complete: </label>
-                <input name="doneDesc" value={this.state.doneDescription} onChange={e => doneDescriptionRef().set(e.target.value)} className="completeText" />
+              <div className="sectionContainer">
+                <h2>QR Codes</h2>
+                <span>(Attendees marked as admins can add new codes from the app)</span>
+                <ul className="qrCodeList">
+                  { codes.map(this.renderCode) }
+                </ul>
+                <h2>Attendees</h2>
+                <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
+                <ul className="userList">
+                  { attendees.sort(this.sortPlayers).map(this.renderUser) }
+                </ul>
               </div>
-
-              <h2>QR Codes</h2>
-              <span>(Attendees marked as admins can add new codes from the app)</span>
-              <ul className="qrCodeList">
-                { codes.map(this.renderCode) }
-              </ul>
-
-              <h2>Attendees</h2>
-              <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
-              <ul className="userList">
-                { attendees.sort(this.sortPlayers).map(this.renderUser) }
-              </ul>
             </div>
           : <div>Loading...</div>
         }
