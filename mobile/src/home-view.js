@@ -99,7 +99,6 @@ export default class HomeView extends Component {
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
-
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
@@ -113,13 +112,17 @@ export default class HomeView extends Component {
                   <ScrollView style={s.scroll}>
                     { categories.filter(cat => cat.scansRequired).map(cat => (
                         <View key={cat.id} style={s.categoryContainer}>
-                          <Text style={s.category}>{cat.name}</Text>
+                          <View style={{flexDirection: "row"}}>
+                            <Text style={s.category}>{cat.name}</Text>
+                            <View style={{flex:1}}/>
+                            <Text style={s.category}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
+                          </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
                               <View style={[s.circle, s.completeCircle]}>
                                 <Checkmark size={circleSize * 0.6} />
                               </View>
-                              <Text>{code.name}</Text>
+                              <Text style={{fontSize: 18, color:'#364247'}}>{code.name}</Text>
                             </View>)
                           )}
                           { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
@@ -136,6 +139,10 @@ export default class HomeView extends Component {
         { isDone && anyScans && !doneDismissed && this.renderDone() }
       </View>
     )
+  }
+
+  renderComplete = () => {
+
   }
 
   renderScanPlaceholders(numScanned, numRequired) {
@@ -218,18 +225,23 @@ const s = ReactNative.StyleSheet.create({
   },
   scroll: {
     flex: 1,
-    padding: 15,
+    paddingTop: 15,
+    paddingBottom: 15
   },
   category: {
-    fontSize: 20,
-    textAlign: 'center',
-    marginBottom: 15,
+    fontSize: 14,
+    textAlign: 'left',
+    marginBottom: 10,
+    marginTop: 15,
+    color: '#364247',
   },
   categoryContainer: {
-    marginBottom: 30,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 10
   },
   scan: {
-    padding: 8,
+    paddingBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -240,16 +252,17 @@ const s = ReactNative.StyleSheet.create({
     marginRight: 10,
   },
   completeCircle: {
-    backgroundColor: green,
+    backgroundColor: client.primaryColor,
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholderCircle: {
-    borderColor: gray,
-    borderWidth: 1,
+    borderColor: client.primaryColor,
+    borderWidth: 2,
   },
   placeholderText: {
     color: gray,
+    fontSize: 18
   },
   buttons: {
     flexDirection: 'row',
@@ -263,25 +276,25 @@ const s = ReactNative.StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#fff',
     textAlign: 'center',
   },
   welcomeBox: {
-    backgroundColor: new Color(client.primaryColor).limitLightness(0.2).rgbString(),
-    margin: 10,
-    borderRadius: 5,
+    backgroundColor: "#FFFFFF",
+    marginVertical: 10,
   },
   welcomeTitle: {
-    color: '#fff',
+    color:'#364247',
     fontSize: 24,
     textAlign: 'center',
     marginTop: 20,
   },
   welcomeText: {
-    color: '#fff',
+    color: '#364247',
     fontSize: 16,
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15
   },
   done: {
     position: 'absolute',
