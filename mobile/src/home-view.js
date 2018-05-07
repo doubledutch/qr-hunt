@@ -122,7 +122,7 @@ export default class HomeView extends Component {
                               <View style={[s.circle, s.completeCircle]}>
                                 <Checkmark size={circleSize * 0.6} />
                               </View>
-                              <Text style={{fontSize: 18, color: charcoal}}>{code.name}</Text>
+                              <Text style={s.codeTitle}>{code.name}</Text>
                             </View>)
                           )}
                           { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
@@ -240,6 +240,10 @@ const s = ReactNative.StyleSheet.create({
     paddingBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  codeTitle: {
+    fontSize: 18,
+    color: charcoal
   },
   circle: {
     height: circleSize,
