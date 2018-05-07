@@ -122,7 +122,7 @@ export default class HomeView extends Component {
                               <View style={[s.circle, s.completeCircle]}>
                                 <Checkmark size={circleSize * 0.6} />
                               </View>
-                              <Text style={{fontSize: 18, color:'#364247'}}>{code.name}</Text>
+                              <Text style={s.codeTitle}>{code.name}</Text>
                             </View>)
                           )}
                           { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
@@ -139,10 +139,6 @@ export default class HomeView extends Component {
         { isDone && anyScans && !doneDismissed && this.renderDone() }
       </View>
     )
-  }
-
-  renderComplete = () => {
-
   }
 
   renderScanPlaceholders(numScanned, numRequired) {
@@ -218,6 +214,7 @@ function sortByName(a, b) {
 const circleSize = 24
 const green = '#61b53d'
 const gray = '#a0a0a0'
+const charcoal = '#364247'
 const s = ReactNative.StyleSheet.create({
   container: {
     flex: 1,
@@ -225,15 +222,14 @@ const s = ReactNative.StyleSheet.create({
   },
   scroll: {
     flex: 1,
-    paddingTop: 15,
-    paddingBottom: 15
+    paddingVertical: 15
   },
   category: {
     fontSize: 14,
     textAlign: 'left',
     marginBottom: 10,
     marginTop: 15,
-    color: '#364247',
+    color: charcoal,
   },
   categoryContainer: {
     marginBottom: 20,
@@ -244,6 +240,10 @@ const s = ReactNative.StyleSheet.create({
     paddingBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  codeTitle: {
+    fontSize: 18,
+    color: charcoal
   },
   circle: {
     height: circleSize,
@@ -285,13 +285,13 @@ const s = ReactNative.StyleSheet.create({
     marginVertical: 10,
   },
   welcomeTitle: {
-    color:'#364247',
+    color: charcoal,
     fontSize: 24,
     textAlign: 'center',
     marginTop: 20,
   },
   welcomeText: {
-    color: '#364247',
+    color: charcoal,
     fontSize: 16,
     paddingVertical: 10,
     paddingHorizontal: 15
