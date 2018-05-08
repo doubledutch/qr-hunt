@@ -17,7 +17,7 @@
 import React, { Component } from 'react'
 import {CSVLink} from 'react-csv'
 import './App.css'
-
+import CategoryCell from "./CategoryCell"
 import client from '@doubledutch/admin-client'
 import Avatar from './Avatar'
 import FirebaseConnector from '@doubledutch/firebase-connector'
@@ -39,6 +39,10 @@ export default class App extends Component {
     categories: [],
     codes: [],
     scansPerUserPerCategory: {},
+    isTitleBoxDisplay : true,
+    isCategoryBoxDisplay: true,
+    isCodeBoxDisplay: true,
+    isAttendeeBoxDisplay: true
   }
 
   componentDidMount() {
@@ -83,15 +87,22 @@ export default class App extends Component {
     })
   }
 
+  handleChange = (name, value) => {
+    this.setState({[name]: value});
+  }
+
   render() {
     const {attendees, categories, codes} = this.state
     return (
       <div className="App">
         { attendees
           ? <div>
-
               <div className="sectionContainer">
-                <h2>QR Hunt</h2>
+                <div className="containerRow">
+                  <h2>QR Hunt</h2>
+                  <div style={{flex: 1}}/>
+                  <button className="displayButton" onClick={() => this.handleChange("isTitleBoxDisplay", !this.state.isTitleBoxDisplay)}>{(this.state.isTitleBoxDisplay ? "Hide Section" : "View Section")}</button>
+                </div>
                 <div className="field">
                   <div><label htmlFor="title">Title </label></div>
                   <input name="title" value={this.state.title} onChange={e => titleRef().set(e.target.value)} className="titleText" placeholder="Challenge" />
@@ -110,19 +121,38 @@ export default class App extends Component {
               </div>
 
               <div className="sectionContainer">
-                <h2>QR Code Categories <button onClick={this.newCategory} className="add">Add New</button></h2>
+                <div className="containerRow">
+                  <h2>QR Code Categories</h2>
+                  <button onClick={this.newCategory} className="add">Add Category</button>
+                  <div style={{flex: 1}}/>
+                  <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? "Hide Section" : "View Section")}</button>
+                </div>
+                <div className="titleBar"><p>Name</p><p>Scans Required</p></div>
                 <ul className="categoryList">
-                  { categories.map(this.renderCategory) }
+                  { categories.map(category => {
+                    return <CategoryCell category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
+                  } 
+                  )}
                 </ul>
               </div>
 
               <div className="sectionContainer">
-                <h2>QR Codes</h2>
+                <div className="containerRow">
+                  <h2>QR Codes</h2>
+                  <div style={{flex: 1}}/>
+                  <button className="displayButton" onClick={() => this.handleChange("isCodeBoxDisplay", !this.state.isCodeBoxDisplay)}>{(this.state.isCodeBoxDisplay ? "Hide Section" : "View Section")}</button>
+                </div>
                 <span>(Attendees marked as admins can add new codes from the app)</span>
                 <ul className="qrCodeList">
                   { codes.map(this.renderCode) }
                 </ul>
-                <h2>Attendees</h2>
+              </div>
+              <div className="sectionContainer">
+                <div className="containerRow">
+                  <h2>Attendees</h2>
+                  <div style={{flex: 1}}/>
+                  <button className="displayButton" onClick={() => this.handleChange("isAttendeeBoxDisplay", !this.state.isAttendeeBoxDisplay)}>{(this.state.isAttendeeBoxDisplay ? "Hide Section" : "View Section")}</button>
+                </div>
                 <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
                 <ul className="userList">
                   { attendees.sort(this.sortPlayers).map(this.renderUser) }
@@ -139,11 +169,21 @@ export default class App extends Component {
     const { id, name, scansRequired } = category
     return (
       <li key={id}>
-        <button className="remove" onClick={this.removeCategory(category)}>Remove</button>&nbsp;
         <input type="text" value={name} placeholder="Category Name" onChange={e => categoriesRef().child(id).child('name').set(e.target.value)} />&nbsp;
         <input type="number" value={scansRequired || 0} onChange={e => categoriesRef().child(id).child('scansRequired').set(+e.target.value)} min={0} max={100} />&nbsp;scans required
+        <div />
+        <button className="Edit">Edit</button>&nbsp;
+        <button className="remove" onClick={this.removeCategory(category)}>Remove</button>&nbsp;
       </li>
     )
+  }
+
+  setCatName = (id, e) => {
+    categoriesRef().child(id).child('name').set(e.target.value)
+  }
+
+  setCatNumb = (id, e) => {
+    categoriesRef().child(id).child('scansRequired').set(+e.target.value)
   }
 
   renderCode = code => {
