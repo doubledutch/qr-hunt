@@ -29,7 +29,7 @@ export default class CategoryCell extends Component {
     this.setState({isEditing: !this.state.isEditing})
   }
   render() {
-    const { categoryId, id, name, value } = this.props.code
+    const { categoryId, id, name } = this.props.code
     const cat = this.props.categories.find(cat => cat.id === categoryId)
     if (!this.state.isEditing) {
       return (
