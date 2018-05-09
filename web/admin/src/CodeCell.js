@@ -29,26 +29,30 @@ export default class CategoryCell extends Component {
     this.setState({isEditing: !this.state.isEditing})
   }
   render() {
-    const { id, name, scansRequired } = this.props.category
+    const { categoryId, id, name, value } = this.props.code
+    const cat = this.props.categories.find(cat => cat.id === categoryId)
     if (!this.state.isEditing) {
       return (
         <li key={id}>
           <p style={{width: 200}}>{name}</p>&nbsp;
-          <p>{scansRequired || 0} scans required</p>
+          <p>{cat ? cat.name : "unavailable"}</p>
           <div style={{flex:1}}/>
           <button className="edit" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="remove" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          <button className="remove" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
         </li>
       )
     }
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={name} placeholder="Category Name" onChange={e => this.props.setCatName(id, e)} />&nbsp;
-          <input className="catNumbText" type="number" value={scansRequired || 0} onChange={e => this.props.setCatNumb(id, e)} min={0} max={100} />&nbsp;scans required
+          <input className="catNameText" type="text" value={name} placeholder="QR Code Name" onChange={e => this.props.setCodeName(id, e)} />&nbsp;
+          <select value={categoryId} onChange={e => this.props.setCodeNumb(id, e)}>
+            <option>--Select category--</option>
+            { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
+          </select>&nbsp;
           <div style={{flex:1}}/>
           <button className="edit" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="remove" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          <button className="remove" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
         </li>
       )
     }

@@ -18,6 +18,7 @@ import React, { Component } from 'react'
 import {CSVLink} from 'react-csv'
 import './App.css'
 import CategoryCell from "./CategoryCell"
+import CodeCell from "./CodeCell"
 import client from '@doubledutch/admin-client'
 import Avatar from './Avatar'
 import FirebaseConnector from '@doubledutch/firebase-connector'
@@ -91,6 +92,61 @@ export default class App extends Component {
     this.setState({[name]: value});
   }
 
+  renderTitleBox = () => {
+    if (this.state.isTitleBoxDisplay) {
+      return (
+        <div>
+          <div className="field">
+            <div><label htmlFor="title">Title </label></div>
+            <input name="title" value={this.state.title} onChange={e => titleRef().set(e.target.value)} placeholder="Ex. QR Challenge" className="titleText" />
+          </div>
+          <div className="containerRow">
+            <div className="field">
+              <div><label htmlFor="welcome">Game Instructions for Attendees</label></div>
+              <textarea name="welcome" placeholder="Ex. Scan 3 codes in each category and be entered into the raffle!" value={this.state.welcome} onChange={e => welcomeRef().set(e.target.value)} className="welcomeText"></textarea>
+          </div>
+          <span style={{width: "50px"}}/>
+          <div className="field">
+            <label htmlFor="doneDesc">Message to Attendee When Complete</label>
+            <textarea name="doneDesc" placeholder="Ex. You're now entered into the raffle!" value={this.state.doneDescription} onChange={e => doneDescriptionRef().set(e.target.value)} className="completeText" />          </div>
+          </div>
+        </div>
+      )
+    }
+  }
+
+  renderCatBox = (categories) => {
+    if (this.state.isCategoryBoxDisplay) {
+      return (
+        <div>
+          <div className="titleBar"><p>Name</p><p>Scans Required</p></div>
+          <ul className="categoryList">
+            { categories.map(category => {
+              return <CategoryCell category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
+            } 
+            )}              
+          </ul>
+        </div>
+      )
+    }
+  }
+
+  renderCodeBox = (codes, categories) => {
+    if (this.state.isCodeBoxDisplay) {
+      return (
+        <div>
+          <div className="titleBar"><p>Name</p><p>Category</p></div>
+          <ul className="qrCodeList">
+            { codes.map(code => {
+              return <CodeCell code={code} setCodeName={this.setCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
+            }
+            )}
+          </ul>
+        </div>
+      )
+    }
+  }
+
   render() {
     const {attendees, categories, codes} = this.state
     return (
@@ -103,21 +159,7 @@ export default class App extends Component {
                   <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isTitleBoxDisplay", !this.state.isTitleBoxDisplay)}>{(this.state.isTitleBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
-                <div className="field">
-                  <div><label htmlFor="title">Title </label></div>
-                  <input name="title" value={this.state.title} onChange={e => titleRef().set(e.target.value)} className="titleText" placeholder="Challenge" />
-                </div>
-                <div className="containerRow">
-                  <div className="field">
-                    <div><label htmlFor="welcome">Game Instructions for Attendees</label></div>
-                    <textarea name="welcome" value={this.state.welcome} onChange={e => welcomeRef().set(e.target.value)} className="welcomeText"></textarea>
-                  </div>
-                  <span style={{width: "50px"}}/>
-                  <div className="field">
-                    <label htmlFor="doneDesc">Message to Attendee When Complete</label>
-                    <textarea name="doneDesc" value={this.state.doneDescription} onChange={e => doneDescriptionRef().set(e.target.value)} className="completeText" />
-                  </div>
-                </div>
+                {this.renderTitleBox()}
               </div>
 
               <div className="sectionContainer">
@@ -127,13 +169,7 @@ export default class App extends Component {
                   <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
-                <div className="titleBar"><p>Name</p><p>Scans Required</p></div>
-                <ul className="categoryList">
-                  { categories.map(category => {
-                    return <CategoryCell category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
-                  } 
-                  )}
-                </ul>
+                {this.renderCatBox(categories)}
               </div>
 
               <div className="sectionContainer">
@@ -142,11 +178,9 @@ export default class App extends Component {
                   <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isCodeBoxDisplay", !this.state.isCodeBoxDisplay)}>{(this.state.isCodeBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
-                <span>(Attendees marked as admins can add new codes from the app)</span>
-                <ul className="qrCodeList">
-                  { codes.map(this.renderCode) }
-                </ul>
+                {this.renderCodeBox(codes, categories)}
               </div>
+              
               <div className="sectionContainer">
                 <div className="containerRow">
                   <h2>Attendees</h2>
@@ -165,19 +199,6 @@ export default class App extends Component {
     )
   }
 
-  renderCategory = category => {
-    const { id, name, scansRequired } = category
-    return (
-      <li key={id}>
-        <input type="text" value={name} placeholder="Category Name" onChange={e => categoriesRef().child(id).child('name').set(e.target.value)} />&nbsp;
-        <input type="number" value={scansRequired || 0} onChange={e => categoriesRef().child(id).child('scansRequired').set(+e.target.value)} min={0} max={100} />&nbsp;scans required
-        <div />
-        <button className="Edit">Edit</button>&nbsp;
-        <button className="remove" onClick={this.removeCategory(category)}>Remove</button>&nbsp;
-      </li>
-    )
-  }
-
   setCatName = (id, e) => {
     categoriesRef().child(id).child('name').set(e.target.value)
   }
@@ -186,19 +207,12 @@ export default class App extends Component {
     categoriesRef().child(id).child('scansRequired').set(+e.target.value)
   }
 
-  renderCode = code => {
-    const { categoryId, id, name, value } = code
-    return (
-      <li key={id}>
-        <button className="remove" onClick={this.removeCode(code)}>Remove</button>&nbsp;
-        <input type="text" value={name} placeholder="QR Code Name" onChange={e => codesRef().child(id).child('name').set(e.target.value)} />&nbsp;
-        <select value={categoryId} onChange={e => codesRef().child(id).child('categoryId').set(e.target.value)}>
-          <option>--Select category--</option>
-          { this.state.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
-        </select>&nbsp;
-        <span className="payload" title={value}>{value}</span>
-      </li>
-    )
+  setCodeName = (id, e) => {
+    codesRef().child(id).child('name').set(e.target.value)
+  }
+
+  setCodeNumb = (id, e) => {
+    codesRef().child(id).child('categoryId').set(e.target.value)
   }
 
   renderUser = user => {
@@ -212,8 +226,8 @@ export default class App extends Component {
           </span>)
         }
         { this.isAdmin(id)
-            ? <button className="remove" onClick={()=>this.setAdmin(id, false)}>Remove admin</button>
-            : <button className="add" onClick={()=>this.setAdmin(id, true)}>Make admin</button>
+          ? <button className="remove" onClick={()=>this.setAdmin(id, false)}>Remove admin</button>
+          : <button className="add" onClick={()=>this.setAdmin(id, true)}>Make admin</button>
         }
       </li>
     )

@@ -26,6 +26,10 @@ h2 {
   margin: 1em 0 0.25em 0;
 }
 
+body {
+  font: 400 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
 .avatar {
   width: 40px;
 }
@@ -78,15 +82,21 @@ ul.categoryList {
 
 ul.qrCodeList {
   height: 250px;
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  background-color: #FCFCFC;
 }
 
 ul.userList {
   height: 500px;
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  background-color: #FCFCFC;
 }
 
-ul.categoryList li {
+/* ul.categoryList li {
   height: 39px;
-  padding: 3px 3px 3px 20px;
+  padding: 0px 3px 0px 20px;
   flex: 1;
   display: flex;
   flex-direction: nowrap;
@@ -94,14 +104,18 @@ ul.categoryList li {
   background-color: #FFFFFF;
   border-bottom: 1px solid #E3ECF8;
   border-radius: 5px;
-}
+} */
 
 ul li {
-  padding: 3px;
+  height: 39px;
+  padding: 0px 3px 0px 20px;
   flex: 1;
   display: flex;
   flex-direction: nowrap;
   align-items: center;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E3ECF8;
+  border-radius: 5px;
 }
 
 ul li .name {
@@ -131,9 +145,9 @@ textarea {
 }
 
 button.add {
-  font-size: 12px;
+  font-size: 14px;
   margin: 20px 0px 0px 10px;
-  height: 30px;
+  height: 35px;
   border-radius: 5px;
   padding: 0px 10px;
   background-color: white;
@@ -144,7 +158,7 @@ button.add {
 button.edit {
   background-color: white;
   border: none;
-  font: 300 12px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+  font: 300 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
   color: #4A4A4A;
   margin: 0px 20px;
 }
@@ -152,7 +166,7 @@ button.edit {
 button.remove {
   background-color: white;
   border: none;
-  font: 300 12px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+  font: 300 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
   color: #4A4A4A;
   margin: 0px 20px;
 }
@@ -186,8 +200,23 @@ button.remove {
   padding: 12px 15px;
 }
 
+select {
+  border: none;
+  height: 30px;
+  font: 400 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.catNumbText {
+  width: 30px;
+  border: none;
+  margin-left: 8px;
+  border-bottom: 1px solid #AAB9CA;
+  font: 400 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #4A4A4A;
+}
+
 .catNameText {
-  width: 200px;
+  width: 190px;
   border: none;
   border-bottom: 1px solid #AAB9CA;
   font: 400 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
