@@ -69,7 +69,7 @@ ul {
 
 .containerRow {
   display: flex;
-  flex-direction: nowrap;
+  flex-direction: row wrap;
 }
 
 ul.categoryList {
@@ -91,6 +91,7 @@ ul.userList {
   border: 1px solid #E3ECF8;
   border-radius: 5px;
   background-color: #FCFCFC;
+  overflow-x: auto;
 }
 
 ul li {
@@ -98,7 +99,7 @@ ul li {
   padding: 0px 3px 0px 20px;
   flex: 1;
   display: flex;
-  flex-direction: nowrap;
+  flex-direction: row;
   align-items: center;
   background-color: #FFFFFF;
   border-bottom: 1px solid #E3ECF8;
@@ -106,15 +107,9 @@ ul li {
 }
 
 ul li .name {
-  overflow: hidden;
-  flex: 1;
-  display: flex;
-  flex-direction: row wrap;
   margin: 0px;
   padding: 5px;
   margin-top: 2px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   font-size: 14px;
 }
 
@@ -199,7 +194,7 @@ select {
   display: flex;
   padding: 0px 20px;
   margin: 10px 0px 5px 0px;
-  flex-direction: row wrap;
+  flex-direction: row;
 }
 
 .titleBar p {

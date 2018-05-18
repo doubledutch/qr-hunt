@@ -25,7 +25,7 @@ export default class CategoryCell extends Component {
   }
 }
 
-  letEdit = () => {
+  toggleEdit = () => {
     this.setState({isEditing: !this.state.isEditing})
   }
   render() {
@@ -36,7 +36,7 @@ export default class CategoryCell extends Component {
           <p style={{width: 200}}>{name}</p>&nbsp;
           <p>{scansRequired || 0} scans required</p>
           <div style={{flex:1}}/>
-          <button className="edit" onClick={this.letEdit}>Edit</button>&nbsp;
+          <button className="edit" onClick={this.toggleEdit}>Edit</button>&nbsp;
           <button className="remove" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
         </li>
       )
@@ -47,7 +47,7 @@ export default class CategoryCell extends Component {
           <input className="catNameText" type="text" value={name} placeholder="Category Name" onChange={e => this.props.setCatName(id, e)} />&nbsp;
           <input className="catNumbText" type="number" value={scansRequired || 0} onChange={e => this.props.setCatNumb(id, e)} min={0} max={100} />&nbsp;scans required
           <div style={{flex:1}}/>
-          <button className="edit" onClick={this.letEdit}>Edit</button>&nbsp;
+          <button className="edit" onClick={this.toggleEdit}>Edit</button>&nbsp;
           <button className="remove" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
         </li>
       )
