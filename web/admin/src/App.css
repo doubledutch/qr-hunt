@@ -69,7 +69,7 @@ ul {
 
 .containerRow {
   display: flex;
-  flex-direction: row wrap;
+  flex-flow: row wrap;
 }
 
 ul.categoryList {
