@@ -16,7 +16,9 @@
 
 import React, { Component } from 'react'
 import {CSVLink} from 'react-csv'
+import '@doubledutch/react-components/lib/base.css'
 import './App.css'
+import AttendeeSelector from './AttendeeSelector'
 import CategoryCell from "./CategoryCell"
 import CodeCell from "./CodeCell"
 import client from '@doubledutch/admin-client'
@@ -43,6 +45,7 @@ export default class App extends Component {
     isTitleBoxDisplay : true,
     isCategoryBoxDisplay: true,
     isCodeBoxDisplay: true,
+    isAdminBoxDisplay: true,
     isAttendeeBoxDisplay: true
   }
 
@@ -101,14 +104,14 @@ export default class App extends Component {
             <input name="title" value={this.state.title} onChange={e => titleRef().set(e.target.value)} placeholder="Ex. QR Challenge" className="titleText" />
           </div>
           <div className="containerRow">
-            <div className="field">
+            <div className="field half">
               <div><label htmlFor="welcome">Game Instructions for Attendees</label></div>
               <textarea name="welcome" placeholder="Ex. Scan 3 codes in each category and be entered into the raffle!" value={this.state.welcome} onChange={e => welcomeRef().set(e.target.value)} className="welcomeText"></textarea>
-          </div>
-          <span style={{width: "50px"}}/>
-          <div className="field">
-            <label htmlFor="doneDesc">Message to Attendee When Complete</label>
-            <textarea name="doneDesc" placeholder="Ex. You're now entered into the raffle!" value={this.state.doneDescription} onChange={e => doneDescriptionRef().set(e.target.value)} className="completeText" />          </div>
+            </div>
+            <div className="field half">
+              <label htmlFor="doneDesc">Message to Attendee When Complete</label>
+              <textarea name="doneDesc" placeholder="Ex. You're now entered into the raffle!" value={this.state.doneDescription} onChange={e => doneDescriptionRef().set(e.target.value)} className="completeText" />
+            </div>
           </div>
         </div>
       )
@@ -156,7 +159,6 @@ export default class App extends Component {
               <div className="sectionContainer">
                 <div className="containerRow">
                   <h2>QR Hunt</h2>
-                  <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isTitleBoxDisplay", !this.state.isTitleBoxDisplay)}>{(this.state.isTitleBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
                 {this.renderTitleBox()}
@@ -164,8 +166,10 @@ export default class App extends Component {
 
               <div className="sectionContainer">
                 <div className="containerRow">
-                  <h2>QR Code Categories</h2>
-                  <button onClick={this.newCategory} className="add">Add Category</button>
+                  <div className="containerRow">
+                    <h2>QR Code Categories</h2>
+                    <button onClick={this.newCategory} className="secondary">Add Category</button>
+                  </div>
                   <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
@@ -175,16 +179,14 @@ export default class App extends Component {
               <div className="sectionContainer">
                 <div className="containerRow">
                   <h2>QR Codes</h2>
-                  <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isCodeBoxDisplay", !this.state.isCodeBoxDisplay)}>{(this.state.isCodeBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
                 {this.renderCodeBox(codes, categories)}
               </div>
-              
+
               <div className="sectionContainer">
                 <div className="containerRow">
                   <h2>Attendees</h2>
-                  <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isAttendeeBoxDisplay", !this.state.isAttendeeBoxDisplay)}>{(this.state.isAttendeeBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
                 <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
