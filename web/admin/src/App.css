@@ -14,13 +14,36 @@
  * limitations under the License.
  */
 
+ :root {
+  font: 400 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #4A4A4A;
+  background-color: white;
+}
+
 h2 {
-  font-size: 1.5em;
+  font-size: 24px;
+  font-weight: normal;
   margin: 1em 0 0.25em 0;
+}
+
+html, body, input, button, select {
+  font: inherit;
 }
 
 .avatar {
   width: 40px;
+}
+
+.titleText {
+  margin-top: 5px;
+}
+
+.displayButton {
+  border: none;
+  color: #73aaf3;
+  font-size: 14px;
+  height: 20px;
+  margin: 30px 0 0 0;
 }
 
 ul {
@@ -36,66 +59,150 @@ ul {
   margin: 0 0 1em 0;
 }
 
+.sectionContainer {
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  margin: 20px;
+  background-color: #FFFFFF;
+  padding: 0px 25px;
+}
+
+.containerRow {
+  display: flex;
+  flex-flow: row wrap;
+}
+
 ul.categoryList {
   height: 150px;
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  background-color: #FCFCFC;
 }
 
 ul.qrCodeList {
   height: 250px;
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  background-color: #FCFCFC;
 }
 
 ul.userList {
   height: 500px;
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  background-color: #FCFCFC;
+  overflow-x: auto;
 }
 
 ul li {
-  padding: 3px;
+  height: 39px;
+  padding: 0px 3px 0px 20px;
   flex: 1;
   display: flex;
-  flex-direction: nowrap;
+  flex-direction: row;
   align-items: center;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E3ECF8;
+  border-radius: 5px;
 }
 
 ul li .name {
-  overflow: hidden;
-  flex: 1;
-  display: flex;
-  flex-direction: row wrap;
   margin: 0px;
   padding: 5px;
   margin-top: 2px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   font-size: 14px;
 }
 
 textarea {
-  height: 5em;
-  width: 40em;
+  font-size: 14px;
+  color: #4A4A4A;
+  height: 100px;	
+  width: 470px;
+  border: 1px solid #AAB9CA;	
+  border-radius: 4px;	
+  background-color: #FFFFFF;	
+  margin-top: 5px;
+  padding: 12px 15px;
+}
+
+button {
+  background-color: white;
+  border: none;
+  font-weight: 300;
+  color: #4A4A4A;
+  margin: 0px 20px;
 }
 
 button.add {
-  font-size: 12px;
-  margin-left: 10px;
-  height: 20px;
-  background-color: #73aaf3;
-}
-
-button.remove {
-  background-color: #e97476;
-  height: 20px;
+  font-size: 14px;
+  margin: 20px 0px 0px 10px;
+  height: 35px;
+  border-radius: 5px;
+  padding: 0px 10px;
+  background-color: white;
+  border: 1px solid #73aaf3;
+  color: #73aaf3;
 }
 
 .catScans {
   padding: 0 0.7em;
 }
 
-.completeText {
-  width: 40em;
-}
 
 .field {
   margin: 0.7em 0;
+  width: 500px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input {	
+  width: 240px;	
+  border: 1px solid #AAB9CA;	
+  border-radius: 4px;	
+  background-color: #FFFFFF;	
+  font-size: 14px;
+  color: #4A4A4A;
+  padding: 12px 15px;
+}
+
+select {
+  border: none;
+  height: 30px;
+  color: #4A4A4A;
+}
+
+.catNumbText {
+  width: 30px;
+  border: none;
+  margin-left: 8px;
+  border-bottom: 1px solid #AAB9CA;
+  color: #4A4A4A;
+}
+
+.catNameText {
+  width: 190px;
+  border: none;
+  border-bottom: 1px solid #AAB9CA;
+  color: #4A4A4A;
+}
+
+.titleBar {
+  display: flex;
+  padding: 0px 20px;
+  margin: 10px 0px 5px 0px;
+  flex-direction: row;
+}
+
+.titleBar p {
+  width: 200px;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 0;
+  margin: 0px 5px 0 0;
 }
 
 .payload {
