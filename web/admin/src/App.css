@@ -26,7 +26,7 @@ h2 {
   margin: 1em 0;
 }
 
-html, body, input, button, select {
+html, body, select {
   font: inherit;
 }
 
@@ -43,6 +43,11 @@ html, body, input, button, select {
   color: #73aaf3;
   font-size: 14px;
   margin: 0;
+  background-color: transparent;
+  font-weight: 300;
+}
+button.displayButton:focus, button.displayButton:active {
+  border: none;
 }
 
 ul {
@@ -126,14 +131,6 @@ textarea {
   box-sizing: border-box;
 }
 
-button {
-  background-color: white;
-  border: none;
-  font-weight: 300;
-  color: #4A4A4A;
-  margin: 0px 20px;
-}
-
 .catScans {
   padding: 0 0.7em;
 }
@@ -145,21 +142,6 @@ button {
 }
 .field.half {
   width: 45%;
-}
-
-.field label {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.field input {	
-  width: 240px;	
-  border: 1px solid #AAB9CA;	
-  border-radius: 4px;	
-  background-color: #FFFFFF;	
-  font-size: 14px;
-  color: #4A4A4A;
-  padding: 12px 15px;
 }
 
 select {

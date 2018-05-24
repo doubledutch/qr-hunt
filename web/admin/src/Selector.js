@@ -15,12 +15,20 @@
  */
 
 import React, { PureComponent } from 'react'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import faSearch from '@fortawesome/fontawesome-free-solid/faSearch'
+import {TextInput} from '@doubledutch/react-components'
 
 export default class Selector extends PureComponent {
   render() {
+    const {className, onSelected, onDeselected, searchTitle, selectedTitle} = this.props
+
     return (
-      <div>
+      <div className={`selector-row ${className}`}>
+        <SearchInput />
       </div>
     )
   }
 }
+
+const SearchInput = props => <TextInput icon={({className}) => <FontAwesomeIcon icon={faSearch} className={className} />} placeholder="Search" {...props} />

@@ -18,6 +18,7 @@ import React, { Component } from 'react'
 import {CSVLink} from 'react-csv'
 import '@doubledutch/react-components/lib/base.css'
 import './App.css'
+import {TextInput} from '@doubledutch/react-components'
 import AttendeeSelector from './AttendeeSelector'
 import CategoryCell from "./CategoryCell"
 import CodeCell from "./CodeCell"
@@ -41,6 +42,9 @@ export default class App extends Component {
     admins: [],
     categories: [],
     codes: [],
+    doneDescription: '',
+    title: '',
+    welcome: '',
     scansPerUserPerCategory: {},
     isTitleBoxDisplay : true,
     isCategoryBoxDisplay: true,
@@ -97,20 +101,30 @@ export default class App extends Component {
 
   renderTitleBox = () => {
     if (this.state.isTitleBoxDisplay) {
+      const {doneDescription, title, welcome} = this.state
       return (
         <div>
-          <div className="field">
-            <div><label htmlFor="title">Title </label></div>
-            <input name="title" value={this.state.title} onChange={e => titleRef().set(e.target.value)} placeholder="Ex. QR Challenge" className="titleText" />
-          </div>
+          <TextInput label="Title"
+                     value={title}
+                     onChange={e => titleRef().set(e.target.value)}
+                     placeholder="Ex. QR Challenge"
+                     className="titleText" />
           <div className="containerRow">
             <div className="field half">
-              <div><label htmlFor="welcome">Game Instructions for Attendees</label></div>
-              <textarea name="welcome" placeholder="Ex. Scan 3 codes in each category and be entered into the raffle!" value={this.state.welcome} onChange={e => welcomeRef().set(e.target.value)} className="welcomeText"></textarea>
+              <TextInput multiline label="Game Instructions for Attendees"
+                         placeholder="Ex. Scan 3 codes in each category and be entered into the raffle!"
+                         value={welcome}
+                         onChange={e => welcomeRef().set(e.target.value)}
+                         maxLength={500}
+                         className="welcomeText" />
             </div>
             <div className="field half">
-              <label htmlFor="doneDesc">Message to Attendee When Complete</label>
-              <textarea name="doneDesc" placeholder="Ex. You're now entered into the raffle!" value={this.state.doneDescription} onChange={e => doneDescriptionRef().set(e.target.value)} className="completeText" />
+              <TextInput multiline label="Message to Attendee When Complete"
+                         placeholder="Ex. You're now entered into the raffle!"
+                         value={doneDescription}
+                         onChange={e => welcomeRef().set(e.target.value)}
+                         maxLength={500}
+                         className="completeText" />
             </div>
           </div>
         </div>
@@ -125,7 +139,7 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Scans Required</p></div>
           <ul className="categoryList">
             { categories.map(category => {
-              return <CategoryCell category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
+              return <CategoryCell key={category.id} category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
             } 
             )}              
           </ul>
@@ -141,7 +155,7 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Category</p></div>
           <ul className="qrCodeList">
             { codes.map(code => {
-              return <CodeCell code={code} setCodeName={this.setCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
+              return <CodeCell key={code.id} code={code} setCodeName={this.setCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
             }
             )}
           </ul>
@@ -166,7 +180,7 @@ export default class App extends Component {
 
               <div className="sectionContainer">
                 <div className="containerRow">
-                  <div className="containerRow">
+                  <div className="containerRow horizontal space-children">
                     <h2>QR Code Categories</h2>
                     <button onClick={this.newCategory} className="secondary">Add Category</button>
                   </div>
@@ -176,6 +190,14 @@ export default class App extends Component {
                 {this.renderCatBox(categories)}
               </div>
 
+              <div className="sectionContainer">
+                <div className="containerRow">
+                  <h2>Admins</h2>
+                  <button className="displayButton" onClick={() => this.handleChange("isAdminBoxDisplay", !this.state.isAdminBoxDisplay)}>{(this.state.isAdminBoxDisplay ? "Hide Section" : "View Section")}</button>
+                </div>
+                <AttendeeSelector client={client} searchTitle="Select Admins" selectedTitle="Current Admins" onSelected={this.onAdminSelected} onDeselected={this.onAdminDeselected} />
+              </div>
+              
               <div className="sectionContainer">
                 <div className="containerRow">
                   <h2>QR Codes</h2>
