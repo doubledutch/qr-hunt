@@ -20,7 +20,7 @@ import Selector from './Selector'
 // Attendee-specific Selector
 export default class AttendeeSelector extends PureComponent {
   render() {
-    return <Selector selectedTextFn={nameOf} {...props} />
+    return <Selector selectedTextFn={nameOf} {...this.props} />
   }
 }
 
