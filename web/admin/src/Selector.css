@@ -14,12 +14,36 @@
  * limitations under the License.
  */
 
- .selector-row {
-   display: flex;
- }
- .selector-row > * {
-   flex: 1
- }
- .selector-row > :not(:last-child) {
-   margin-right: 1em;
- }
+.selector-row {
+  display: flex;
+}
+.selector-row > * {
+  flex: 1
+}
+.selector-row > :not(:last-child) {
+  margin-right: 3em;
+}
+.selector-row label > :first-child {
+  margin-top: 1.2em;
+}
+.selector-row input[type="text"] {
+  margin-top: 0;
+}
+
+.selector-tiles {
+  flex-wrap: wrap;
+}
+
+.selector-tile {
+  font-size: 1.1em;
+  font-weight: 300;
+  border-radius: 0.4em;
+  color: #4e92df;
+  background-color: #d3e3f6;
+  padding: 0.6em 1em;
+  margin-bottom: 0.5em;
+}
+.selector-tile-x {
+  margin-left: 0.7em;
+  cursor: pointer;
+}

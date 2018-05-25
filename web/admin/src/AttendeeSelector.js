@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react'
+import React, {PureComponent} from 'react'
 import Selector from './Selector'
 
-export default class AttendeeSelector extends Selector {
-
+// Attendee-specific Selector
+export default class AttendeeSelector extends PureComponent {
+  render() {
+    return <Selector selectedTextFn={nameOf} {...props} />
+  }
 }
+
+const nameOf = attendee => `${attendee.firstName} ${attendee.lastName}`

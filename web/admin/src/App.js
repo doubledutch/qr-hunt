@@ -184,7 +184,6 @@ export default class App extends Component {
                     <h2>QR Code Categories</h2>
                     <button onClick={this.newCategory} className="secondary">Add Category</button>
                   </div>
-                  <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
                 {this.renderCatBox(categories)}
@@ -195,7 +194,12 @@ export default class App extends Component {
                   <h2>Admins</h2>
                   <button className="displayButton" onClick={() => this.handleChange("isAdminBoxDisplay", !this.state.isAdminBoxDisplay)}>{(this.state.isAdminBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
-                <AttendeeSelector client={client} searchTitle="Select Admins" selectedTitle="Current Admins" onSelected={this.onAdminSelected} onDeselected={this.onAdminDeselected} />
+                <AttendeeSelector client={client}
+                                  searchTitle="Select Admins"
+                                  selectedTitle="Current Admins"
+                                  onSelected={this.onAdminSelected}
+                                  onDeselected={this.onAdminDeselected}
+                                  selected={attendees.filter(a => this.isAdmin(a.id))} />
               </div>
               
               <div className="sectionContainer">
@@ -222,6 +226,9 @@ export default class App extends Component {
       </div>
     )
   }
+
+  onAdminSelected = attendee => this.setAdmin(attendee.id, true)
+  onAdminDeselected = attendee => this.setAdmin(attendee.id, false)
 
   setCatName = (id, e) => {
     categoriesRef().child(id).child('name').set(e.target.value)
