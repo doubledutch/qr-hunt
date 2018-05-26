@@ -25,7 +25,7 @@ export default class AttendeeSelector extends PureComponent {
                      {...this.props} />
   }
 
-  search = query => this.props.client.getAttendees(query)
+  search = query => query ? this.props.client.getAttendees(query) : Promise.resolve([])
 }
 
 const nameOf = attendee => `${attendee.firstName} ${attendee.lastName}`

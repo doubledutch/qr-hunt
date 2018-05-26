@@ -15,11 +15,11 @@
     babel-runtime "^6.26.0"
     firebase "^4.10.0"
 
-"@doubledutch/react-components@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@doubledutch/react-components/-/react-components-0.0.3.tgz#47712292e402458664e5af8f8cffc167c0678e5f"
+"@doubledutch/react-components@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@doubledutch/react-components/-/react-components-0.0.5.tgz#9629597db8b088eaa629854b5577dff8fcfa5f0d"
   dependencies:
-    react "^16.3.2"
+    react "^16.4.0"
     react-dom "^16.3.2"
 
 "@firebase/app-types@0.1.2":
@@ -5862,15 +5862,6 @@ react-scripts@1.0.14:
     whatwg-fetch "2.0.3"
   optionalDependencies:
     fsevents "1.1.2"
-
-react@^16.3.2:
-  version "16.3.2"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.3.2.tgz#fdc8420398533a1e58872f59091b272ce2f91ea9"
-  dependencies:
-    fbjs "^0.8.16"
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.0"
 
 react@^16.4.0:
   version "16.4.0"

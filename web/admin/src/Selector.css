@@ -30,7 +30,7 @@
   margin-top: 0;
 }
 
-.selector-tiles {
+.selector-tiles, .selector-search-results {
   flex-wrap: wrap;
 }
 
@@ -43,7 +43,25 @@
   padding: 0.6em 1em;
   margin-bottom: 0.5em;
 }
-.selector-tile-x {
+.selector-tile-pointer {
+  cursor: pointer;
+}
+.selector-tile-icon {
   margin-left: 0.7em;
   cursor: pointer;
+}
+.selector-search-container {
+  position: relative;
+}
+.selector-search-results {
+  position: absolute;
+  left: 0;
+  background-color: rgba(255,255,255,0.95);
+  border-radius: 0.4em;
+  padding: 0.7em 1em;
+  border: 1px solid #4e92df;
+  width: 40vw;
+}
+.hidden {
+  visibility: hidden;
 }
