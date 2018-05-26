@@ -20,8 +20,12 @@ import Selector from './Selector'
 // Attendee-specific Selector
 export default class AttendeeSelector extends PureComponent {
   render() {
-    return <Selector selectedTextFn={nameOf} {...this.props} />
+    return <Selector selectedTextFn={nameOf}
+                     search={this.search}
+                     {...this.props} />
   }
+
+  search = query => this.props.client.getAttendees(query)
 }
 
 const nameOf = attendee => `${attendee.firstName} ${attendee.lastName}`

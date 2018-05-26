@@ -11,6 +11,7 @@
     "@fortawesome/fontawesome": "^1.1.8",
     "@fortawesome/fontawesome-free-solid": "^5.0.13",
     "@fortawesome/react-fontawesome": "^0.0.20",
+    "lodash.debounce": "^4.0.8",
     "react": "^16.4.0",
     "react-csv": "^1.0.14",
     "react-dom": "^16.4.0",

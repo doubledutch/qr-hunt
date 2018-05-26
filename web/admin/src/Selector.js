@@ -19,6 +19,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import faSearch from '@fortawesome/fontawesome-free-solid/faSearch'
 import faTimes from '@fortawesome/fontawesome-free-solid/faTimes'
 import {TextInput} from '@doubledutch/react-components'
+import debounce from 'lodash.debounce'
 import './Selector.css'
 
 export default class Selector extends PureComponent {
@@ -26,7 +27,7 @@ export default class Selector extends PureComponent {
     const {className, onSelected, onDeselected, searchTitle, selectedTitle, selected, selectedTextFn} = this.props
     return (
       <div className={`selector-row ${className}`}>
-        <SearchInput label={searchTitle} />
+        <SearchInput label={searchTitle} onChange={this.onSearchChange} />
         <label>
           {selectedTitle}
           <div className="selector-tiles horizontal space-children">
@@ -37,6 +38,20 @@ export default class Selector extends PureComponent {
       </div>
     )
   }
+
+  searchIndex = 0
+  lastResponseSearchIndex = 0
+
+  onSearchChange = e => this.search(e.target.value)
+  search = debounce(query => {
+    const searchIndex = ++this.searchIndex
+    this.props.search(query).then(results => {
+      if (searchIndex < this.lastResponseSearchIndex) return // Ignore stale search results that arrived out of order
+      // TODO: display dropdown
+    }).catch(err => {
+      console.error(err)
+    })
+  }, 300)
 }
 
 class Tile extends PureComponent {
