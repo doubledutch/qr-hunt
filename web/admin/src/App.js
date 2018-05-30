@@ -18,8 +18,7 @@ import React, { Component } from 'react'
 import {CSVLink} from 'react-csv'
 import '@doubledutch/react-components/lib/base.css'
 import './App.css'
-import {TextInput} from '@doubledutch/react-components'
-import AttendeeSelector from './AttendeeSelector'
+import {AttendeeSelector, TextInput} from '@doubledutch/react-components'
 import CategoryCell from "./CategoryCell"
 import CodeCell from "./CodeCell"
 import client from '@doubledutch/admin-client'

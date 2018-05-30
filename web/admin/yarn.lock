@@ -15,9 +15,9 @@
     babel-runtime "^6.26.0"
     firebase "^4.10.0"
 
-"@doubledutch/react-components@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@doubledutch/react-components/-/react-components-0.0.5.tgz#9629597db8b088eaa629854b5577dff8fcfa5f0d"
+"@doubledutch/react-components@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@doubledutch/react-components/-/react-components-0.0.8.tgz#48e0b1607ae142d55125e237a141d9c7d9d0c920"
   dependencies:
     react "^16.4.0"
     react-dom "^16.3.2"
