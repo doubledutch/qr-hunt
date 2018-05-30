@@ -226,8 +226,15 @@ export default class App extends Component {
     )
   }
 
-  onAdminSelected = attendee => this.setAdmin(attendee.id, true)
-  onAdminDeselected = attendee => this.setAdmin(attendee.id, false)
+  onAdminSelected = attendee => {
+    const tokenRef = fbc.database.private.adminableUsersRef(attendee.id).child('adminToken')
+    this.setState()
+    fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
+  }
+  onAdminDeselected = attendee => {
+    const tokenRef = fbc.database.private.adminableUsersRef(attendee.id).child('adminToken')
+    tokenRef.remove()
+  }
 
   setCatName = (id, e) => {
     categoriesRef().child(id).child('name').set(e.target.value)
@@ -254,10 +261,6 @@ export default class App extends Component {
         { this.state.categories.map(cat => <span className="catScans" key={cat.id}>
             {cat.name}: {this.categoryScansForUser(cat.id, user.id)}
           </span>)
-        }
-        { this.isAdmin(id)
-          ? <button className="remove" onClick={()=>this.setAdmin(id, false)}>Remove admin</button>
-          : <button className="add" onClick={()=>this.setAdmin(id, true)}>Make admin</button>
         }
       </li>
     )
