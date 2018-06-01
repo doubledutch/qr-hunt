@@ -15,10 +15,14 @@
     babel-runtime "^6.26.0"
     firebase "^4.10.0"
 
-"@doubledutch/react-components@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@doubledutch/react-components/-/react-components-0.0.8.tgz#48e0b1607ae142d55125e237a141d9c7d9d0c920"
+"@doubledutch/react-components@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@doubledutch/react-components/-/react-components-0.0.10.tgz#ae2d3e0385ae2cc0a4e9ee786d7caaf4f513fc9c"
   dependencies:
+    "@fortawesome/fontawesome" "^1.1.8"
+    "@fortawesome/fontawesome-free-solid" "^5.0.13"
+    "@fortawesome/react-fontawesome" "^0.0.20"
+    lodash.debounce "^4.0.8"
     react "^16.4.0"
     react-dom "^16.3.2"
 
