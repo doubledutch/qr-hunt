@@ -18,11 +18,10 @@ import React, { Component } from 'react'
 import {CSVLink} from 'react-csv'
 import '@doubledutch/react-components/lib/base.css'
 import './App.css'
-import {AttendeeSelector, TextInput} from '@doubledutch/react-components'
+import {AttendeeSelector, Avatar, TextInput} from '@doubledutch/react-components'
 import CategoryCell from "./CategoryCell"
 import CodeCell from "./CodeCell"
 import client from '@doubledutch/admin-client'
-import Avatar from './Avatar'
 import FirebaseConnector from '@doubledutch/firebase-connector'
 const fbc = FirebaseConnector(client, 'qrhunt')
 

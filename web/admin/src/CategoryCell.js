@@ -36,7 +36,7 @@ export default class CategoryCell extends Component {
           <p style={{width: 200}}>{name}</p>&nbsp;
           <p>{scansRequired || 0} scans required</p>
           <div style={{flex:1}}/>
-          <button className="dd-bordered secondary edit" onClick={this.toggleEdit}>Edit</button>&nbsp;
+          <button className="dd-bordered secondary" onClick={this.toggleEdit}>Edit</button>&nbsp;
           <button className="dd-bordered destructive" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
         </li>
       )
