@@ -37,8 +37,8 @@ export default class CategoryCell extends Component {
           <p style={{width: 200}}>{name}</p>&nbsp;
           <p>{cat ? cat.name : "unavailable"}</p>
           <div style={{flex:1}}/>
-          <button className="edit" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="remove" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
+          <button className="dd-bordered secondary" onClick={this.letEdit}>Edit</button>&nbsp;
+          <button className="dd-bordered destructive" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
         </li>
       )
     }
@@ -51,8 +51,8 @@ export default class CategoryCell extends Component {
             { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
           </select>&nbsp;
           <div style={{flex:1}}/>
-          <button className="edit" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="remove" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
+          <button className="dd-bordered secondary" onClick={this.letEdit}>Edit</button>&nbsp;
+          <button className="dd-bordered destructive" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
         </li>
       )
     }

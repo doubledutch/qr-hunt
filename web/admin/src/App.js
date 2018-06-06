@@ -181,7 +181,7 @@ export default class App extends Component {
                 <div className="containerRow">
                   <div className="containerRow horizontal space-children">
                     <h2>QR Code Categories</h2>
-                    <button onClick={this.newCategory} className="secondary">Add Category</button>
+                    <button onClick={this.newCategory} className="dd-bordered secondary">Add Category</button>
                   </div>
                   <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
