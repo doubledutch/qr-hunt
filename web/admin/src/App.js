@@ -193,12 +193,12 @@ export default class App extends Component {
                   <h2>Admins</h2>
                   <button className="displayButton" onClick={() => this.handleChange("isAdminBoxDisplay", !this.state.isAdminBoxDisplay)}>{(this.state.isAdminBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
-                <AttendeeSelector client={client}
+                {this.state.isAdminBoxDisplay ? <AttendeeSelector client={client}
                                   searchTitle="Select Admins"
                                   selectedTitle="Current Admins"
                                   onSelected={this.onAdminSelected}
                                   onDeselected={this.onAdminDeselected}
-                                  selected={attendees.filter(a => this.isAdmin(a.id))} />
+        selected={attendees.filter(a => this.isAdmin(a.id))} /> : null}
               </div>
               
               <div className="sectionContainer">
@@ -214,10 +214,13 @@ export default class App extends Component {
                   <h2>Attendees</h2>
                   <button className="displayButton" onClick={() => this.handleChange("isAttendeeBoxDisplay", !this.state.isAttendeeBoxDisplay)}>{(this.state.isAttendeeBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
-                <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
-                <ul className="userList">
-                  { attendees.sort(this.sortPlayers).map(this.renderUser) }
-                </ul>
+
+                {this.state.isAttendeeBoxDisplay ? <div>
+                  <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
+                  <ul className="userList">
+                    { attendees.sort(this.sortPlayers).map(this.renderUser) }
+                  </ul>
+                </div> : null}
               </div>
             </div>
           : <div>Loading...</div>
