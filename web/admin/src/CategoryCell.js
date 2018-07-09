@@ -26,8 +26,15 @@ export default class CategoryCell extends Component {
 }
 
   toggleEdit = () => {
-    this.setState({isEditing: !this.state.isEditing})
+    this.setState({isEditing: !this.state.isEditing, originalName: this.props.category.name, originalValue: this.props.category.id})
   }
+
+  resetInfo = () => {
+    this.props.setCodeName(this.props.category.id, this.state.originalName)
+    this.props.setCatNumb(this.props.category.id, this.state.id)
+    this.setState({isEditing: false})
+  }
+
   render() {
     const { id, name, scansRequired } = this.props.category
     if (!this.state.isEditing) {
@@ -36,19 +43,19 @@ export default class CategoryCell extends Component {
           <p style={{width: 200}}>{name}</p>&nbsp;
           <p>{scansRequired || 0} scans required</p>
           <div style={{flex:1}}/>
-          <button className="edit" onClick={this.toggleEdit}>Edit</button>&nbsp;
-          <button className="remove" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          <button className="noBorderButton" onClick={this.toggleEdit}>Edit</button>&nbsp;
+          <button className="noBorderButton" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
         </li>
       )
     }
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={name} placeholder="Category Name" onChange={e => this.props.setCatName(id, e)} />&nbsp;
-          <input className="catNumbText" type="number" value={scansRequired || 0} onChange={e => this.props.setCatNumb(id, e)} min={0} max={100} />&nbsp;scans required
+          <input className="catNameText" type="text" value={name} placeholder="Category Name" onChange={e => this.props.setCatName(id, e.target.value)} />&nbsp;
+          <input className="catNumbText" type="number" value={scansRequired || 0} onChange={e => this.props.setCatNumb(id, e.target.value)} min={0} max={100} />&nbsp;scans required
           <div style={{flex:1}}/>
-          <button className="edit" onClick={this.toggleEdit}>Edit</button>&nbsp;
-          <button className="remove" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          <button className="noBorderButton" onClick={this.toggleEdit}>Save</button>&nbsp;
+          <button className="noBorderButton" onClick={this.resetInfo}>Cancel</button>&nbsp;
         </li>
       )
     }

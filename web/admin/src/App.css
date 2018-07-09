@@ -26,7 +26,15 @@ h2 {
   margin: 1em 0;
 }
 
-html, body, select {
+.titleWithDescription {
+  margin: 1em 0 0 0;
+}
+
+.boxDescription {
+  margin-bottom: 30px;
+}
+
+html, body, select{
   font: inherit;
 }
 
@@ -38,6 +46,18 @@ html, body, select {
   margin-top: 5px;
 }
 
+.searchBar {
+  margin: 0px 10px
+}
+
+.csvButton{
+  float: right;
+  text-decoration: none;
+  border: 1px solid #73aaf3;
+  border-radius: 5px;
+  padding: 10px;
+}
+
 .displayButton {
   border: none;
   color: #73aaf3;
@@ -46,8 +66,15 @@ html, body, select {
   background-color: transparent;
   font-weight: 300;
 }
+
 button.displayButton:focus, button.displayButton:active {
   border: none;
+}
+
+.noBorderButton {
+  border: none;
+  background-color: white;
+  color: #4A4A4A;
 }
 
 ul {
@@ -77,7 +104,13 @@ ul {
   align-items: center;
 }
 
+.containerRowSearchBar {
+  display: flex;
+  align-items: center;
+}
+
 ul.categoryList {
+  height: 250px;
   border: 1px solid #E3ECF8;
   border-radius: 5px;
   background-color: #FCFCFC;
@@ -96,6 +129,17 @@ ul.userList {
   border-radius: 5px;
   background-color: #FCFCFC;
   overflow-x: auto;
+}
+
+.noResultsMessage {
+  font-size: 18px;
+}
+
+.noResultsBox {
+  flex: 1;
+  display: flex;
+  align-content: center;
+  justify-content: center;
 }
 
 ul li {

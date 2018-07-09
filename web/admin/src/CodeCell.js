@@ -17,17 +17,26 @@
 import React, { Component } from 'react'
 import './App.css'
 
-export default class CategoryCell extends Component {
+export default class CodeCell extends Component {
   constructor() {
     super()
     this.state = {
-      isEditing : false
+      isEditing : false,
+      originalName: "",
+      originalCategory: ""
   }
 }
 
   letEdit = () => {
-    this.setState({isEditing: !this.state.isEditing})
+    this.setState({isEditing: !this.state.isEditing, originalName: this.props.code.name, originalCategory: this.props.code.categoryId})
   }
+
+  resetName = () => {
+    this.props.setCodeName(this.props.code.id, this.state.originalName)
+    this.props.setCodeNumb(this.props.code.id, this.state.originalCategory)
+    this.setState({isEditing: false})
+  }
+
   render() {
     const { categoryId, id, name } = this.props.code
     const cat = this.props.categories.find(cat => cat.id === categoryId)
@@ -37,22 +46,22 @@ export default class CategoryCell extends Component {
           <p style={{width: 200}}>{name}</p>&nbsp;
           <p>{cat ? cat.name : "unavailable"}</p>
           <div style={{flex:1}}/>
-          <button className="edit" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="remove" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
+          <button className="noBorderButton" onClick={this.letEdit}>Edit</button>&nbsp;
+          <button className="noBorderButton" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
         </li>
       )
     }
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={name} placeholder="QR Code Name" onChange={e => this.props.setCodeName(id, e)} />&nbsp;
-          <select value={categoryId} onChange={e => this.props.setCodeNumb(id, e)}>
+          <input className="catNameText" type="text" value={name} placeholder="QR Code Name" onChange={e => this.props.setCodeName(id, e.target.value)} />&nbsp;
+          <select value={categoryId} onChange={e => this.props.setCodeNumb(id, e.target.value)}>
             <option>--Select category--</option>
             { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
           </select>&nbsp;
           <div style={{flex:1}}/>
-          <button className="edit" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="remove" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
+          <button className="noBorderButton" onClick={this.letEdit}>Save</button>&nbsp;
+          <button className="noBorderButton" onClick={this.resetName}>Cancel</button>&nbsp;
         </li>
       )
     }

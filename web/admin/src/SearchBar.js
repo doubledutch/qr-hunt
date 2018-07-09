@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
- .Avatar {
-  object-fit: cover;
-  vertical-align: middle;
-}
+import React, { Component } from 'react'
 
-.Initials {
-  display: inline-block;
-  text-align: center;
-  vertical-align: middle;
-  background-color: gray;
-  color: white;
-  cursor: default;
-  user-select: none;
+export default class SearchBar extends Component {
+  constructor(props) {
+    super()
+    this.state = {
+      value: ""
+    }
+  }
+
+  handleChange = (event) => {
+    this.setState({value: event.target.value})
+    this.props.updateList(event.target.value)
+  }
+
+
+  render() {
+    return (
+      <div>
+        <input className={"searchBar" + ((this.props.disable) ? '--gray' : '')} type="text" id="myInput" disabled={this.props.disable} value={this.props.search ? this.state.value : ""} onChange={this.handleChange} placeholder="Search"/>
+      </div>
+    )
+  }
 }

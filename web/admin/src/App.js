@@ -18,11 +18,11 @@ import React, { Component } from 'react'
 import {CSVLink} from 'react-csv'
 import '@doubledutch/react-components/lib/base.css'
 import './App.css'
-import {AttendeeSelector, TextInput} from '@doubledutch/react-components'
+import {AttendeeSelector, Avatar, TextInput} from '@doubledutch/react-components'
 import CategoryCell from "./CategoryCell"
 import CodeCell from "./CodeCell"
+import SearchBar from "./SearchBar"
 import client from '@doubledutch/admin-client'
-import Avatar from './Avatar'
 import FirebaseConnector from '@doubledutch/firebase-connector'
 const fbc = FirebaseConnector(client, 'qrhunt')
 
@@ -38,6 +38,7 @@ const titleRef = () => fbc.database.public.adminRef('title')
 export default class App extends Component {
   state = {
     attendees: [],
+    updatedList: [],
     admins: [],
     categories: [],
     codes: [],
@@ -49,7 +50,9 @@ export default class App extends Component {
     isCategoryBoxDisplay: true,
     isCodeBoxDisplay: true,
     isAdminBoxDisplay: true,
-    isAttendeeBoxDisplay: true
+    isAttendeeBoxDisplay: true,
+    attendeeSearch: true,
+    attendeeSearchValue: ""
   }
 
   componentDidMount() {
@@ -103,6 +106,7 @@ export default class App extends Component {
       const {doneDescription, title, welcome} = this.state
       return (
         <div>
+          <p className="boxDescription">With QR Hunt, attendees are encentivized to scan QR codes and complete the scavenger hunt. The QR codes can be various categories and once an attendee has completed the QR Hunt, a custom congratulatory note is displayed.</p>
           <TextInput label="Title"
                      value={title}
                      onChange={e => titleRef().set(e.target.value)}
@@ -121,7 +125,7 @@ export default class App extends Component {
               <TextInput multiline label="Message to Attendee When Complete"
                          placeholder="Ex. You're now entered into the raffle!"
                          value={doneDescription}
-                         onChange={e => welcomeRef().set(e.target.value)}
+                         onChange={e => doneDescriptionRef().set(e.target.value)}
                          maxLength={500}
                          className="completeText" />
             </div>
@@ -154,7 +158,7 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Category</p></div>
           <ul className="qrCodeList">
             { codes.map(code => {
-              return <CodeCell key={code.id} code={code} setCodeName={this.setCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
+              return <CodeCell key={code.id} code={code} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
             }
             )}
           </ul>
@@ -164,14 +168,16 @@ export default class App extends Component {
   }
 
   render() {
-    const {attendees, categories, codes} = this.state
+    const {categories, codes} = this.state
+    const attendees = this.createList()
+
     return (
       <div className="App">
         { attendees
           ? <div>
               <div className="sectionContainer">
                 <div className="containerRow">
-                  <h2>QR Hunt</h2>
+                  <h2 className="titleWithDescription">QR Hunt</h2>
                   <button className="displayButton" onClick={() => this.handleChange("isTitleBoxDisplay", !this.state.isTitleBoxDisplay)}>{(this.state.isTitleBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
                 {this.renderTitleBox()}
@@ -181,7 +187,7 @@ export default class App extends Component {
                 <div className="containerRow">
                   <div className="containerRow horizontal space-children">
                     <h2>QR Code Categories</h2>
-                    <button onClick={this.newCategory} className="secondary">Add Category</button>
+                    {this.state.isCategoryBoxDisplay ? <button onClick={this.newCategory} className="dd-bordered secondary">Add Category</button> : null}
                   </div>
                   <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
@@ -190,17 +196,20 @@ export default class App extends Component {
 
               <div className="sectionContainer">
                 <div className="containerRow">
-                  <h2>Admins</h2>
+                  <h2 className="titleWithDescription">Admins</h2>
                   <button className="displayButton" onClick={() => this.handleChange("isAdminBoxDisplay", !this.state.isAdminBoxDisplay)}>{(this.state.isAdminBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
-                {this.state.isAdminBoxDisplay ? <AttendeeSelector client={client}
-                                  searchTitle="Select Admins"
-                                  selectedTitle="Current Admins"
-                                  onSelected={this.onAdminSelected}
-                                  onDeselected={this.onAdminDeselected}
-        selected={attendees.filter(a => this.isAdmin(a.id))} /> : null}
+                { this.state.isAdminBoxDisplay ? <div>
+                  <p className="boxDescription">To add a QR code, first designate yourself or another organizer as an admin. Next, open up the QR Hunt section in the mobile app and scan any QR code. The QR code will then be added to the section below where it can be assigned a name and category.</p>
+                  <AttendeeSelector client={client}
+                    searchTitle="Select Admins"
+                    selectedTitle="Current Admins"
+                    onSelected={this.onAdminSelected}
+                    onDeselected={this.onAdminDeselected}
+                    selected={attendees.filter(a => this.isAdmin(a.id))} />
+                </div> : null}
               </div>
-              
+
               <div className="sectionContainer">
                 <div className="containerRow">
                   <h2>QR Codes</h2>
@@ -210,16 +219,18 @@ export default class App extends Component {
               </div>
 
               <div className="sectionContainer">
-                <div className="containerRow">
+                <div className="containerRowSearchBar">
                   <h2>Attendees</h2>
+                  {this.state.isAttendeeBoxDisplay ? <SearchBar updateList={this.updateList} disable={false} search={this.state.attendeeSearch}/> : null}
+                  <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.handleChange("isAttendeeBoxDisplay", !this.state.isAttendeeBoxDisplay)}>{(this.state.isAttendeeBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
-
                 {this.state.isAttendeeBoxDisplay ? <div>
-                  <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
                   <ul className="userList">
                     { attendees.sort(this.sortPlayers).map(this.renderUser) }
+                    {attendees.length ? null : <div className="noResultsBox"><p className="noResultsMessage">No Results</p></div> }
                   </ul>
+                  <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
                 </div> : null}
               </div>
             </div>
@@ -229,30 +240,50 @@ export default class App extends Component {
     )
   }
 
+  updateList = (value) => {
+    this.setState({attendeeSearch: value.length > 0, attendeeSearchValue: value})
+  }
+
+  hideAttendeeSection = () => {
+
+  }
+
+  createList = () => {
+    const queryText = this.state.attendeeSearchValue.toLowerCase()
+    if (queryText.length > 0) {
+      const queryResult = this.state.attendees.filter(s => s.firstName.toLowerCase().includes(queryText) || s.lastName.toLowerCase().includes(queryText))
+      return queryResult
+    }
+    else {
+      return this.state.attendees
+    }
+  }
+
   onAdminSelected = attendee => {
     const tokenRef = fbc.database.private.adminableUsersRef(attendee.id).child('adminToken')
     this.setState()
     fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
   }
+
   onAdminDeselected = attendee => {
     const tokenRef = fbc.database.private.adminableUsersRef(attendee.id).child('adminToken')
     tokenRef.remove()
   }
 
-  setCatName = (id, e) => {
-    categoriesRef().child(id).child('name').set(e.target.value)
+  setCatName = (id, value) => {
+    categoriesRef().child(id).child('name').set(value)
   }
 
-  setCatNumb = (id, e) => {
-    categoriesRef().child(id).child('scansRequired').set(+e.target.value)
+  setCatNumb = (id, value) => {
+    categoriesRef().child(id).child('scansRequired').set(+value)
   }
 
-  setCodeName = (id, e) => {
-    codesRef().child(id).child('name').set(e.target.value)
+  setCodeName = (id, value) => {
+    codesRef().child(id).child('name').set(value)
   }
 
-  setCodeNumb = (id, e) => {
-    codesRef().child(id).child('categoryId').set(e.target.value)
+  setCodeNumb = (id, value) => {
+    codesRef().child(id).child('categoryId').set(value)
   }
 
   renderUser = user => {
