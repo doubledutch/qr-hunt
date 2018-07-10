@@ -16,11 +16,9 @@
 
 import React, { Component } from 'react'
 import ReactNative, {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native'
-
 import Checkmark from './Checkmark'
 import Star from './Star'
 import Scanner from './Scanner'
-
 import md5 from 'md5'
 import client, { Avatar, Color, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
@@ -87,7 +85,8 @@ export default class HomeView extends Component {
   }
 
   render() {
-    const {categories, codes, isAdmin, onScan, scans, showScanner, title, doneDismissed, welcomeDismissed} = this.state
+    const {codes, isAdmin, onScan, scans, showScanner, title, doneDismissed, welcomeDismissed} = this.state
+    const categories = this.state.categories.filter(c => c.name)
     const codesByCategory = codes.reduce((cbc, code) => {
       if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
       const isScanned = scans[code.id]
@@ -171,6 +170,26 @@ export default class HomeView extends Component {
       <TouchableOpacity style={s.done} onPress={this.dismissDone}>
         <Star style={s.star} />
         <Text style={s.doneTitle}>You did it!</Text>
+        <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
+      </TouchableOpacity>
+    )
+  }
+
+  renderScanSuccess() {
+    return (
+      <TouchableOpacity style={s.done} onPress={this.dismissDone}>
+        <Star style={s.star} />
+        <Text style={s.doneTitle}>Succesful Scan!</Text>
+        <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
+      </TouchableOpacity>
+    )
+  }
+
+  renderScanDuplicate() {
+    return (
+      <TouchableOpacity style={s.done} onPress={this.dismissDone}>
+        <Star style={s.star} />
+        <Text style={s.doneTitle}>Duplicate Scan</Text>
         <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
       </TouchableOpacity>
     )

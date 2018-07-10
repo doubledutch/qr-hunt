@@ -21,17 +21,19 @@ export default class CategoryCell extends Component {
   constructor() {
     super()
     this.state = {
-      isEditing : false
+      isEditing : false,
+      originalName: "",
+      originalValue: 0
   }
 }
 
   toggleEdit = () => {
-    this.setState({isEditing: !this.state.isEditing, originalName: this.props.category.name, originalValue: this.props.category.id})
+    this.setState({isEditing: !this.state.isEditing, originalName: this.props.category.name, originalValue: this.props.category.scansRequired})
   }
 
   resetInfo = () => {
-    this.props.setCodeName(this.props.category.id, this.state.originalName)
-    this.props.setCatNumb(this.props.category.id, this.state.id)
+    this.props.setCatName(this.props.category.id, this.state.originalName)
+    this.props.setCatNumb(this.props.category.id, this.state.originalValue)
     this.setState({isEditing: false})
   }
 
@@ -41,7 +43,7 @@ export default class CategoryCell extends Component {
       return (
         <li key={id}>
           <p style={{width: 200}}>{name}</p>&nbsp;
-          <p>{scansRequired || 0} scans required</p>
+          <p>{scansRequired || 0} {scansRequired === 1 ? "scan" : "scans"} required</p>
           <div style={{flex:1}}/>
           <button className="noBorderButton" onClick={this.toggleEdit}>Edit</button>&nbsp;
           <button className="noBorderButton" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;

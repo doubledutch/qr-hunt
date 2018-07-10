@@ -111,6 +111,7 @@ export default class App extends Component {
                      value={title}
                      onChange={e => titleRef().set(e.target.value)}
                      placeholder="Ex. QR Challenge"
+                     maxLength={50}
                      className="titleText" />
           <div className="containerRow">
             <div className="field half">
@@ -118,7 +119,7 @@ export default class App extends Component {
                          placeholder="Ex. Scan 3 codes in each category and be entered into the raffle!"
                          value={welcome}
                          onChange={e => welcomeRef().set(e.target.value)}
-                         maxLength={500}
+                         maxLength={250}
                          className="welcomeText" />
             </div>
             <div className="field half">
@@ -126,7 +127,7 @@ export default class App extends Component {
                          placeholder="Ex. You're now entered into the raffle!"
                          value={doneDescription}
                          onChange={e => doneDescriptionRef().set(e.target.value)}
-                         maxLength={500}
+                         maxLength={250}
                          className="completeText" />
             </div>
           </div>
@@ -168,7 +169,7 @@ export default class App extends Component {
   }
 
   render() {
-    const {categories, codes} = this.state
+    const {codes, categories} = this.state
     const attendees = this.createList()
 
     return (
@@ -223,7 +224,7 @@ export default class App extends Component {
                   <h2>Attendees</h2>
                   {this.state.isAttendeeBoxDisplay ? <SearchBar updateList={this.updateList} disable={false} search={this.state.attendeeSearch}/> : null}
                   <div style={{flex: 1}}/>
-                  <button className="displayButton" onClick={() => this.handleChange("isAttendeeBoxDisplay", !this.state.isAttendeeBoxDisplay)}>{(this.state.isAttendeeBoxDisplay ? "Hide Section" : "View Section")}</button>
+                  <button className="displayButton" onClick={() => this.hideAttendeeSection()}>{(this.state.isAttendeeBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
                 {this.state.isAttendeeBoxDisplay ? <div>
                   <ul className="userList">
@@ -245,7 +246,8 @@ export default class App extends Component {
   }
 
   hideAttendeeSection = () => {
-
+    this.handleChange("isAttendeeBoxDisplay", !this.state.isAttendeeBoxDisplay)
+    this.setState({attendeeSearch: false, attendeeSearchValue: ""})
   }
 
   createList = () => {
