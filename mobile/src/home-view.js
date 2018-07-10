@@ -194,6 +194,7 @@ export default class HomeView extends Component {
       this.setState({showScanner: false, onScan: null})
     }
   })
+  
   addCode = () => this.setState({
     showScanner: true,
     onScan: code => {
@@ -201,6 +202,7 @@ export default class HomeView extends Component {
       this.setState({showScanner: false, onScan: null})
     }
   })
+
   cancelScan = () => this.setState({showScanner: false, onScan: null})
 
   dismissWelcome = () => this.setState({welcomeDismissed: true})
