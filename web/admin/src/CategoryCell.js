@@ -22,43 +22,34 @@ export default class CategoryCell extends Component {
     super()
     this.state = {
       isEditing : false,
-      originalName: "",
-      originalValue: 0
+      catName: "",
+      catValue: 0
+    }
   }
-}
 
-componentWillReceiveProps(newProps) {
-  if (newProps.activeEdit !== this.props.category.id && this.state.originalName !== "" && this.state.originalValue){
-    this.resetInfo()
+  componentDidMount() {
+    this.setState({catName: this.props.category.name, catValue: this.props.category.scansRequired})
   }
-}
 
   toggleEdit = () => {
-    this.setState({isEditing: !this.state.isEditing, originalName: this.props.category.name, originalValue: this.props.category.scansRequired})
+    this.setState({isEditing: !this.state.isEditing})
     this.props.setCurrentEdit(this.props.category.id)
   }
 
-  endEdit = () => {
-    this.setState({isEditing: !this.state.isEditing, originalName: this.props.category.name, originalValue: this.props.category.scansRequired})
+  saveEdit = () => {
+    this.props.setCatName(this.props.category.id, this.state.catName)
+    this.props.setCatNumb(this.props.category.id, this.state.catValue)
     this.props.setCurrentEdit("")
   }
 
-  resetInfo = () => {
-    this.props.setCatName(this.props.category.id, this.state.originalName)
-    this.props.setCatNumb(this.props.category.id, this.state.originalValue)
-    this.setState({isEditing: false})
-  }
-
   cancelEdits = () => {
-    this.props.setCatName(this.props.category.id, this.state.originalName)
-    this.props.setCatNumb(this.props.category.id, this.state.originalValue)
-    this.setState({isEditing: false})
+    this.setState({isEditing: false, catName: this.props.category.name, catValue: this.props.category.scansRequired})
     this.props.setCurrentEdit("")
   }
 
   render() {
     const { id, name, scansRequired } = this.props.category
-    if (!this.state.isEditing) {
+    if (this.props.category.id !== this.props.activeEdit) {
       return (
         <li key={id}>
           <p className="cellName">{name}</p>&nbsp;
@@ -72,10 +63,10 @@ componentWillReceiveProps(newProps) {
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={name} placeholder="Category Name" onChange={e => this.props.setCatName(id, e.target.value)} />&nbsp;
-          <input className="catNumbText" type="number" value={scansRequired || 0} onChange={e => this.props.setCatNumb(id, e.target.value)} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
+          <input className="catNameText" type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value})} />&nbsp;
+          <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
           <div style={{flex:1}}/>
-          <button className="noBorderButton" onClick={this.endEdit}>Save</button>&nbsp;
+          <button className="noBorderButton" onClick={this.saveEdit}>Save</button>&nbsp;
           <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
         </li>
       )
