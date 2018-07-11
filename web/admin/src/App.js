@@ -52,7 +52,8 @@ export default class App extends Component {
     isAdminBoxDisplay: true,
     isAttendeeBoxDisplay: true,
     attendeeSearch: true,
-    attendeeSearchValue: ""
+    attendeeSearchValue: "",
+    activeEdit: ""
   }
 
   componentDidMount() {
@@ -106,7 +107,7 @@ export default class App extends Component {
       const {doneDescription, title, welcome} = this.state
       return (
         <div>
-          <p className="boxDescription">With QR Hunt, attendees are encentivized to scan QR codes and complete the scavenger hunt. The QR codes can be various categories and once an attendee has completed the QR Hunt, a custom congratulatory note is displayed.</p>
+          <p className="boxDescription">With QR Hunt, attendees are incentivized to scan QR codes and complete the scavenger hunt. The QR codes can be grouped into various categories and once an attendee has completed the QR Hunt, a custom congratulatory note is displayed.</p>
           <TextInput label="Title"
                      value={title}
                      onChange={e => titleRef().set(e.target.value)}
@@ -143,7 +144,7 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Scans Required</p></div>
           <ul className="categoryList">
             { categories.map(category => {
-              return <CategoryCell key={category.id} category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
+              return <CategoryCell key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
             } 
             )}              
           </ul>
@@ -159,7 +160,7 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Category</p></div>
           <ul className="qrCodeList">
             { codes.map(code => {
-              return <CodeCell key={code.id} code={code} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
+              return <CodeCell key={code.id} code={code} isHidden={!this.state.isCodeBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
             }
             )}
           </ul>
@@ -170,7 +171,7 @@ export default class App extends Component {
 
   render() {
     const {codes, categories} = this.state
-    const attendees = this.createList()
+    const attendees = this.getCustomAttendeeList()
 
     return (
       <div className="App">
@@ -190,7 +191,7 @@ export default class App extends Component {
                     <h2>QR Code Categories</h2>
                     {this.state.isCategoryBoxDisplay ? <button onClick={this.newCategory} className="dd-bordered secondary">Add Category</button> : null}
                   </div>
-                  <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? "Hide Section" : "View Section")}</button>
+                  {categories.filter(c=> c.id === this.state.activeEdit).length ? null : <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? "Hide Section" : "View Section")}</button>}
                 </div>
                 {this.renderCatBox(categories)}
               </div>
@@ -207,22 +208,22 @@ export default class App extends Component {
                     selectedTitle="Current Admins"
                     onSelected={this.onAdminSelected}
                     onDeselected={this.onAdminDeselected}
-                    selected={attendees.filter(a => this.isAdmin(a.id))} />
+                    selected={this.state.attendees.filter(a => this.isAdmin(a.id))} />
                 </div> : null}
               </div>
 
               <div className="sectionContainer">
                 <div className="containerRow">
                   <h2>QR Codes</h2>
-                  <button className="displayButton" onClick={() => this.handleChange("isCodeBoxDisplay", !this.state.isCodeBoxDisplay)}>{(this.state.isCodeBoxDisplay ? "Hide Section" : "View Section")}</button>
+                  {codes.filter(c=> c.id === this.state.activeEdit).length ? null : <button className="displayButton" onClick={() => this.handleChange("isCodeBoxDisplay", !this.state.isCodeBoxDisplay)}>{(this.state.isCodeBoxDisplay ? "Hide Section" : "View Section")}</button>}
                 </div>
                 {this.renderCodeBox(codes, categories)}
               </div>
 
-              <div className="sectionContainer">
+              <div className="attendeeSectionContainer">
                 <div className="containerRowSearchBar">
                   <h2>Attendees</h2>
-                  {this.state.isAttendeeBoxDisplay ? <SearchBar updateList={this.updateList} disable={false} search={this.state.attendeeSearch}/> : null}
+                  {this.state.isAttendeeBoxDisplay ? <SearchBar updateList={this.updateList} disabled={false} search={this.state.attendeeSearch}/> : null}
                   <div style={{flex: 1}}/>
                   <button className="displayButton" onClick={() => this.hideAttendeeSection()}>{(this.state.isAttendeeBoxDisplay ? "Hide Section" : "View Section")}</button>
                 </div>
@@ -250,7 +251,7 @@ export default class App extends Component {
     this.setState({attendeeSearch: false, attendeeSearchValue: ""})
   }
 
-  createList = () => {
+  getCustomAttendeeList = () => {
     const queryText = this.state.attendeeSearchValue.toLowerCase()
     if (queryText.length > 0) {
       const queryResult = this.state.attendees.filter(s => s.firstName.toLowerCase().includes(queryText) || s.lastName.toLowerCase().includes(queryText))
@@ -333,6 +334,10 @@ export default class App extends Component {
     } else {
       tokenRef.remove()
     }
+  }
+
+  setCurrentEdit = (id) => {
+    this.setState({activeEdit: id})
   }
 
   sortPlayers = (a, b) => {

@@ -23,18 +23,39 @@ export default class CodeCell extends Component {
     this.state = {
       isEditing : false,
       originalName: "",
-      originalCategory: ""
+      originalCategory: "",
+  }
+}
+
+componentWillReceiveProps(newProps) {
+  if (newProps.activeEdit !== this.props.code.id){
+    console.log("hello")
+    this.resetName()
   }
 }
 
   letEdit = () => {
     this.setState({isEditing: !this.state.isEditing, originalName: this.props.code.name, originalCategory: this.props.code.categoryId})
+    this.props.setCurrentEdit(this.props.code.id)
   }
+
+  endEdit = () => {
+    this.setState({isEditing: !this.state.isEditing, originalName: this.props.code.name, originalCategory: this.props.code.categoryId})
+    this.props.setCurrentEdit("")
+  }
+
 
   resetName = () => {
     this.props.setCodeName(this.props.code.id, this.state.originalName)
     this.props.setCodeNumb(this.props.code.id, this.state.originalCategory)
     this.setState({isEditing: false})
+  }
+
+  cancelEdits = () => {
+    this.props.setCodeName(this.props.code.id, this.state.originalName)
+    this.props.setCodeNumb(this.props.code.id, this.state.originalCategory)
+    this.setState({isEditing: false})
+    this.props.setCurrentEdit("")
   }
 
   render() {
@@ -43,7 +64,7 @@ export default class CodeCell extends Component {
     if (!this.state.isEditing) {
       return (
         <li key={id}>
-          <p style={{width: 200}}>{name}</p>&nbsp;
+          <p className="cellName">{name}</p>&nbsp;
           <p>{cat ? cat.name : "unavailable"}</p>
           <div style={{flex:1}}/>
           <button className="noBorderButton" onClick={this.letEdit}>Edit</button>&nbsp;
@@ -60,8 +81,8 @@ export default class CodeCell extends Component {
             { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
           </select>&nbsp;
           <div style={{flex:1}}/>
-          <button className="noBorderButton" onClick={this.letEdit}>Save</button>&nbsp;
-          <button className="noBorderButton" onClick={this.resetName}>Cancel</button>&nbsp;
+          <button className="noBorderButton" onClick={this.endEdit}>Save</button>&nbsp;
+          <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
         </li>
       )
     }

@@ -33,7 +33,7 @@ export default class SearchBar extends Component {
   render() {
     return (
       <div>
-        <input className={"searchBar" + ((this.props.disable) ? '--gray' : '')} type="text" id="myInput" disabled={this.props.disable} value={this.props.search ? this.state.value : ""} onChange={this.handleChange} placeholder="Search"/>
+        <input className={"searchBar" + ((this.props.disable) ? '--gray' : '')} type="text" id="myInput" disabled={this.props.disabled} value={this.props.search ? this.state.value : ""} onChange={this.handleChange} placeholder="Search"/>
       </div>
     )
   }

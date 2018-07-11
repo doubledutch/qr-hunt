@@ -27,8 +27,20 @@ export default class CategoryCell extends Component {
   }
 }
 
+componentWillReceiveProps(newProps) {
+  if (newProps.activeEdit !== this.props.category.id){
+    this.resetInfo()
+  }
+}
+
   toggleEdit = () => {
     this.setState({isEditing: !this.state.isEditing, originalName: this.props.category.name, originalValue: this.props.category.scansRequired})
+    this.props.setCurrentEdit(this.props.category.id)
+  }
+
+  endEdit = () => {
+    this.setState({isEditing: !this.state.isEditing, originalName: this.props.category.name, originalValue: this.props.category.scansRequired})
+    this.props.setCurrentEdit("")
   }
 
   resetInfo = () => {
@@ -37,12 +49,19 @@ export default class CategoryCell extends Component {
     this.setState({isEditing: false})
   }
 
+  cancelEdits = () => {
+    this.props.setCatName(this.props.category.id, this.state.originalName)
+    this.props.setCatNumb(this.props.category.id, this.state.originalValue)
+    this.setState({isEditing: false})
+    this.props.setCurrentEdit("")
+  }
+
   render() {
     const { id, name, scansRequired } = this.props.category
     if (!this.state.isEditing) {
       return (
         <li key={id}>
-          <p style={{width: 200}}>{name}</p>&nbsp;
+          <p className="cellName">{name}</p>&nbsp;
           <p>{scansRequired || 0} {scansRequired === 1 ? "scan" : "scans"} required</p>
           <div style={{flex:1}}/>
           <button className="noBorderButton" onClick={this.toggleEdit}>Edit</button>&nbsp;
@@ -54,10 +73,10 @@ export default class CategoryCell extends Component {
       return (
         <li key={id}>
           <input className="catNameText" type="text" value={name} placeholder="Category Name" onChange={e => this.props.setCatName(id, e.target.value)} />&nbsp;
-          <input className="catNumbText" type="number" value={scansRequired || 0} onChange={e => this.props.setCatNumb(id, e.target.value)} min={0} max={100} />&nbsp;scans required
+          <input className="catNumbText" type="number" value={scansRequired || 0} onChange={e => this.props.setCatNumb(id, e.target.value)} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
           <div style={{flex:1}}/>
-          <button className="noBorderButton" onClick={this.toggleEdit}>Save</button>&nbsp;
-          <button className="noBorderButton" onClick={this.resetInfo}>Cancel</button>&nbsp;
+          <button className="noBorderButton" onClick={this.endEdit}>Save</button>&nbsp;
+          <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
         </li>
       )
     }
