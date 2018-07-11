@@ -28,8 +28,7 @@ export default class CodeCell extends Component {
 }
 
 componentWillReceiveProps(newProps) {
-  if (newProps.activeEdit !== this.props.code.id){
-    console.log("hello")
+  if (newProps.activeEdit !== this.props.code.id && this.state.originalName !== "" && this.state.originalCategory !== ""){
     this.resetName()
   }
 }

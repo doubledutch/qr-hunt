@@ -28,7 +28,7 @@ export default class CategoryCell extends Component {
 }
 
 componentWillReceiveProps(newProps) {
-  if (newProps.activeEdit !== this.props.category.id){
+  if (newProps.activeEdit !== this.props.category.id && this.state.originalName !== "" && this.state.originalValue){
     this.resetInfo()
   }
 }

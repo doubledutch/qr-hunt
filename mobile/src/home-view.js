@@ -124,7 +124,7 @@ export default class HomeView extends Component {
                               <Text style={s.codeTitle}>{code.name}</Text>
                             </View>)
                           )}
-                          { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
+                          {this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired)}
                         </View>
                       ))
                     }
