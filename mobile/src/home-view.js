@@ -177,26 +177,6 @@ export default class HomeView extends Component {
     )
   }
 
-  renderScanSuccess() {
-    return (
-      <TouchableOpacity style={s.done} onPress={this.dismissDone}>
-        <Star style={s.star} />
-        <Text style={s.doneTitle}>Succesful Scan!</Text>
-        <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
-      </TouchableOpacity>
-    )
-  }
-
-  renderScanDuplicate() {
-    return (
-      <TouchableOpacity style={s.done} onPress={this.dismissDone}>
-        <Star style={s.star} />
-        <Text style={s.doneTitle}>Duplicate Scan</Text>
-        <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
-      </TouchableOpacity>
-    )
-  }
-
   scanCode = () => this.setState({
     showScanner: true,
     onScan: code => {
@@ -204,15 +184,17 @@ export default class HomeView extends Component {
       const namedCode = this.state.codes.find(c => c.id === hash)
       if (namedCode) {
         if (this.state.scans[hash]) {
-          Alert.alert('Already scanned', 'It looks like you already scanned this QR code!')
+          Alert.alert('Already scanned', 'It looks like you already scanned this QR code!', [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
+          { cancelable: false })
         } else {
           scansRef().child(hash).set(true)
-          Alert.alert('Congrats!', `You scanned ${namedCode.name}`)
+          Alert.alert('Congrats!', `You scanned ${namedCode.name}`, [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
+          { cancelable: false })
         }
       } else {
-        Alert.alert('Oops!', 'It looks like this QR code is not part of the challenge!')
+        Alert.alert('Oops!', 'It looks like this QR code is not part of the challenge!', [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
+        { cancelable: false })
       }
-      this.setState({showScanner: false, onScan: null})
     }
   })
   
