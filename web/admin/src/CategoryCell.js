@@ -32,7 +32,7 @@ export default class CategoryCell extends Component {
   }
 
   toggleEdit = () => {
-    this.setState({isEditing: !this.state.isEditing})
+    this.setState({isEditing: !this.state.isEditing, catName: this.props.category.name, catValue: this.props.category.scansRequired})
     this.props.setCurrentEdit(this.props.category.id)
   }
 
@@ -66,7 +66,7 @@ export default class CategoryCell extends Component {
           <input className="catNameText" type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value})} />&nbsp;
           <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
           <div style={{flex:1}}/>
-          <button className="noBorderButton" onClick={this.saveEdit}>Save</button>&nbsp;
+          { this.state.catName.trim().length ? <button className="noBorderButton" onClick={this.saveEdit}>Save</button> : null}&nbsp;
           <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
         </li>
       )

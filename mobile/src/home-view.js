@@ -98,6 +98,7 @@ export default class HomeView extends Component {
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
+    const categoriesToShow = categories.filter(cat => cat.scansRequired) || []
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
@@ -109,7 +110,7 @@ export default class HomeView extends Component {
               ? <Scanner onScan={onScan} onCancel={this.cancelScan} />
               : <View style={s.container}>
                   <ScrollView style={s.scroll}>
-                    { categories.filter(cat => cat.scansRequired).map(cat => (
+                    { categoriesToShow.map(cat => (
                         <View key={cat.id} style={s.categoryContainer}>
                           <View style={{flexDirection: "row"}}>
                             <Text style={s.category}>{cat.name}</Text>
@@ -128,9 +129,10 @@ export default class HomeView extends Component {
                         </View>
                       ))
                     }
+                    { categoriesToShow.length ? null : <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> }
                   </ScrollView>
                   <View style={s.buttons}>
-                    <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity>
+                    { categoriesToShow.length ? <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> : null }
                     { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
                   </View>
                 </View>
@@ -261,6 +263,16 @@ const s = ReactNative.StyleSheet.create({
     paddingBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  helpTextContainer: {
+    flex: 1, 
+    alignItems: "center", 
+    justifyContent: "center"
+  },
+  helpText: {
+    fontSize: 20, 
+    marginTop: 150, 
+    textAlign: "center"
   },
   codeTitle: {
     fontSize: 18,

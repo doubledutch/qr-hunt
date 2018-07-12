@@ -32,13 +32,13 @@ export default class CodeCell extends Component {
   }
 
   letEdit = () => {
-    this.setState({isEditing: !this.state.isEditing})
+    this.setState({isEditing: !this.state.isEditing, catName: this.props.code.name, codeCat: this.props.code.categoryId})
     this.props.setCurrentEdit(this.props.code.id)
   }
 
   saveEdit = () => {
     this.props.setCodeName(this.props.code.id, this.state.codeName)
-    this.props.setCodeNumb(this.props.code.id, this.state.codeCat)
+    if (this.state.codeCat) { this.props.setCodeNumb(this.props.code.id, this.state.codeCat) }
     this.props.setCurrentEdit("")
   }
 
@@ -65,13 +65,13 @@ export default class CodeCell extends Component {
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={name} placeholder="QR Code Name" onChange={e => this.setState({codeName: e.target.value})} />&nbsp;
-          <select value={categoryId} onChange={e => this.setState({codeCat: e.target.value})}>
+          <input className="catNameText" type="text" value={this.state.codeName} placeholder="QR Code Name" onChange={e => this.setState({codeName: e.target.value})} />&nbsp;
+          <select value={this.state.codeCat} onChange={e => this.setState({codeCat: e.target.value})}>
             <option>--Select category--</option>
             { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
           </select>&nbsp;
           <div style={{flex:1}}/>
-          <button className="noBorderButton" onClick={this.saveEdit}>Save</button>&nbsp;
+          { this.state.codeName.length ? <button className="noBorderButton" onClick={this.saveEdit}>Save</button> : null }&nbsp;
           <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
         </li>
       )

@@ -286,6 +286,7 @@ export default class App extends Component {
   }
 
   setCodeNumb = (id, value) => {
+    console.log(id, value)
     codesRef().child(id).child('categoryId').set(value)
   }
 
