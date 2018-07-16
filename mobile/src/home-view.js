@@ -98,7 +98,7 @@ export default class HomeView extends Component {
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
-    const categoriesToShow = categories.filter(cat => cat.scansRequired) || []
+    const categoriesToShow = categories.filter(cat => cat.scansRequired)
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
