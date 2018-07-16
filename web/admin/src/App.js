@@ -144,9 +144,10 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Scans Required</p></div>
           <ul className="categoryList">
             { categories.map(category => {
-              return <CategoryCell key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
+              return <CategoryCell categories={categories} key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
             } 
-            )}              
+            )}
+            <h2 className="emptyBoxText">No Current Categories</h2>              
           </ul>
         </div>
       )
@@ -232,7 +233,7 @@ export default class App extends Component {
                     { attendees.sort(this.sortPlayers).map(this.renderUser) }
                     {attendees.length ? null : <div className="noResultsBox"><p className="noResultsMessage">No Results</p></div> }
                   </ul>
-                  <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export completed attendees to CSV</CSVLink>
+                  <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export list of completed attendees</CSVLink>
                 </div> : null}
               </div>
             </div>
@@ -286,7 +287,6 @@ export default class App extends Component {
   }
 
   setCodeNumb = (id, value) => {
-    console.log(id, value)
     codesRef().child(id).child('categoryId').set(value)
   }
 
@@ -308,7 +308,11 @@ export default class App extends Component {
   isDone = userId => !!this.state.categories.length && !this.state.categories.find(cat => this.categoryScansForUser(cat.id, userId) < (cat.scansRequired || 0))
 
   newCategory = () => {
-    categoriesRef().push({name: 'New QR Code Category'})
+    const activeCat = this.state.categories.find(cat => cat.id === this.state.activeEdit)
+
+    if (!activeCat) {
+      categoriesRef().push({name: 'New QR Code Category'})
+    }
   }
 
   removeCategory = category => () => {

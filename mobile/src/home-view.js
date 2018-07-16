@@ -114,8 +114,7 @@ export default class HomeView extends Component {
                         <View key={cat.id} style={s.categoryContainer}>
                           <View style={{flexDirection: "row"}}>
                             <Text style={s.category}>{cat.name}</Text>
-                            <View style={{flex:1}}/>
-                            <Text style={s.category}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
+                            <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
@@ -223,7 +222,7 @@ const charcoal = '#364247'
 const s = ReactNative.StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d9e1f9',
+    backgroundColor: '#EFEFEF',
   },
   scroll: {
     flex: 1,
@@ -235,6 +234,15 @@ const s = ReactNative.StyleSheet.create({
     marginBottom: 10,
     marginTop: 15,
     color: charcoal,
+    flex: 1
+  },
+  categoryRight: {
+    fontSize: 14,
+    textAlign: 'right',
+    marginBottom: 10,
+    marginTop: 15,
+    color: charcoal,
+    flex: 1
   },
   categoryContainer: {
     marginBottom: 20,

@@ -23,7 +23,8 @@ export default class CategoryCell extends Component {
     this.state = {
       isEditing : false,
       catName: "",
-      catValue: 0
+      catValue: 0,
+      isError: false
     }
   }
 
@@ -37,9 +38,13 @@ export default class CategoryCell extends Component {
   }
 
   saveEdit = () => {
-    this.props.setCatName(this.props.category.id, this.state.catName)
-    this.props.setCatNumb(this.props.category.id, this.state.catValue)
-    this.props.setCurrentEdit("")
+    const isDup = this.props.categories.find(cat => cat.name.toLowerCase() === this.state.catName.trim().toLowerCase() && cat.id !== this.props.category.id)
+    if (isDup) { this.setState({isError: true}) }
+    else {
+      this.props.setCatName(this.props.category.id, this.state.catName.trim())
+      this.props.setCatNumb(this.props.category.id, this.state.catValue)
+      this.props.setCurrentEdit("")
+    }
   }
 
   cancelEdits = () => {
@@ -63,13 +68,32 @@ export default class CategoryCell extends Component {
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value})} />&nbsp;
+          <input className="catNameText" type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
           <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
           <div style={{flex:1}}/>
-          { this.state.catName.trim().length ? <button className="noBorderButton" onClick={this.saveEdit}>Save</button> : null}&nbsp;
+          { this.renderSaveButton() }
           <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
         </li>
       )
     }
   }
+
+  renderSaveButton = () => {
+    if (this.state.isError) {
+      return (
+        <button className="noBorderButtonRed" onClick={this.saveEdit}>Rename</button>
+      )
+    }
+    else {
+      if (this.state.catName.trim().length){
+        return (
+          <button className="noBorderButton" onClick={this.saveEdit}>Save</button>
+        )
+      }
+      else {
+        return null
+      }
+    }
+  }
+
 }

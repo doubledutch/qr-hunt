@@ -37,7 +37,7 @@ export default class CodeCell extends Component {
   }
 
   saveEdit = () => {
-    this.props.setCodeName(this.props.code.id, this.state.codeName)
+    this.props.setCodeName(this.props.code.id, this.state.codeName.trim())
     if (this.state.codeCat) { this.props.setCodeNumb(this.props.code.id, this.state.codeCat) }
     this.props.setCurrentEdit("")
   }
