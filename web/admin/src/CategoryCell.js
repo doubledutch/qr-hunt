@@ -84,15 +84,13 @@ export default class CategoryCell extends Component {
         <button className="noBorderButtonRed" onClick={this.saveEdit}>Rename</button>
       )
     }
+    else if (this.state.catName.trim().length){
+      return (
+        <button className="noBorderButton" onClick={this.saveEdit}>Save</button>
+      ) 
+    }
     else {
-      if (this.state.catName.trim().length){
-        return (
-          <button className="noBorderButton" onClick={this.saveEdit}>Save</button>
-        )
-      }
-      else {
-        return null
-      }
+      return null
     }
   }
 
