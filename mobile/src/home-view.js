@@ -16,11 +16,9 @@
 
 import React, { Component } from 'react'
 import ReactNative, {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native'
-
 import Checkmark from './Checkmark'
 import Star from './Star'
 import Scanner from './Scanner'
-
 import md5 from 'md5'
 import client, { Avatar, Color, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
@@ -87,7 +85,8 @@ export default class HomeView extends Component {
   }
 
   render() {
-    const {categories, codes, isAdmin, onScan, scans, showScanner, title, doneDismissed, welcomeDismissed} = this.state
+    const {codes, isAdmin, onScan, scans, showScanner, title, doneDismissed, welcomeDismissed} = this.state
+    const categories = this.state.categories.filter(c => c.name)
     const codesByCategory = codes.reduce((cbc, code) => {
       if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
       const isScanned = scans[code.id]
@@ -99,6 +98,7 @@ export default class HomeView extends Component {
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
+    const categoriesToShow = categories.filter(cat => cat.scansRequired)
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
@@ -110,12 +110,12 @@ export default class HomeView extends Component {
               ? <Scanner onScan={onScan} onCancel={this.cancelScan} />
               : <View style={s.container}>
                   <ScrollView style={s.scroll}>
-                    { categories.filter(cat => cat.scansRequired).map(cat => (
+                    { categoriesToShow.map(cat => (
                         <View key={cat.id} style={s.categoryContainer}>
                           <View style={{flexDirection: "row"}}>
                             <Text style={s.category}>{cat.name}</Text>
-                            <View style={{flex:1}}/>
-                            <Text style={s.category}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
+                            <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
+
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
@@ -125,13 +125,14 @@ export default class HomeView extends Component {
                               <Text style={s.codeTitle}>{code.name}</Text>
                             </View>)
                           )}
-                          { this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired) }
+                          {this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired)}
                         </View>
                       ))
                     }
+                    { categoriesToShow.length ? null : <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> }
                   </ScrollView>
                   <View style={s.buttons}>
-                    <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity>
+                    { categoriesToShow.length ? <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> : null }
                     { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
                   </View>
                 </View>
@@ -183,17 +184,20 @@ export default class HomeView extends Component {
       const namedCode = this.state.codes.find(c => c.id === hash)
       if (namedCode) {
         if (this.state.scans[hash]) {
-          Alert.alert('Already scanned', 'It looks like you already scanned this QR code!')
+          Alert.alert('Already scanned', 'It looks like you already scanned this QR code!', [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
+          { cancelable: false })
         } else {
           scansRef().child(hash).set(true)
-          Alert.alert('Congrats!', `You scanned ${namedCode.name}`)
+          Alert.alert('Congrats!', `You scanned ${namedCode.name}`, [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
+          { cancelable: false })
         }
       } else {
-        Alert.alert('Oops!', 'It looks like this QR code is not part of the challenge!')
+        Alert.alert('Oops!', 'It looks like this QR code is not part of the challenge!', [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
+        { cancelable: false })
       }
-      this.setState({showScanner: false, onScan: null})
     }
   })
+  
   addCode = () => this.setState({
     showScanner: true,
     onScan: code => {
@@ -201,6 +205,7 @@ export default class HomeView extends Component {
       this.setState({showScanner: false, onScan: null})
     }
   })
+
   cancelScan = () => this.setState({showScanner: false, onScan: null})
 
   dismissWelcome = () => this.setState({welcomeDismissed: true})
@@ -218,7 +223,7 @@ const charcoal = '#364247'
 const s = ReactNative.StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d9e1f9',
+    backgroundColor: '#EFEFEF',
   },
   scroll: {
     flex: 1,
@@ -230,6 +235,15 @@ const s = ReactNative.StyleSheet.create({
     marginBottom: 10,
     marginTop: 15,
     color: charcoal,
+    flex: 1
+  },
+  categoryRight: {
+    fontSize: 14,
+    textAlign: 'right',
+    marginBottom: 10,
+    marginTop: 15,
+    color: charcoal,
+    flex: 1
   },
   categoryContainer: {
     marginBottom: 20,
@@ -240,6 +254,16 @@ const s = ReactNative.StyleSheet.create({
     paddingBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  helpTextContainer: {
+    flex: 1, 
+    alignItems: "center", 
+    justifyContent: "center"
+  },
+  helpText: {
+    fontSize: 20, 
+    marginTop: 150, 
+    textAlign: "center"
   },
   codeTitle: {
     fontSize: 18,

@@ -16,41 +16,96 @@
 
 import React, { Component } from 'react'
 import './App.css'
+import ReactTooltip from "react-tooltip"
+import AlertIcon from "./alerticon.png"
 
 export default class CategoryCell extends Component {
   constructor() {
     super()
     this.state = {
-      isEditing : false
+      isEditing : false,
+      catName: "",
+      catValue: 0,
+      isError: false
+    }
   }
-}
+
+  componentDidMount() {
+    this.setState({catName: this.props.category.name, catValue: this.props.category.scansRequired})
+  }
 
   toggleEdit = () => {
-    this.setState({isEditing: !this.state.isEditing})
+    this.setState({isEditing: !this.state.isEditing, catName: this.props.category.name, catValue: this.props.category.scansRequired})
+    this.props.setCurrentEdit(this.props.category.id)
   }
+
+  saveEdit = () => {
+    const isDup = this.props.categories.find(cat => cat.name.toLowerCase() === this.state.catName.trim().toLowerCase() && cat.id !== this.props.category.id)
+    if (isDup) { this.setState({isError: true}) }
+    else {
+      this.props.setCatName(this.props.category.id, this.state.catName.trim())
+      this.props.setCatNumb(this.props.category.id, this.state.catValue)
+      this.props.setCurrentEdit("")
+    }
+  }
+
+  cancelEdits = () => {
+    this.setState({isEditing: false, catName: this.props.category.name, catValue: this.props.category.scansRequired})
+    this.props.setCurrentEdit("")
+  }
+
   render() {
     const { id, name, scansRequired } = this.props.category
-    if (!this.state.isEditing) {
+    if (this.props.category.id !== this.props.activeEdit) {
       return (
         <li key={id}>
-          <p style={{width: 200}}>{name}</p>&nbsp;
-          <p>{scansRequired || 0} scans required</p>
+          <p className="cellName">{name}</p>&nbsp;
+          <p>{scansRequired || 0} {scansRequired === 1 ? "scan" : "scans"} required</p>
+          {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
-          <button className="dd-bordered secondary" onClick={this.toggleEdit}>Edit</button>&nbsp;
-          <button className="dd-bordered destructive" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          <button className="noBorderButton" onClick={this.toggleEdit}>Edit</button>&nbsp;
+          <button className="noBorderButton" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          <ReactTooltip multiline={true}/>
         </li>
       )
     }
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={name} placeholder="Category Name" onChange={e => this.props.setCatName(id, e)} />&nbsp;
-          <input className="catNumbText" type="number" value={scansRequired || 0} onChange={e => this.props.setCatNumb(id, e)} min={0} max={100} />&nbsp;scans required
+          <input className="catNameText" type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
+          <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
+          {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
-          <button className="dd-bordered secondary" onClick={this.toggleEdit}>Edit</button>&nbsp;
-          <button className="dd-bordered destructive" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          { this.renderSaveButton() }
+          <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
+          <ReactTooltip multiline={true}/>
         </li>
       )
     }
   }
+
+  renderNeedsMoreCatCodes = () => {
+    const total = this.props.codes.filter(code => code.categoryId === this.props.category.id)
+    if (total.length !== this.props.category.scansRequired) {
+      return <img data-tip="More scans are required than are available. <br /> The category will remain hidden for attendees <br /> until there are enough codes to complete the category." className="box-icon" src={AlertIcon} alt="alert"/>
+    }
+    else { return null }
+  }
+
+  renderSaveButton = () => {
+    if (this.state.isError) {
+      return (
+        <button className="noBorderButtonRed" onClick={this.saveEdit}>Rename</button>
+      )
+    }
+    else if (this.state.catName.trim().length){
+      return (
+        <button className="noBorderButton" onClick={this.saveEdit}>Save</button>
+      ) 
+    }
+    else {
+      return null
+    }
+  }
+
 }

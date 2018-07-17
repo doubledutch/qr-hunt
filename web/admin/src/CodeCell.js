@@ -17,42 +17,62 @@
 import React, { Component } from 'react'
 import './App.css'
 
-export default class CategoryCell extends Component {
+export default class CodeCell extends Component {
   constructor() {
     super()
     this.state = {
-      isEditing : false
+      isEditing : false,
+      codeName: "",
+      codeCat: ""
+    }
   }
-}
+
+  componentDidMount() {
+    this.setState({catName: this.props.code.name, codeCat: this.props.code.categoryId})
+  }
 
   letEdit = () => {
-    this.setState({isEditing: !this.state.isEditing})
+    this.setState({isEditing: !this.state.isEditing, catName: this.props.code.name, codeCat: this.props.code.categoryId})
+    this.props.setCurrentEdit(this.props.code.id)
   }
+
+  saveEdit = () => {
+    this.props.setCodeName(this.props.code.id, this.state.codeName.trim())
+    if (this.state.codeCat) { this.props.setCodeNumb(this.props.code.id, this.state.codeCat) }
+    this.props.setCurrentEdit("")
+  }
+
+
+  cancelEdits = () => {
+    this.setState({isEditing: false, codeName: this.props.code.name, codeCat: this.props.code.categoryId})
+    this.props.setCurrentEdit("")
+  }
+
   render() {
     const { categoryId, id, name } = this.props.code
     const cat = this.props.categories.find(cat => cat.id === categoryId)
-    if (!this.state.isEditing) {
+    if (this.props.code.id !== this.props.activeEdit) {
       return (
         <li key={id}>
-          <p style={{width: 200}}>{name}</p>&nbsp;
+          <p className="cellName">{name}</p>&nbsp;
           <p>{cat ? cat.name : "unavailable"}</p>
           <div style={{flex:1}}/>
-          <button className="dd-bordered secondary" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="dd-bordered destructive" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
+          <button className="noBorderButton" onClick={this.letEdit}>Edit</button>&nbsp;
+          <button className="noBorderButton" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
         </li>
       )
     }
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={name} placeholder="QR Code Name" onChange={e => this.props.setCodeName(id, e)} />&nbsp;
-          <select value={categoryId} onChange={e => this.props.setCodeNumb(id, e)}>
+          <input className="catNameText" type="text" value={this.state.codeName} placeholder="QR Code Name" onChange={e => this.setState({codeName: e.target.value})} />&nbsp;
+          <select value={this.state.codeCat} onChange={e => this.setState({codeCat: e.target.value})}>
             <option>--Select category--</option>
             { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
           </select>&nbsp;
           <div style={{flex:1}}/>
-          <button className="dd-bordered secondary" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="dd-bordered destructive" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
+          { this.state.codeName.length ? <button className="noBorderButton" onClick={this.saveEdit}>Save</button> : null }&nbsp;
+          <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
         </li>
       )
     }

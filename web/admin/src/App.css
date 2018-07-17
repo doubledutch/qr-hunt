@@ -26,7 +26,15 @@ h2 {
   margin: 1em 0;
 }
 
-html, body, select {
+.titleWithDescription {
+  margin: 1em 0 0 0;
+}
+
+.boxDescription {
+  margin-bottom: 30px;
+}
+
+html, body, select{
   font: inherit;
 }
 
@@ -38,6 +46,20 @@ html, body, select {
   margin-top: 5px;
 }
 
+.searchBar {
+  margin: 0px 10px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.csvButton{
+  float: right;
+  text-decoration: none;
+  border: 1px solid #73aaf3;
+  border-radius: 5px;
+  padding: 10px;
+}
+
 .displayButton {
   border: none;
   color: #73aaf3;
@@ -46,8 +68,27 @@ html, body, select {
   background-color: transparent;
   font-weight: 300;
 }
+
 button.displayButton:focus, button.displayButton:active {
   border: none;
+}
+
+.emptyBoxText {
+  flex: 1;
+  text-align: center;
+  margin-top: 100px;
+}
+
+.noBorderButton {
+  border: none;
+  background-color: white;
+  color: #4A4A4A;
+}
+
+.noBorderButtonRed {
+  border: none;
+  background-color: white;
+  color: red;
 }
 
 ul {
@@ -71,13 +112,27 @@ ul {
   padding: 0px 25px;
 }
 
+.attendeeSectionContainer {
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  margin: 20px;
+  background-color: #FFFFFF;
+  padding: 0px 25px 50px 25px;
+}
+
 .containerRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.containerRowSearchBar {
+  display: flex;
+  align-items: center;
+}
+
 ul.categoryList {
+  height: 250px;
   border: 1px solid #E3ECF8;
   border-radius: 5px;
   background-color: #FCFCFC;
@@ -96,6 +151,17 @@ ul.userList {
   border-radius: 5px;
   background-color: #FCFCFC;
   overflow-x: auto;
+}
+
+.noResultsMessage {
+  font-size: 18px;
+}
+
+.noResultsBox {
+  flex: 1;
+  display: flex;
+  align-content: center;
+  justify-content: center;
 }
 
 ul li {
@@ -134,6 +200,12 @@ textarea {
   padding: 0 0.7em;
 }
 
+.box-icon{
+  height: 15px;
+  width: 15px;
+  margin-left: 5px;
+}
+
 
 .field {
   margin: 0.7em 0;
@@ -155,6 +227,14 @@ select {
   margin-left: 8px;
   border-bottom: 1px solid #AAB9CA;
   color: #4A4A4A;
+}
+
+
+.cellName{
+  width: 200px; 
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 
 .catNameText {
