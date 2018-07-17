@@ -200,6 +200,12 @@ textarea {
   padding: 0 0.7em;
 }
 
+.box-icon{
+  height: 15px;
+  width: 15px;
+  margin-left: 5px;
+}
+
 
 .field {
   margin: 0.7em 0;

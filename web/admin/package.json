@@ -15,7 +15,8 @@
     "react": "^16.4.0",
     "react-csv": "^1.0.14",
     "react-dom": "^16.4.0",
-    "react-scripts": "1.0.14"
+    "react-scripts": "1.0.14",
+    "react-tooltip": "^3.6.1"
   },
   "scripts": {
     "start": "node emulator",

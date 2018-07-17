@@ -115,6 +115,7 @@ export default class HomeView extends Component {
                           <View style={{flexDirection: "row"}}>
                             <Text style={s.category}>{cat.name}</Text>
                             <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
+
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>

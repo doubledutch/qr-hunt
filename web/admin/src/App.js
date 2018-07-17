@@ -144,15 +144,16 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Scans Required</p></div>
           <ul className="categoryList">
             { categories.map(category => {
-              return <CategoryCell categories={categories} key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
+              return <CategoryCell categories={categories} codes={this.state.codes} key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
             } 
             )}
-            <h2 className="emptyBoxText">No Current Categories</h2>              
+            {categories.length ? null : <h2 className="emptyBoxText">No Current Categories</h2>}              
           </ul>
         </div>
       )
     }
   }
+
 
   renderCodeBox = (codes, categories) => {
     if (this.state.isCodeBoxDisplay) {

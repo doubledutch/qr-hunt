@@ -16,6 +16,7 @@
 
 import React, { Component } from 'react'
 import './App.css'
+import ReactTooltip from "react-tooltip"
 
 export default class CategoryCell extends Component {
   constructor() {
@@ -59,9 +60,11 @@ export default class CategoryCell extends Component {
         <li key={id}>
           <p className="cellName">{name}</p>&nbsp;
           <p>{scansRequired || 0} {scansRequired === 1 ? "scan" : "scans"} required</p>
+          {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
           <button className="noBorderButton" onClick={this.toggleEdit}>Edit</button>&nbsp;
           <button className="noBorderButton" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          <ReactTooltip multiline={true}/>
         </li>
       )
     }
@@ -70,12 +73,22 @@ export default class CategoryCell extends Component {
         <li key={id}>
           <input className="catNameText" type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
           <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
+          {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
           { this.renderSaveButton() }
           <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
+          <ReactTooltip multiline={true}/>
         </li>
       )
     }
+  }
+
+  renderNeedsMoreCatCodes = () => {
+    const total = this.props.codes.filter(code => code.categoryId === this.props.category.id)
+    if (total.length !== this.props.category.scansRequired) {
+      return <img data-tip="More scans are required than are available. <br /> The category will remain hidden for attendees <br /> until there are enough codes to complete the category." className="box-icon" src={require('./alerticon.png')} alt="alert"/>
+    }
+    else { return null }
   }
 
   renderSaveButton = () => {
