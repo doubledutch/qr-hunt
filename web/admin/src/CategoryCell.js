@@ -17,6 +17,7 @@
 import React, { Component } from 'react'
 import './App.css'
 import ReactTooltip from "react-tooltip"
+import AlertIcon from "./alerticon.png"
 
 export default class CategoryCell extends Component {
   constructor() {
@@ -86,7 +87,7 @@ export default class CategoryCell extends Component {
   renderNeedsMoreCatCodes = () => {
     const total = this.props.codes.filter(code => code.categoryId === this.props.category.id)
     if (total.length !== this.props.category.scansRequired) {
-      return <img data-tip="More scans are required than are available. <br /> The category will remain hidden for attendees <br /> until there are enough codes to complete the category." className="box-icon" src={require('./alerticon.png')} alt="alert"/>
+      return <img data-tip="More scans are required than are available. <br /> The category will remain hidden for attendees <br /> until there are enough codes to complete the category." className="box-icon" src={AlertIcon} alt="alert"/>
     }
     else { return null }
   }
