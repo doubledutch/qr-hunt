@@ -1,6 +1,6 @@
 {
   "name": "qrhunt",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "baseBundleVersion": "0.46.4",
   "private": true,
   "scripts": {
