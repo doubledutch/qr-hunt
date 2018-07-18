@@ -98,7 +98,7 @@ export default class HomeView extends Component {
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
-    const categoriesToShow = categories.filter(cat => cat.scansRequired)
+    const categoriesToShow = categories.filter(cat => cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory))
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
@@ -115,7 +115,6 @@ export default class HomeView extends Component {
                           <View style={{flexDirection: "row"}}>
                             <Text style={s.category}>{cat.name}</Text>
                             <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
-
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
@@ -140,6 +139,11 @@ export default class HomeView extends Component {
         { isDone && anyScans && !doneDismissed && this.renderDone() }
       </View>
     )
+  }
+
+  findTotalCatCodes = (cat, codesByCategory) => {
+    const number = codesByCategory[cat.id] ? Object.keys(codesByCategory[cat.id]).length - 1 : 0
+    return number
   }
 
   renderScanPlaceholders(numScanned, numRequired) {

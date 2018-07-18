@@ -165,6 +165,7 @@ export default class App extends Component {
               return <CodeCell key={code.id} code={code} isHidden={!this.state.isCodeBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
             }
             )}
+            {codes.length ? null : <h2 className="emptyBoxText">No Current Codes</h2>}    
           </ul>
         </div>
       )
@@ -232,7 +233,7 @@ export default class App extends Component {
                 {this.state.isAttendeeBoxDisplay ? <div>
                   <ul className="userList">
                     { attendees.sort(this.sortPlayers).map(this.renderUser) }
-                    {attendees.length ? null : <div className="noResultsBox"><p className="noResultsMessage">No Results</p></div> }
+                    {attendees.length ? null : <h2 className="emptyBoxText">No Results</h2>}
                   </ul>
                   <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export list of completed attendees</CSVLink>
                 </div> : null}
