@@ -162,7 +162,7 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Category</p></div>
           <ul className="qrCodeList">
             { codes.map(code => {
-              return <CodeCell key={code.id} code={code} isHidden={!this.state.isCodeBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
+              return <CodeCell key={code.id} code={code} codes={this.state.codes} isHidden={!this.state.isCodeBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
             }
             )}
             {codes.length ? null : <h2 className="emptyBoxText">No Current Codes</h2>}    
@@ -190,7 +190,7 @@ export default class App extends Component {
 
               <div className="sectionContainer">
                 <div className="containerRow">
-                  <div className="containerRow horizontal space-children">
+                  <div className="nameRow">
                     <h2>QR Code Categories</h2>
                     {this.state.isCategoryBoxDisplay ? <button onClick={this.newCategory} className="dd-bordered secondary">Add Category</button> : null}
                   </div>
@@ -281,7 +281,7 @@ export default class App extends Component {
   }
 
   setCatNumb = (id, value) => {
-    categoriesRef().child(id).child('scansRequired').set(+value)
+    categoriesRef().child(id).child('scansRequired').set(+value || 0)
   }
 
   setCodeName = (id, value) => {

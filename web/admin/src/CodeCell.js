@@ -22,6 +22,7 @@ export default class CodeCell extends Component {
     super()
     this.state = {
       isEditing : false,
+      isError: false,
       codeName: "",
       codeCat: ""
     }
@@ -37,9 +38,13 @@ export default class CodeCell extends Component {
   }
 
   saveEdit = () => {
-    this.props.setCodeName(this.props.code.id, this.state.codeName.trim())
-    if (this.state.codeCat) { this.props.setCodeNumb(this.props.code.id, this.state.codeCat) }
-    this.props.setCurrentEdit("")
+    const isDup = this.props.codes.find(code => code.name.toLowerCase() === this.state.codeName.trim().toLowerCase() && code.id !== this.props.code.id)
+    if (isDup) { this.setState({isError: true}) }
+    else {
+      this.props.setCodeName(this.props.code.id, this.state.codeName.trim())
+      if (this.state.codeCat) { this.props.setCodeNumb(this.props.code.id, this.state.codeCat) }
+      this.props.setCurrentEdit("")
+    }
   }
 
 
@@ -65,16 +70,32 @@ export default class CodeCell extends Component {
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={this.state.codeName} placeholder="QR Code Name" onChange={e => this.setState({codeName: e.target.value})} />&nbsp;
+          <input className="catNameText" type="text" value={this.state.codeName} placeholder="QR Code Name" onChange={e => this.setState({codeName: e.target.value, isError: false})} />&nbsp;
           <select value={this.state.codeCat} onChange={e => this.setState({codeCat: e.target.value})}>
             <option>--Select category--</option>
             { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
           </select>&nbsp;
           <div style={{flex:1}}/>
-          { this.state.codeName.length ? <button className="noBorderButton" onClick={this.saveEdit}>Save</button> : null }&nbsp;
+          { this.renderSaveButton() }
           <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
         </li>
       )
+    }
+  }
+
+  renderSaveButton = () => {
+    if (this.state.isError) {
+      return (
+        <button className="noBorderButtonRed" onClick={this.saveEdit}>Rename</button>
+      )
+    }
+    else if (this.state.catName.trim().length){
+      return (
+        <button className="noBorderButton" onClick={this.saveEdit}>Save</button>
+      ) 
+    }
+    else {
+      return null
     }
   }
 }

@@ -23,15 +23,22 @@
 h2 {
   font-size: 24px;
   font-weight: normal;
-  margin: 1em 0;
+  margin: 1em 1em 1em 0;
 }
 
 .titleWithDescription {
-  margin: 1em 0 0 0;
+  margin: 1em 0;
 }
 
 .boxDescription {
   margin-bottom: 30px;
+  margin-top: -15px;
+}
+
+.nameRow {
+  display: flex;
+  flex: 1;
+  align-items: center;
 }
 
 html, body, select{
@@ -124,6 +131,7 @@ ul {
 }
 
 .containerRow {
+  flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
