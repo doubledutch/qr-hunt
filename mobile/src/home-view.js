@@ -98,7 +98,7 @@ export default class HomeView extends Component {
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
-    const categoriesToShow = categories.filter(cat => cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory))
+    const categoriesToShow = categories.filter(cat => cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory) && cat.scansRequired > 0)
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
@@ -191,7 +191,7 @@ export default class HomeView extends Component {
     isAdminScan: true
   })
 
-  onScan = (code) => this.state.isAdminCode ? this.onCodeAdded(code) : this.onCodeScanned(code)
+  onScan = (code) => this.state.isAdminScan ? this.onCodeAdded(code) : this.onCodeScanned(code)
 
   onCodeAdded = code => {
     codesRef().child(md5(code.data)).set({value: code.data, name: 'Added @ ' + new Date().toString()})
