@@ -131,7 +131,7 @@ export default class HomeView extends Component {
                     { categoriesToShow.length ? null : <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> }
                   </ScrollView>
                   <View style={s.buttons}>
-                    { categoriesToShow.length ? <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> : null }
+                    { (categoriesToShow.length && !isDone) ? <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> : null }
                     { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
                   </View>
                 </View>

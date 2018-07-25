@@ -49,7 +49,7 @@ export default class CodeCell extends Component {
 
 
   cancelEdits = () => {
-    this.setState({isEditing: false, codeName: this.props.code.name, codeCat: this.props.code.categoryId})
+    this.setState({isEditing: false, codeName: this.props.code.name, codeCat: this.props.code.categoryId, isError: false})
     this.props.setCurrentEdit("")
   }
 
@@ -89,7 +89,7 @@ export default class CodeCell extends Component {
         <button className="noBorderButtonRed" onClick={this.saveEdit}>Rename</button>
       )
     }
-    else if (this.state.catName.trim().length){
+    else if (this.state.codeName.trim().length){
       return (
         <button className="noBorderButton" onClick={this.saveEdit}>Save</button>
       ) 

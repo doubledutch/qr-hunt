@@ -235,7 +235,7 @@ export default class App extends Component {
                     { attendees.sort(this.sortPlayers).map(this.renderUser) }
                     {attendees.length ? null : <h2 className="emptyBoxText">No Results</h2>}
                   </ul>
-                  <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export list of completed attendees</CSVLink>
+                  <CSVLink className="csvButton" target='_self' data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export list of completed attendees</CSVLink>
                 </div> : null}
               </div>
             </div>
@@ -257,7 +257,10 @@ export default class App extends Component {
   getCustomAttendeeList = () => {
     const queryText = this.state.attendeeSearchValue.toLowerCase()
     if (queryText.length > 0) {
-      const queryResult = this.state.attendees.filter(s => s.firstName.toLowerCase().includes(queryText) || s.lastName.toLowerCase().includes(queryText))
+      const queryResult = this.state.attendees.filter(s => { 
+        const name = s.firstName.toLowerCase() + " " + s.lastName.toLowerCase()
+        return name.includes(queryText)
+        })
       return queryResult
     }
     else {
