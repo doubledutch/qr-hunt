@@ -260,7 +260,7 @@ export default class App extends Component {
       const queryResult = this.state.attendees.filter(s => { 
         const name = s.firstName.toLowerCase() + " " + s.lastName.toLowerCase()
         return name.includes(queryText)
-        })
+      })
       return queryResult
     }
     else {

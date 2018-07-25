@@ -142,6 +142,7 @@ export default class HomeView extends Component {
   }
 
   findTotalCatCodes = (cat, codesByCategory) => {
+    //when you convert these objects to keys it includes the count object which needs to be filtered out in determining accurate amount of codes
     const number = codesByCategory[cat.id] ? Object.keys(codesByCategory[cat.id]).length - 1 : 0
     return number
   }
