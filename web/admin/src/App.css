@@ -23,15 +23,22 @@
 h2 {
   font-size: 24px;
   font-weight: normal;
-  margin: 1em 0;
+  margin: 1em 1em 1em 0;
 }
 
 .titleWithDescription {
-  margin: 1em 0 0 0;
+  margin: 1em 0;
 }
 
 .boxDescription {
   margin-bottom: 30px;
+  margin-top: -15px;
+}
+
+.nameRow {
+  display: flex;
+  flex: 1;
+  align-items: center;
 }
 
 html, body, select{
@@ -50,6 +57,9 @@ html, body, select{
   margin: 0px 10px;
   padding: 5px;
   border-radius: 5px;
+  height: 28px;
+  width: 200px;
+  border: 0.06em solid #abbac9;
 }
 
 .csvButton{
@@ -121,6 +131,7 @@ ul {
 }
 
 .containerRow {
+  flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;

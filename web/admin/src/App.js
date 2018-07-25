@@ -162,9 +162,10 @@ export default class App extends Component {
           <div className="titleBar"><p>Name</p><p>Category</p></div>
           <ul className="qrCodeList">
             { codes.map(code => {
-              return <CodeCell key={code.id} code={code} isHidden={!this.state.isCodeBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
+              return <CodeCell key={code.id} code={code} codes={this.state.codes} isHidden={!this.state.isCodeBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
             }
             )}
+            {codes.length ? null : <h2 className="emptyBoxText">No Current Codes</h2>}    
           </ul>
         </div>
       )
@@ -189,7 +190,7 @@ export default class App extends Component {
 
               <div className="sectionContainer">
                 <div className="containerRow">
-                  <div className="containerRow horizontal space-children">
+                  <div className="nameRow">
                     <h2>QR Code Categories</h2>
                     {this.state.isCategoryBoxDisplay ? <button onClick={this.newCategory} className="dd-bordered secondary">Add Category</button> : null}
                   </div>
@@ -232,9 +233,9 @@ export default class App extends Component {
                 {this.state.isAttendeeBoxDisplay ? <div>
                   <ul className="userList">
                     { attendees.sort(this.sortPlayers).map(this.renderUser) }
-                    {attendees.length ? null : <div className="noResultsBox"><p className="noResultsMessage">No Results</p></div> }
+                    {attendees.length ? null : <h2 className="emptyBoxText">No Results</h2>}
                   </ul>
-                  <CSVLink className="csvButton" data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export list of completed attendees</CSVLink>
+                  <CSVLink className="csvButton" target='_self' data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export list of completed attendees</CSVLink>
                 </div> : null}
               </div>
             </div>
@@ -256,7 +257,10 @@ export default class App extends Component {
   getCustomAttendeeList = () => {
     const queryText = this.state.attendeeSearchValue.toLowerCase()
     if (queryText.length > 0) {
-      const queryResult = this.state.attendees.filter(s => s.firstName.toLowerCase().includes(queryText) || s.lastName.toLowerCase().includes(queryText))
+      const queryResult = this.state.attendees.filter(s => { 
+        const name = s.firstName.toLowerCase() + " " + s.lastName.toLowerCase()
+        return name.includes(queryText)
+      })
       return queryResult
     }
     else {
@@ -280,7 +284,7 @@ export default class App extends Component {
   }
 
   setCatNumb = (id, value) => {
-    categoriesRef().child(id).child('scansRequired').set(+value)
+    categoriesRef().child(id).child('scansRequired').set(+value || 0)
   }
 
   setCodeName = (id, value) => {

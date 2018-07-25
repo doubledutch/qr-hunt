@@ -85,7 +85,7 @@ export default class HomeView extends Component {
   }
 
   render() {
-    const {codes, isAdmin, onScan, scans, showScanner, title, doneDismissed, welcomeDismissed} = this.state
+    const {codes, isAdmin, scans, showScanner, title, doneDismissed, welcomeDismissed} = this.state
     const categories = this.state.categories.filter(c => c.name)
     const codesByCategory = codes.reduce((cbc, code) => {
       if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
@@ -98,7 +98,7 @@ export default class HomeView extends Component {
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
-    const categoriesToShow = categories.filter(cat => cat.scansRequired)
+    const categoriesToShow = categories.filter(cat => cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory) && cat.scansRequired > 0)
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
@@ -107,7 +107,7 @@ export default class HomeView extends Component {
           : !welcomeDismissed && !anyScans
             ? this.renderWelcome()
             : showScanner
-              ? <Scanner onScan={onScan} onCancel={this.cancelScan} />
+              ? <Scanner onScan={this.onScan} onCancel={this.cancelScan} />
               : <View style={s.container}>
                   <ScrollView style={s.scroll}>
                     { categoriesToShow.map(cat => (
@@ -115,7 +115,6 @@ export default class HomeView extends Component {
                           <View style={{flexDirection: "row"}}>
                             <Text style={s.category}>{cat.name}</Text>
                             <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
-
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
@@ -132,7 +131,7 @@ export default class HomeView extends Component {
                     { categoriesToShow.length ? null : <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> }
                   </ScrollView>
                   <View style={s.buttons}>
-                    { categoriesToShow.length ? <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> : null }
+                    { (categoriesToShow.length && !isDone) ? <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> : null }
                     { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
                   </View>
                 </View>
@@ -140,6 +139,12 @@ export default class HomeView extends Component {
         { isDone && anyScans && !doneDismissed && this.renderDone() }
       </View>
     )
+  }
+
+  findTotalCatCodes = (cat, codesByCategory) => {
+    //when you convert these objects to keys it includes the count object which needs to be filtered out in determining accurate amount of codes
+    const number = codesByCategory[cat.id] ? Object.keys(codesByCategory[cat.id]).length - 1 : 0
+    return number
   }
 
   renderScanPlaceholders(numScanned, numRequired) {
@@ -179,34 +184,41 @@ export default class HomeView extends Component {
 
   scanCode = () => this.setState({
     showScanner: true,
-    onScan: code => {
-      const hash = md5(code.data)
-      const namedCode = this.state.codes.find(c => c.id === hash)
-      if (namedCode) {
-        if (this.state.scans[hash]) {
-          Alert.alert('Already scanned', 'It looks like you already scanned this QR code!', [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
-          { cancelable: false })
-        } else {
-          scansRef().child(hash).set(true)
-          Alert.alert('Congrats!', `You scanned ${namedCode.name}`, [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
-          { cancelable: false })
-        }
-      } else {
-        Alert.alert('Oops!', 'It looks like this QR code is not part of the challenge!', [{ text: 'OK', onPress: () => this.setState({showScanner: false, onScan: null}) }],
-        { cancelable: false })
-      }
-    }
+    isAdminScan: false
   })
   
   addCode = () => this.setState({
     showScanner: true,
-    onScan: code => {
-      codesRef().child(md5(code.data)).set({value: code.data, name: 'Added @ ' + new Date().toString()})
-      this.setState({showScanner: false, onScan: null})
-    }
+    isAdminScan: true
   })
 
-  cancelScan = () => this.setState({showScanner: false, onScan: null})
+  onScan = (code) => this.state.isAdminScan ? this.onCodeAdded(code) : this.onCodeScanned(code)
+
+  onCodeAdded = code => {
+    codesRef().child(md5(code.data)).set({value: code.data, name: 'Added @ ' + new Date().toString()})
+    this.setState({showScanner: false})
+  }
+
+  onCodeScanned = code => {
+    const hash = md5(code.data)
+    const namedCode = this.state.codes.find(c => c.id === hash)
+    if (namedCode) {
+      if (this.state.scans[hash]) {
+        this.dismissScannerWithAlert('Already scanned', 'It looks like you already scanned this QR code!')
+      } else {
+        scansRef().child(hash).set(true)
+        this.dismissScannerWithAlert('Congrats!', `You scanned ${namedCode.name}`)
+      }
+    } else {
+      this.dismissScannerWithAlert('Oops!', 'It looks like this QR code is not part of the challenge!')
+    }
+  }
+
+  dismissScannerWithAlert = (title, message) => {
+    Alert.alert(title, message, [{ text: 'OK', onPress: () => this.setState({showScanner: false}) }], { cancelable: false })
+  }
+
+  cancelScan = () => this.setState({showScanner: false})
 
   dismissWelcome = () => this.setState({welcomeDismissed: true})
   dismissDone = () => this.setState({doneDismissed: true})
