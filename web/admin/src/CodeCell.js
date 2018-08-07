@@ -29,7 +29,7 @@ export default class CodeCell extends Component {
   }
 
   componentDidMount() {
-    this.setState({catName: this.props.code.name, codeCat: this.props.code.categoryId})
+    this.setState({codeName: this.props.code.name, codeCat: this.props.code.categoryId})
   }
 
   letEdit = () => {
