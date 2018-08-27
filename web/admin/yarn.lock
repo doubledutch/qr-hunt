@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@doubledutch/admin-client@^1.2.0":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@doubledutch/admin-client/-/admin-client-1.2.5.tgz#a69d08ea50617653174156748f83e36193e5a141"
+"@doubledutch/admin-client@^1.5.4":
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/@doubledutch/admin-client/-/admin-client-1.5.4.tgz#0495d5bebdec4912bb2b01a7e48acc2499dd0af9"
   dependencies:
     babel-runtime "^6.26.0"
 
