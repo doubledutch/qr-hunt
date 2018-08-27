@@ -16,13 +16,13 @@
 
 import React, { Component } from 'react'
 import {CSVLink} from 'react-csv'
+import client from '@doubledutch/admin-client'
 import '@doubledutch/react-components/lib/base.css'
 import './App.css'
-import {AttendeeSelector, Avatar, TextInput} from '@doubledutch/react-components'
 import CategoryCell from "./CategoryCell"
 import CodeCell from "./CodeCell"
 import SearchBar from "./SearchBar"
-import client from '@doubledutch/admin-client'
+import {AttendeeSelector, Avatar, TextInput} from '@doubledutch/react-components'
 import FirebaseConnector from '@doubledutch/firebase-connector'
 const fbc = FirebaseConnector(client, 'qrhunt')
 
@@ -206,7 +206,8 @@ export default class App extends Component {
                 </div>
                 { this.state.isAdminBoxDisplay ? <div>
                   <p className="boxDescription">To add a QR code, first designate yourself or another organizer as an admin. Next, open up the QR Hunt section in the mobile app and scan any QR code. The QR code will then be added to the section below where it can be assigned a name and category.</p>
-                  <AttendeeSelector client={client}
+                  <AttendeeSelector 
+                    client={client}
                     searchTitle="Select Admins"
                     selectedTitle="Current Admins"
                     onSelected={this.onAdminSelected}
