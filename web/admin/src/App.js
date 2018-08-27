@@ -300,7 +300,7 @@ export default class App extends Component {
     const { id, firstName, lastName } = user
     return (
       <li key={id} className={this.isDone(user.id) ? 'is-done' : 'not-done'}>
-        <Avatar user={user} size={30} />
+        <div><Avatar user={user} size={30}/></div>
         <span className="name"> {firstName} {lastName}</span>
         { this.state.categories.map(cat => <span className="catScans" key={cat.id}>
             {cat.name}: {this.categoryScansForUser(cat.id, user.id)}
