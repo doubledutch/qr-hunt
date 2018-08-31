@@ -86,10 +86,12 @@ export default class CategoryCell extends Component {
 
   renderNeedsMoreCatCodes = () => {
     const total = this.props.codes.filter(code => code.categoryId === this.props.category.id)
-    if (total.length !== this.props.category.scansRequired && this.props.category.scansRequired) {
+    if (this.props.category.scansRequired && total.length < this.props.category.scansRequired) {
       return <img data-tip="More QR codes are required than are available. <br /> The category will remain hidden for attendees <br /> until there are enough codes to complete the category." className="box-icon" src={AlertIcon} alt="alert"/>
     }
-    else { return null }
+    else {
+      return null
+    }
   }
 
   renderSaveButton = () => {

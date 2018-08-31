@@ -94,7 +94,7 @@ export default class HomeView extends Component {
       if (isScanned) cbc[code.categoryId].count++
       return cbc
     }, {})
-    let hasScannedRequiredInAllCategories = true
+
     const isDone = scans && !categories.find(cat =>
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
@@ -114,7 +114,7 @@ export default class HomeView extends Component {
                         <View key={cat.id} style={s.categoryContainer}>
                           <View style={{flexDirection: "row"}}>
                             <Text style={s.category}>{cat.name}</Text>
-                            <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete </Text>
+                            <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete</Text>
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
@@ -124,7 +124,7 @@ export default class HomeView extends Component {
                               <Text style={s.codeTitle}>{code.name}</Text>
                             </View>)
                           )}
-                          {this.renderScanPlaceholders((codesByCategory[cat.id] || {}).count, cat.scansRequired)}
+                          {this.renderScanPlaceholders(codesByCategory[cat.id], cat.scansRequired)}
                         </View>
                       ))
                     }
@@ -147,15 +147,19 @@ export default class HomeView extends Component {
     return number
   }
 
-  renderScanPlaceholders(numScanned, numRequired) {
-    const placeholders = []
-    for (let i = numScanned || 0; i < numRequired; i++) {
-      placeholders.push(<View key={i} style={s.scan}>
-        <View style={[s.circle, s.placeholderCircle]} />
-        <Text style={s.placeholderText}>Scan #{i+1}</Text>
-      </View>)
+  renderScanPlaceholders(codesInCategory, numRequired) {
+    const numScanned = codesInCategory.count || 0
+    let remainingNames = Object.values(codesInCategory).filter(x => x && x.name && !x.isScanned).map(x => x.name)
+    if (remainingNames.length > numRequired - numScanned) {
+      remainingNames = range(numScanned + 1, numRequired + 1).map(num => `Scan #${num}`)
     }
-    return placeholders
+
+    return remainingNames.map((name, i) => (
+      <View key={i} style={s.scan}>
+        <View style={[s.circle, s.placeholderCircle]} />
+        <Text style={s.placeholderText}>{name}</Text>
+      </View>
+    ))
   }
 
   renderWelcome() {
@@ -226,6 +230,14 @@ export default class HomeView extends Component {
 
 function sortByName(a, b) {
   return (a.name || '').toLowerCase() < (b.name || '').toLowerCase() ? -1 : 1
+}
+
+function range(start, end) {
+  const arr = []
+  for (let i = start; i < end; ++i) {
+    arr.push(i)
+  }
+  return arr
 }
 
 const circleSize = 24
