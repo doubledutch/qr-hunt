@@ -25,6 +25,7 @@ export default class CategoryCell extends Component {
     this.state = {
       isEditing : false,
       catName: "",
+      catDes: "",
       catValue: 0,
       isError: false
     }
@@ -45,21 +46,23 @@ export default class CategoryCell extends Component {
     else {
       this.props.setCatName(this.props.category.id, this.state.catName.trim())
       this.props.setCatNumb(this.props.category.id, this.state.catValue)
+      this.props.setCatDes(this.props.category.id, this.state.catDes.trim())
       this.props.setCurrentEdit("")
     }
   }
 
   cancelEdits = () => {
-    this.setState({isEditing: false, catName: this.props.category.name, catValue: this.props.category.scansRequired, isError: false})
+    this.setState({isEditing: false, catName: this.props.category.name, CatDes: this.props.category.description, catValue: this.props.category.scansRequired, isError: false})
     this.props.setCurrentEdit("")
   }
 
   render() {
-    const { id, name, scansRequired } = this.props.category
+    const { id, name, scansRequired, description } = this.props.category
     if (this.props.category.id !== this.props.activeEdit) {
       return (
         <li key={id}>
           <p className="cellName">{name}</p>&nbsp;
+          <p className="cellName">{description}</p>&nbsp;
           <p>{scansRequired || 0} {scansRequired === 1 ? "scan" : "scans"} required</p>
           {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
@@ -73,6 +76,7 @@ export default class CategoryCell extends Component {
       return (
         <li key={id}>
           <input className="catNameText" type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
+          <input className="catNameText" type="text" value={this.state.catDes} placeholder="Description (Optional)" onChange={(e) => this.setState({catDes: e.target.value, isError: false})} />&nbsp;
           <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
           {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
