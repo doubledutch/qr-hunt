@@ -141,10 +141,10 @@ export default class App extends Component {
     if (this.state.isCategoryBoxDisplay) {
       return (
         <div>
-          <div className="titleBar"><p>Name</p><p>Scans Required</p></div>
+          <div className="titleBar"><p>Name</p><p>Description</p><p>Scans Required</p></div>
           <ul className="categoryList">
             { categories.map(category => {
-              return <CategoryCell categories={categories} codes={this.state.codes} key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
+              return <CategoryCell categories={categories} codes={this.state.codes} key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatDes={this.setCatDes} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/>
             } 
             )}
             {categories.length ? null : <h2 className="emptyBoxText">No Current Categories</h2>}              
@@ -282,6 +282,10 @@ export default class App extends Component {
 
   setCatName = (id, value) => {
     categoriesRef().child(id).child('name').set(value)
+  }
+
+  setCatDes= (id, value) => {
+    categoriesRef().child(id).child('description').set(value)
   }
 
   setCatNumb = (id, value) => {

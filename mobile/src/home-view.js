@@ -112,9 +112,12 @@ export default class HomeView extends Component {
                   <ScrollView style={s.scroll}>
                     { categoriesToShow.map(cat => (
                         <View key={cat.id} style={s.categoryContainer}>
-                          <View style={{flexDirection: "row"}}>
-                            <Text style={s.category}>{cat.name}</Text>
-                            <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete</Text>
+                          <View style={s.categoryHeader}>
+                            <View style={{flexDirection: "row"}}>
+                              <Text style={s.category}>{cat.name}</Text>
+                              <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete</Text>
+                            </View>
+                            {cat.description && <Text style={s.categoryDes}>{cat.description}</Text>}
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
@@ -249,23 +252,30 @@ const s = ReactNative.StyleSheet.create({
     flex: 1,
     backgroundColor: '#EFEFEF',
   },
+  categoryHeader: {
+    marginTop: 15,
+    marginBottom: 10
+  },
   scroll: {
     flex: 1,
     paddingVertical: 15
   },
   category: {
+    fontSize: 16,
+    textAlign: 'left',
+    color: charcoal,
+    flex: 1,
+    fontWeight: "bold"
+  },
+  categoryDes: {
     fontSize: 14,
     textAlign: 'left',
-    marginBottom: 10,
-    marginTop: 15,
     color: charcoal,
-    flex: 1
+    flex: 1,
   },
   categoryRight: {
     fontSize: 14,
     textAlign: 'right',
-    marginBottom: 10,
-    marginTop: 15,
     color: charcoal,
     flex: 1
   },
