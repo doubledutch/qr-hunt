@@ -160,7 +160,7 @@ export default class HomeView extends Component {
     return remainingNames.map((name, i) => (
       <View key={i} style={s.scan}>
         <View style={[s.circle, s.placeholderCircle]} />
-        <Text style={s.placeholderText}>{name}</Text>
+        <Text style={s.codeTitle}>{name}</Text>
       </View>
     ))
   }
@@ -301,7 +301,9 @@ const s = ReactNative.StyleSheet.create({
   },
   codeTitle: {
     fontSize: 18,
-    color: charcoal
+    color: charcoal,
+    flex: 1,
+    flexWrap: "wrap",
   },
   circle: {
     height: circleSize,
@@ -318,10 +320,12 @@ const s = ReactNative.StyleSheet.create({
     borderColor: client.primaryColor,
     borderWidth: 2,
   },
-  placeholderText: {
-    color: gray,
-    fontSize: 18
-  },
+  // placeholderText: {
+  //   color: gray,
+  //   fontSize: 18,
+  //   flex: 1,
+  //   flexWrap: "wrap",
+  // },
   buttons: {
     flexDirection: 'row',
   },
