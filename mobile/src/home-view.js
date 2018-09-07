@@ -112,7 +112,7 @@ export default class HomeView extends Component {
                   <ScrollView style={s.scroll}>
                     { categoriesToShow.map(cat => (
                         <View key={cat.id} style={s.categoryContainer}>
-                          <View style={{marginTop: 15, marginBottom: 10}}>
+                          <View style={s.categoryHeader}>
                             <View style={{flexDirection: "row"}}>
                               <Text style={s.category}>{cat.name}</Text>
                               <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete</Text>
@@ -251,6 +251,10 @@ const s = ReactNative.StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EFEFEF',
+  },
+  categoryHeader: {
+    marginTop: 15,
+    marginBottom: 10
   },
   scroll: {
     flex: 1,

@@ -52,7 +52,7 @@ export default class CategoryCell extends Component {
   }
 
   cancelEdits = () => {
-    this.setState({isEditing: false, catName: this.props.category.name, CatDes: this.props.category.description, catValue: this.props.category.scansRequired, isError: false})
+    this.setState({isEditing: false, catName: this.props.category.name, catDes: this.props.category.description, catValue: this.props.category.scansRequired, isError: false})
     this.props.setCurrentEdit("")
   }
 
