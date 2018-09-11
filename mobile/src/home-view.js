@@ -99,6 +99,7 @@ export default class HomeView extends Component {
       (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
     const categoriesToShow = categories.filter(cat => cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory) && cat.scansRequired > 0)
+    const category = cat.description ? cat.description : ""
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
@@ -117,7 +118,7 @@ export default class HomeView extends Component {
                               <Text style={s.category}>{cat.name}</Text>
                               <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete</Text>
                             </View>
-                            {cat.description && <Text style={s.categoryDes}>{cat.description}</Text>}
+                            {category.length > 0 && <Text style={s.categoryDes}>{cat.description}</Text>}
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
