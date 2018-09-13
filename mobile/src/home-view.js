@@ -117,7 +117,7 @@ export default class HomeView extends Component {
                               <Text style={s.category}>{cat.name}</Text>
                               <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete</Text>
                             </View>
-                            {cat.description && <Text style={s.categoryDes}>{cat.description}</Text>}
+                            {cat.description ? <Text style={s.categoryDes}>{cat.description}</Text> : null}
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
@@ -160,7 +160,7 @@ export default class HomeView extends Component {
     return remainingNames.map((name, i) => (
       <View key={i} style={s.scan}>
         <View style={[s.circle, s.placeholderCircle]} />
-        <Text style={s.placeholderText}>{name}</Text>
+        <Text style={s.codeTitle}>{name}</Text>
       </View>
     ))
   }
@@ -301,7 +301,9 @@ const s = ReactNative.StyleSheet.create({
   },
   codeTitle: {
     fontSize: 18,
-    color: charcoal
+    color: charcoal,
+    flex: 1,
+    flexWrap: "wrap",
   },
   circle: {
     height: circleSize,
@@ -317,10 +319,6 @@ const s = ReactNative.StyleSheet.create({
   placeholderCircle: {
     borderColor: client.primaryColor,
     borderWidth: 2,
-  },
-  placeholderText: {
-    color: gray,
-    fontSize: 18
   },
   buttons: {
     flexDirection: 'row',
