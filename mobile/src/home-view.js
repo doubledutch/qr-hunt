@@ -320,12 +320,6 @@ const s = ReactNative.StyleSheet.create({
     borderColor: client.primaryColor,
     borderWidth: 2,
   },
-  // placeholderText: {
-  //   color: gray,
-  //   fontSize: 18,
-  //   flex: 1,
-  //   flexWrap: "wrap",
-  // },
   buttons: {
     flexDirection: 'row',
   },
