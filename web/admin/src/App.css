@@ -204,6 +204,10 @@ ul li .name {
   padding: 5px;
   margin-top: 2px;
   font-size: 14px;
+  width: 150px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 
 textarea {
