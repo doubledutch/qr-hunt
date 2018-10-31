@@ -374,6 +374,16 @@ export default class App extends Component {
     if (window.confirm(`Are you sure you want to remove the QR code '${code.name}'?`)) {
       codesRef().child(code.id).remove()
     }
+    this.state.attendees.forEach(attendee => {
+    if (this.state.allCodesByUser[attendee.id]){
+      let scans = this.state.allCodesByUser[attendee.id].scans
+      if (scans){
+        if (scans[code.id]){
+          fbc.database.private.adminableUsersRef(attendee.id).child("scans").child(code.id).remove()
+        }
+      }
+      }
+    })
   }
 
   isAdmin(id) {
