@@ -241,7 +241,7 @@ export default class App extends Component {
                     {attendees.length ? null : <h2 className="emptyBoxText">No Results</h2>}
                   </ul>
                   <div className="csvLinkBox">
-                    <button className="csvButton" onClick={this.parseDataForExport}>Export List of Attendees</button>
+                    <button className="csvButton" onClick={this.formatDataForExport}>Export List of Attendees</button>
                     {this.state.exporting ? <CSVDownload data={this.state.exportList} target="_blank" /> : null}
                   </div>
                 </div> : null}
@@ -253,15 +253,14 @@ export default class App extends Component {
     )
   }
 
-  parseDataForExport = () => {
+  formatDataForExport = () => {
     let parsedData = []
     const completed = this.state.attendees.filter(a => this.isDone(a.id))
     this.state.attendees.forEach(attendee => {
       if (this.state.allCodesByUser[attendee.id]) {
         if (this.state.allCodesByUser[attendee.id].scans){
           let gameWinningUser = completed.find(user => user.id === attendee.id)
-          let gameWinner = ""
-          gameWinningUser ? gameWinner = "True" : null
+          const gameWinner = gameWinningUser ? "True" : null
           let parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company, Game_Winner: gameWinner}
           let scans = Object.keys(this.state.allCodesByUser[attendee.id].scans)
           scans.forEach(scan => {
