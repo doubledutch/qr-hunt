@@ -244,7 +244,6 @@ export default class App extends Component {
                     <button className="csvButton" onClick={this.parseDataForExport}>Export List of Attendees</button>
                     {this.state.exporting ? <CSVDownload data={this.state.exportList} target="_blank" /> : null}
                   </div>
-                  {/* <CSVLink className="csvButton" target='_self' data={this.state.exportList} filename={"attendees.csv"}>Export list of completed attendees</CSVLink> */}
                 </div> : null}
               </div>
             </div>
@@ -257,16 +256,8 @@ export default class App extends Component {
   parseDataForExport = () => {
     let parsedData = []
     const completed = this.state.attendees.filter(a => this.isDone(a.id))
-    // completed.forEach(attendee => {
-    //   let parsedUser = {firstName: attendee.firstName, lastName: attendee.lastName, email: attendee.email, game_winner: "Yes"}
-    //   parsedData.push(parsedUser)
-    // })
-    // parsedData = parsedData.concat(completed)
-    // console.log(parsedData)
     this.state.attendees.forEach(attendee => {
-      console.log(this.state.allCodesByUser)
       if (this.state.allCodesByUser[attendee.id]) {
-        console.log(this.state.allCodesByUser[attendee.id])
         if (this.state.allCodesByUser[attendee.id].scans){
           let gameWinningUser = completed.find(user => user.id === attendee.id)
           let gameWinner = ""
@@ -276,19 +267,13 @@ export default class App extends Component {
           scans.forEach(scan => {
             const originalData = this.state.codes.find(code => code.id === scan)
             if (originalData) {
-              // const userData
               parsedUser[originalData.name] = "Scanned"
-              // console.log(parsedUser)
               parsedData.push(parsedUser)
             }
           })
         }
       }
     })
-    // console.log(this.state.allCodesByUser)
-    // console.log(this.state.scansPerUserPerCategory)
-    // console.log(this.state.codes)
-    // console.log(parsedData)
     this.setState({exporting: true, exportList: parsedData})
     setTimeout(()=>this.setState({exporting: false}), 3000)
   }
