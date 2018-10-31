@@ -70,7 +70,7 @@ export default class CodeCell extends Component {
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={this.state.codeName} placeholder="QR Code Name" onChange={e => this.setState({codeName: e.target.value, isError: false})} />&nbsp;
+          <input className="catNameText" autoFocus type="text" value={this.state.codeName} placeholder="QR Code Name" onChange={e => this.setState({codeName: e.target.value, isError: false})} />&nbsp;
           <select value={this.state.codeCat} onChange={e => this.setState({codeCat: e.target.value})}>
             <option>--Select category--</option>
             { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }

@@ -75,7 +75,7 @@ export default class CategoryCell extends Component {
     else {
       return (
         <li key={id}>
-          <input className="catNameText" type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
+          <input className="catNameText" autoFocus type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
           <input className="catNameText" type="text" value={this.state.catDes} placeholder="Description (Optional)" onChange={(e) => this.setState({catDes: e.target.value, isError: false})} />&nbsp;
           <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
           {this.renderNeedsMoreCatCodes()}
