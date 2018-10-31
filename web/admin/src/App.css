@@ -66,8 +66,16 @@ html, body, select{
   float: right;
   text-decoration: none;
   border: 1px solid #73aaf3;
+  color: #73aaf3;
   border-radius: 5px;
   padding: 10px;
+}
+
+.csvLinkBox{
+  flex-direction: row;
+  align-items: flex-end; 
+  justify-content: flex-end;
+  display: flex
 }
 
 .displayButton {

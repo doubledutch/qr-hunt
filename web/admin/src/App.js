@@ -15,7 +15,7 @@
  */
 
 import React, { Component } from 'react'
-import {CSVLink} from 'react-csv'
+import {CSVLink, CSVDownload} from 'react-csv'
 import client from '@doubledutch/admin-client'
 import '@doubledutch/react-components/lib/base.css'
 import './App.css'
@@ -45,6 +45,7 @@ export default class App extends Component {
     doneDescription: '',
     title: '',
     welcome: '',
+    allCodesByUser: {},
     scansPerUserPerCategory: {},
     isTitleBoxDisplay : true,
     isCategoryBoxDisplay: true,
@@ -53,7 +54,9 @@ export default class App extends Component {
     isAttendeeBoxDisplay: true,
     attendeeSearch: true,
     attendeeSearchValue: "",
-    activeEdit: ""
+    activeEdit: "",
+    exportList: [],
+    exporting: false
   }
 
   componentDidMount() {
@@ -80,6 +83,7 @@ export default class App extends Component {
       codesRef().on('child_removed', onChildRemoved('codes'))
 
       adminableUsersRef().on('value', data => {
+        this.setState({allCodesByUser: data.val()})
         const users = data.val() || {}
         this.setState(state => {
           const codeToCategory = state.codes.reduce((ctc, code) => { ctc[code.id] = code.categoryId; return ctc }, {})
@@ -236,7 +240,11 @@ export default class App extends Component {
                     { attendees.sort(this.sortPlayers).map(this.renderUser) }
                     {attendees.length ? null : <h2 className="emptyBoxText">No Results</h2>}
                   </ul>
-                  <CSVLink className="csvButton" target='_self' data={this.state.attendees.filter(a => this.isDone(a.id))} filename={"attendees-completed.csv"}>Export list of completed attendees</CSVLink>
+                  <div className="csvLinkBox">
+                    <button className="csvButton" onClick={this.parseDataForExport}>Export List of Attendees</button>
+                    {this.state.exporting ? <CSVDownload data={this.state.exportList} target="_blank" /> : null}
+                  </div>
+                  {/* <CSVLink className="csvButton" target='_self' data={this.state.exportList} filename={"attendees.csv"}>Export list of completed attendees</CSVLink> */}
                 </div> : null}
               </div>
             </div>
@@ -244,6 +252,45 @@ export default class App extends Component {
         }
       </div>
     )
+  }
+
+  parseDataForExport = () => {
+    let parsedData = []
+    const completed = this.state.attendees.filter(a => this.isDone(a.id))
+    // completed.forEach(attendee => {
+    //   let parsedUser = {firstName: attendee.firstName, lastName: attendee.lastName, email: attendee.email, game_winner: "Yes"}
+    //   parsedData.push(parsedUser)
+    // })
+    // parsedData = parsedData.concat(completed)
+    // console.log(parsedData)
+    this.state.attendees.forEach(attendee => {
+      console.log(this.state.allCodesByUser)
+      if (this.state.allCodesByUser[attendee.id]) {
+        console.log(this.state.allCodesByUser[attendee.id])
+        if (this.state.allCodesByUser[attendee.id].scans){
+          let gameWinningUser = completed.find(user => user.id === attendee.id)
+          let gameWinner = ""
+          gameWinningUser ? gameWinner = "True" : null
+          let parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company, Game_Winner: gameWinner}
+          let scans = Object.keys(this.state.allCodesByUser[attendee.id].scans)
+          scans.forEach(scan => {
+            const originalData = this.state.codes.find(code => code.id === scan)
+            if (originalData) {
+              // const userData
+              parsedUser[originalData.name] = "Scanned"
+              // console.log(parsedUser)
+              parsedData.push(parsedUser)
+            }
+          })
+        }
+      }
+    })
+    // console.log(this.state.allCodesByUser)
+    // console.log(this.state.scansPerUserPerCategory)
+    // console.log(this.state.codes)
+    // console.log(parsedData)
+    this.setState({exporting: true, exportList: parsedData})
+    setTimeout(()=>this.setState({exporting: false}), 3000)
   }
 
   updateList = (value) => {
