@@ -172,6 +172,10 @@ ul.userList {
   overflow-x: auto;
 }
 
+.flex {
+  flex: 1
+}
+
 .noResultsMessage {
   font-size: 18px;
 }

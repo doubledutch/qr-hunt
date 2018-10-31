@@ -341,8 +341,16 @@ export default class App extends Component {
             {cat.name}: {this.categoryScansForUser(cat.id, user.id)}
           </span>)
         }
+        <div className="flex"/>
+        <button className="dd-bordered" onClick={()=>this.deleteUserScans(user)}>Delete Scans</button>
       </li>
     )
+  }
+
+  deleteUserScans = (user) => {
+    if(window.confirm('Are you sure you want to delete the users scans?')){
+      fbc.database.private.adminableUsersRef(user.id).child("scans").remove()
+    }
   }
 
   categoryScansForUser = (categoryId, userId) => (this.state.scansPerUserPerCategory[userId] || {})[categoryId] || 0
