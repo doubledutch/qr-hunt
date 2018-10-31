@@ -262,14 +262,14 @@ export default class App extends Component {
           let gameWinningUser = completed.find(user => user.id === attendee.id)
           const gameWinner = gameWinningUser ? "True" : null
           let parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company, Game_Winner: gameWinner}
-          let scans = Object.keys(this.state.allCodesByUser[attendee.id].scans)
-          scans.forEach(scan => {
-            const originalData = this.state.codes.find(code => code.id === scan)
-            if (originalData) {
-              parsedUser[originalData.name] = "Scanned"
-              parsedData.push(parsedUser)
-            }
+          this.state.categories.forEach(cat => {
+            const totalCatScans =`Scans for ${cat.name}`
+            const completedCat = `Completed ${cat.name}`
+            const completedScans = this.categoryScansForUser(cat.id, attendee.id)
+            parsedUser[totalCatScans] = completedScans
+            parsedUser[completedCat] = completedScans >= cat.scansRequired && completedScans > 0 ? "True" : ""
           })
+          parsedData.push(parsedUser)
         }
       }
     })
