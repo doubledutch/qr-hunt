@@ -375,13 +375,13 @@ export default class App extends Component {
       codesRef().child(code.id).remove()
     }
     this.state.attendees.forEach(attendee => {
-    if (this.state.allCodesByUser[attendee.id]){
-      let scans = this.state.allCodesByUser[attendee.id].scans
-      if (scans){
-        if (scans[code.id]){
-          fbc.database.private.adminableUsersRef(attendee.id).child("scans").child(code.id).remove()
+      if (this.state.allCodesByUser[attendee.id]){
+        let scans = this.state.allCodesByUser[attendee.id].scans
+        if (scans){
+          if (scans[code.id]){
+            fbc.database.private.adminableUsersRef(attendee.id).child("scans").child(code.id).remove()
+          }
         }
-      }
       }
     })
   }

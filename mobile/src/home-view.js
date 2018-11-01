@@ -70,13 +70,12 @@ export default class HomeView extends Component {
         codesRef().on('child_changed', onChildChanged('codes', sortByName))
         codesRef().on('child_removed', onChildRemoved('codes'))  
 
-        categoriesRef().on('value', data => {
+        scansRef().on('value', data => {
+          this.setState({scans: data.val() || {}})
           setTimeout(() => {
-            this.setState({done: data.val() || {}})
-            }
-            ,500)
+            this.setState({done: true})
+          },500)
         })
-
       }
 
       fbc.database.private.adminableUserRef('adminToken').once('value', async data => {
