@@ -172,6 +172,10 @@ ul.userList {
   overflow-x: auto;
 }
 
+.flex {
+  flex: 1
+}
+
 .noResultsMessage {
   font-size: 18px;
 }
@@ -200,6 +204,10 @@ ul li .name {
   padding: 5px;
   margin-top: 2px;
   font-size: 14px;
+  width: 150px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 
 textarea {

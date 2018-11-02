@@ -45,27 +45,37 @@ export default class HomeView extends Component {
       .catch(err => console.error(err))
   }
 
-  state = {scans: null, categories: [], codes: []}
+  state = {scans: null, categories: [], codes: [], done: null}
 
   componentDidMount() {
     this.signin.then(() => {
       const wireListeners = () => {
-        scansRef().on('value', data => this.setState({scans: data.val() || {}}))
-        doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
-        welcomeRef().on('value', data => this.setState({welcome: data.val()}))
-        titleRef().on('value', data => this.setState({title: data.val()}))
 
         const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
         const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
         const onChildRemoved = stateProp => data => this.setState(state => ({[stateProp]: state[stateProp].filter(c => c.id !== data.key)}))
-  
+
         categoriesRef().on('child_added', onChildAdded('categories', sortByName))
         categoriesRef().on('child_changed', onChildChanged('categories', sortByName))
         categoriesRef().on('child_removed', onChildRemoved('categories'))
-  
+
+
+        doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
+        welcomeRef().on('value', data => this.setState({welcome: data.val()}))
+        titleRef().on('value', data => this.setState({title: data.val()}))
+
+        scansRef().on('value', data => {this.setState({scans: data.val() || {}})})
+
         codesRef().on('child_added', onChildAdded('codes', sortByName))
         codesRef().on('child_changed', onChildChanged('codes', sortByName))
         codesRef().on('child_removed', onChildRemoved('codes'))  
+
+        scansRef().on('value', data => {
+          this.setState({scans: data.val() || {}})
+          setTimeout(() => {
+            this.setState({done: true})
+          },500)
+        })
       }
 
       fbc.database.private.adminableUserRef('adminToken').once('value', async data => {
@@ -85,7 +95,7 @@ export default class HomeView extends Component {
   }
 
   render() {
-    const {codes, isAdmin, scans, showScanner, title, doneDismissed, welcomeDismissed} = this.state
+    const {codes, isAdmin, scans, showScanner, title, doneDismissed, welcomeDismissed, done} = this.state
     const categories = this.state.categories.filter(c => c.name)
     const codesByCategory = codes.reduce((cbc, code) => {
       if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
@@ -95,14 +105,14 @@ export default class HomeView extends Component {
       return cbc
     }, {})
 
-    const isDone = scans && !categories.find(cat =>
-      (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const anyScans = !!scans && !!Object.keys(scans).length
+    const isDone = anyScans && categories.length > 0 && !categories.find(cat =>
+      (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
     const categoriesToShow = categories.filter(cat => cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory) && cat.scansRequired > 0)
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
-        { !scans
+        { scans === null && done === null
           ? <Text>Loading...</Text>
           : !welcomeDismissed && !anyScans
             ? this.renderWelcome()
@@ -131,7 +141,7 @@ export default class HomeView extends Component {
                         </View>
                       ))
                     }
-                    { categoriesToShow.length ? null : <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> }
+                    { categoriesToShow.length === 0 && scans !== null && done !== null ? <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> : null }
                   </ScrollView>
                   <View style={s.buttons}>
                     { (categoriesToShow.length > 0 && !isDone) && <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> }
