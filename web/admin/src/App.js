@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import React, { Component } from 'react'
-import {CSVLink, CSVDownload} from 'react-csv'
+import React, { PureComponent } from 'react'
+import {CSVDownload} from 'react-csv'
 import client from '@doubledutch/admin-client'
 import '@doubledutch/react-components/lib/base.css'
 import './App.css'
@@ -23,19 +23,16 @@ import CategoryCell from "./CategoryCell"
 import CodeCell from "./CodeCell"
 import SearchBar from "./SearchBar"
 import {AttendeeSelector, Avatar, TextInput} from '@doubledutch/react-components'
-import FirebaseConnector from '@doubledutch/firebase-connector'
-const fbc = FirebaseConnector(client, 'qrhunt')
+import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 
-fbc.initializeAppWithSimpleBackend()
-
-const adminableUsersRef = () => fbc.database.private.adminableUsersRef()
-const categoriesRef = () => fbc.database.public.adminRef('categories')
-const codesRef = () => fbc.database.public.adminRef('codes')
-const doneDescriptionRef = () => fbc.database.public.adminRef('doneDescription')
-const welcomeRef = () => fbc.database.public.adminRef('welcome')
-const titleRef = () => fbc.database.public.adminRef('title')
-
-export default class App extends Component {
+class App extends PureComponent {
+  adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
+  categoriesRef = () => this.props.fbc.database.public.adminRef('categories')
+  codesRef = () => this.props.fbc.database.public.adminRef('codes')
+  doneDescriptionRef = () => this.props.fbc.database.public.adminRef('doneDescription')
+  welcomeRef = () => this.props.fbc.database.public.adminRef('welcome')
+  titleRef = () => this.props.fbc.database.public.adminRef('title')
+  
   state = {
     attendees: [],
     updatedList: [],
@@ -62,29 +59,29 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    fbc.signinAdmin()
-    .then(user => {
-      client.getUsers().then(attendees => {
+    this.props.fbc.signinAdmin()
+    .then(() => {
+      client.getAttendees().then(attendees => {
         this.setState({attendees})
       })
 
-      doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
-      welcomeRef().on('value', data => this.setState({welcome: data.val()}))
-      titleRef().on('value', data => this.setState({title: data.val()}))
+      this.doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
+      this.welcomeRef().on('value', data => this.setState({welcome: data.val()}))
+      this.titleRef().on('value', data => this.setState({title: data.val()}))
 
       const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
       const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
       const onChildRemoved = stateProp => data => this.setState(state => ({[stateProp]: state[stateProp].filter(c => c.id !== data.key)}))
 
-      categoriesRef().on('child_added', onChildAdded('categories', sortByName))
-      categoriesRef().on('child_changed', onChildChanged('categories', sortByName))
-      categoriesRef().on('child_removed', onChildRemoved('categories'))
+      this.categoriesRef().on('child_added', onChildAdded('categories', sortByName))
+      this.categoriesRef().on('child_changed', onChildChanged('categories', sortByName))
+      this.categoriesRef().on('child_removed', onChildRemoved('categories'))
 
-      codesRef().on('child_added', onChildAdded('codes', sortByName))
-      codesRef().on('child_changed', onChildChanged('codes', sortByName))
-      codesRef().on('child_removed', onChildRemoved('codes'))
+      this.codesRef().on('child_added', onChildAdded('codes', sortByName))
+      this.codesRef().on('child_changed', onChildChanged('codes', sortByName))
+      this.codesRef().on('child_removed', onChildRemoved('codes'))
 
-      adminableUsersRef().on('value', data => {
+      this.adminableUsersRef().on('value', data => {
         this.setState({allCodesByUser: data.val()})
         const users = data.val() || {}
         this.setState(state => {
@@ -116,7 +113,7 @@ export default class App extends Component {
           <p className="boxDescription">With QR Hunt, attendees are incentivized to scan QR codes and complete the scavenger hunt. The QR codes can be grouped into various categories and once an attendee has completed the QR Hunt, a custom congratulatory note is displayed.</p>
           <TextInput label="Title"
                      value={title}
-                     onChange={e => titleRef().set(e.target.value)}
+                     onChange={e => this.titleRef().set(e.target.value)}
                      placeholder="Ex. QR Challenge"
                      maxLength={50}
                      className="titleText" />
@@ -125,7 +122,7 @@ export default class App extends Component {
               <TextInput multiline label="Game Instructions for Attendees"
                          placeholder="Ex. Scan 3 codes in each category and be entered into the raffle!"
                          value={welcome}
-                         onChange={e => welcomeRef().set(e.target.value)}
+                         onChange={e => this.welcomeRef().set(e.target.value)}
                          maxLength={250}
                          className="welcomeText" />
             </div>
@@ -133,7 +130,7 @@ export default class App extends Component {
               <TextInput multiline label="Message to Attendee When Complete"
                          placeholder="Ex. You're now entered into the raffle!"
                          value={doneDescription}
-                         onChange={e => doneDescriptionRef().set(e.target.value)}
+                         onChange={e => this.doneDescriptionRef().set(e.target.value)}
                          maxLength={250}
                          className="completeText" />
             </div>
@@ -326,34 +323,34 @@ export default class App extends Component {
   }
 
   onAdminSelected = attendee => {
-    const tokenRef = fbc.database.private.adminableUsersRef(attendee.id).child('adminToken')
+    const tokenRef = this.props.fbc.database.private.adminableUsersRef(attendee.id).child('adminToken')
     this.setState()
-    fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
+    this.props.fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
   }
 
   onAdminDeselected = attendee => {
-    const tokenRef = fbc.database.private.adminableUsersRef(attendee.id).child('adminToken')
+    const tokenRef = this.props.fbc.database.private.adminableUsersRef(attendee.id).child('adminToken')
     tokenRef.remove()
   }
 
   setCatName = (id, value) => {
-    categoriesRef().child(id).child('name').set(value)
+    this.categoriesRef().child(id).child('name').set(value)
   }
 
   setCatDes= (id, value) => {
-    categoriesRef().child(id).child('description').set(value)
+    this.categoriesRef().child(id).child('description').set(value)
   }
 
   setCatNumb = (id, value) => {
-    categoriesRef().child(id).child('scansRequired').set(+value || 0)
+    this.categoriesRef().child(id).child('scansRequired').set(+value || 0)
   }
 
   setCodeName = (id, value) => {
-    codesRef().child(id).child('name').set(value)
+    this.codesRef().child(id).child('name').set(value)
   }
 
   setCodeNumb = (id, value) => {
-    codesRef().child(id).child('categoryId').set(value)
+    this.codesRef().child(id).child('categoryId').set(value)
   }
 
   renderUser = user => {
@@ -374,7 +371,7 @@ export default class App extends Component {
 
   deleteUserScans = (user) => {
     if(window.confirm('Are you sure you want to delete the users scans?')){
-      fbc.database.private.adminableUsersRef(user.id).child("scans").remove()
+      this.props.fbc.database.private.adminableUsersRef(user.id).child("scans").remove()
     }
   }
 
@@ -385,26 +382,26 @@ export default class App extends Component {
     const activeCat = this.state.categories.find(cat => cat.id === this.state.activeEdit)
 
     if (!activeCat) {
-      categoriesRef().push({name: 'New QR Code Category'})
+      this.categoriesRef().push({name: 'New QR Code Category'})
     }
   }
 
   removeCategory = category => () => {
     if (window.confirm(`Are you sure you want to remove the QR code category '${category.name}'?`)) {
-      categoriesRef().child(category.id).remove()
+      this.categoriesRef().child(category.id).remove()
     }
   }
 
   removeCode = code => () => {
     if (window.confirm(`Are you sure you want to remove the QR code '${code.name}'?`)) {
-      codesRef().child(code.id).remove()
+      this.codesRef().child(code.id).remove()
     }
     this.state.attendees.forEach(attendee => {
       if (this.state.allCodesByUser[attendee.id]){
         let scans = this.state.allCodesByUser[attendee.id].scans
         if (scans){
           if (scans[code.id]){
-            fbc.database.private.adminableUsersRef(attendee.id).child("scans").child(code.id).remove()
+            this.props.fbc.database.private.adminableUsersRef(attendee.id).child("scans").child(code.id).remove()
           }
         }
       }
@@ -416,10 +413,10 @@ export default class App extends Component {
   }
 
   setAdmin(userId, isAdmin) {
-    const tokenRef = fbc.database.private.adminableUsersRef(userId).child('adminToken')
+    const tokenRef = this.props.fbc.database.private.adminableUsersRef(userId).child('adminToken')
     if (isAdmin) {
       this.setState()
-      fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
+      this.props.fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
     } else {
       tokenRef.remove()
     }
@@ -442,6 +439,8 @@ export default class App extends Component {
       return aLast < bLast ? -1 : 1
   }  
 }
+
+export default provideFirebaseConnectorToReactComponent(client, 'qrhunt', (props, fbc) => <App {...props} fbc={fbc} />, PureComponent)
 
 function sortByName(a, b) {
   return (a.name || '').toLowerCase() < (b.name || '').toLowerCase() ? -1 : 1

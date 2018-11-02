@@ -14,33 +14,28 @@
  * limitations under the License.
  */
 
-import React, { Component } from 'react'
-import ReactNative, {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native'
+import React, { PureComponent } from 'react'
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Checkmark from './Checkmark'
 import Star from './Star'
 import Scanner from './Scanner'
 import md5 from 'md5'
-import client, { Avatar, Color, TitleBar } from '@doubledutch/rn-client'
-import FirebaseConnector from '@doubledutch/firebase-connector'
-import firebase from 'firebase'
-const fbc = FirebaseConnector(client, 'qrhunt')
+import client, { TitleBar } from '@doubledutch/rn-client'
+import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
+import firebase from 'firebase/app'
 
-fbc.initializeAppWithSimpleBackend()
+class HomeView extends PureComponent {
+  scansRef = () => this.props.fbc.database.private.adminableUserRef('scans')
+  categoriesRef = () => this.props.fbc.database.public.adminRef('categories')
+  codesRef = () => this.props.fbc.database.public.adminRef('codes')
+  doneDescriptionRef = () => this.props.fbc.database.public.adminRef('doneDescription')
+  welcomeRef = () => this.props.fbc.database.public.adminRef('welcome')
+  titleRef = () => this.props.fbc.database.public.adminRef('title')
+  
+  constructor(props) {
+    super(props)
 
-const scansRef = () => fbc.database.private.adminableUserRef('scans')
-const categoriesRef = () => fbc.database.public.adminRef('categories')
-const codesRef = () => fbc.database.public.adminRef('codes')
-const doneDescriptionRef = () => fbc.database.public.adminRef('doneDescription')
-const welcomeRef = () => fbc.database.public.adminRef('welcome')
-const titleRef = () => fbc.database.public.adminRef('title')
-
-console.disableYellowBox = true
-
-export default class HomeView extends Component {
-  constructor() {
-    super()
-
-    this.signin = fbc.signin()
+    this.signin = props.fbc.signin()
       .then(user => this.user = user)
       .catch(err => console.error(err))
   }
@@ -48,6 +43,8 @@ export default class HomeView extends Component {
   state = {scans: null, categories: [], codes: [], done: false}
 
   componentDidMount() {
+    const {fbc} = this.props
+    client.getPrimaryColor().then(primaryColor => this.setState({primaryColor}))
     this.signin.then(() => {
       const wireListeners = () => {
 
@@ -55,23 +52,23 @@ export default class HomeView extends Component {
         const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
         const onChildRemoved = stateProp => data => this.setState(state => ({[stateProp]: state[stateProp].filter(c => c.id !== data.key)}))
 
-        categoriesRef().on('value', data => this.setState({
+        this.categoriesRef().on('value', data => this.setState({
           categories: Object.entries(data.val() || {})
             .map(([id, val]) => ({...val, id}))
             .sort(sortByName)
         }))
 
-        doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
-        welcomeRef().on('value', data => this.setState({welcome: data.val()}))
-        titleRef().on('value', data => this.setState({title: data.val()}))
+        this.doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
+        this.welcomeRef().on('value', data => this.setState({welcome: data.val()}))
+        this.titleRef().on('value', data => this.setState({title: data.val()}))
 
-        scansRef().on('value', data => {this.setState({scans: data.val() || {}})})
+        this.scansRef().on('value', data => {this.setState({scans: data.val() || {}})})
 
-        codesRef().on('child_added', onChildAdded('codes', sortByName))
-        codesRef().on('child_changed', onChildChanged('codes', sortByName))
-        codesRef().on('child_removed', onChildRemoved('codes'))  
+        this.codesRef().on('child_added', onChildAdded('codes', sortByName))
+        this.codesRef().on('child_changed', onChildChanged('codes', sortByName))
+        this.codesRef().on('child_removed', onChildRemoved('codes'))  
 
-        scansRef().on('value', data => {
+        this.scansRef().on('value', data => {
           this.setState({scans: data.val() || {}, done: true})
         })
       }
@@ -88,12 +85,13 @@ export default class HomeView extends Component {
         }
         wireListeners()
       })
-
     })
   }
 
   render() {
-    const {codes, isAdmin, scans, showScanner, title, doneDismissed, welcomeDismissed, done} = this.state
+    const {codes, isAdmin, scans, showScanner, title, doneDismissed, welcomeDismissed, done, primaryColor} = this.state
+    if (!primaryColor) return null
+
     const categories = this.state.categories.filter(c => c.name)
     const codesByCategory = codes.reduce((cbc, code) => {
       if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
@@ -115,7 +113,7 @@ export default class HomeView extends Component {
           : !welcomeDismissed && !anyScans
             ? this.renderWelcome()
             : showScanner
-              ? <Scanner onScan={this.onScan} onCancel={this.cancelScan} />
+              ? <Scanner onScan={this.onScan} onCancel={this.cancelScan} primaryColor={primaryColor} />
               : <View style={s.container}>
                   <ScrollView style={s.scroll}>
                     { categoriesToShow.map(cat => (
@@ -129,7 +127,7 @@ export default class HomeView extends Component {
                           </View>
                           { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
                             <View key={code.id} style={s.scan}>
-                              <View style={[s.circle, s.completeCircle]}>
+                              <View style={[s.circle, s.completeCircle, {backgroundColor: primaryColor}]}>
                                 <Checkmark size={circleSize * 0.6} />
                               </View>
                               <Text style={s.codeTitle}>{code.name}</Text>
@@ -142,8 +140,8 @@ export default class HomeView extends Component {
                     { categoriesToShow.length === 0 && scans !== null && done ? <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> : null }
                   </ScrollView>
                   <View style={s.buttons}>
-                    { (categoriesToShow.length > 0 && !isDone) && <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> }
-                    { isAdmin && <TouchableOpacity style={s.button} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
+                    { (categoriesToShow.length > 0 && !isDone) && <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> }
+                    { isAdmin && <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
                   </View>
                 </View>
         }
@@ -167,7 +165,7 @@ export default class HomeView extends Component {
 
     return remainingNames.map((name, i) => (
       <View key={i} style={s.scan}>
-        <View style={[s.circle, s.placeholderCircle]} />
+        <View style={[s.circle, s.placeholderCircle, {borderColor: this.state.primaryColor}]} />
         <Text style={s.codeTitle}>{name}</Text>
       </View>
     ))
@@ -210,7 +208,7 @@ export default class HomeView extends Component {
   onScan = (code) => this.state.isAdminScan ? this.onCodeAdded(code) : this.onCodeScanned(code)
 
   onCodeAdded = code => {
-    codesRef().child(md5(code.data)).set({value: code.data, name: 'Added @ ' + new Date().toString()})
+    this.codesRef().child(md5(code.data)).set({value: code.data, name: 'Added @ ' + new Date().toString()})
     this.setState({showScanner: false})
   }
 
@@ -221,7 +219,7 @@ export default class HomeView extends Component {
       if (this.state.scans[hash]) {
         this.dismissScannerWithAlert('Already scanned', 'It looks like you already scanned this QR code!')
       } else {
-        scansRef().child(hash).set(true)
+        this.scansRef().child(hash).set(true)
         this.dismissScannerWithAlert('Congrats!', `You scanned ${namedCode.name}`)
       }
     } else {
@@ -239,6 +237,8 @@ export default class HomeView extends Component {
   dismissDone = () => this.setState({doneDismissed: true})
 }
 
+export default provideFirebaseConnectorToReactComponent(client, 'qrhunt', (props, fbc) => <HomeView {...props} fbc={fbc} />, PureComponent)
+
 function sortByName(a, b) {
   return (a.name || '').toLowerCase() < (b.name || '').toLowerCase() ? -1 : 1
 }
@@ -252,10 +252,8 @@ function range(start, end) {
 }
 
 const circleSize = 24
-const green = '#61b53d'
-const gray = '#a0a0a0'
 const charcoal = '#364247'
-const s = ReactNative.StyleSheet.create({
+const s = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EFEFEF',
@@ -320,12 +318,10 @@ const s = ReactNative.StyleSheet.create({
     marginRight: 10,
   },
   completeCircle: {
-    backgroundColor: client.primaryColor,
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholderCircle: {
-    borderColor: client.primaryColor,
     borderWidth: 2,
   },
   buttons: {
@@ -334,7 +330,6 @@ const s = ReactNative.StyleSheet.create({
   button: {
     margin: 15,
     padding: 15,
-    backgroundColor: client.primaryColor,
     borderRadius: 5,
     flex: 1,
     justifyContent: 'center',
