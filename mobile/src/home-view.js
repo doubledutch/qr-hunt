@@ -45,7 +45,7 @@ export default class HomeView extends Component {
       .catch(err => console.error(err))
   }
 
-  state = {scans: null, categories: [], codes: [], done: null}
+  state = {scans: null, categories: [], codes: [], done: false}
 
   componentDidMount() {
     this.signin.then(() => {
@@ -55,10 +55,11 @@ export default class HomeView extends Component {
         const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
         const onChildRemoved = stateProp => data => this.setState(state => ({[stateProp]: state[stateProp].filter(c => c.id !== data.key)}))
 
-        categoriesRef().on('child_added', onChildAdded('categories', sortByName))
-        categoriesRef().on('child_changed', onChildChanged('categories', sortByName))
-        categoriesRef().on('child_removed', onChildRemoved('categories'))
-
+        categoriesRef().on('value', data => this.setState({
+          categories: Object.entries(data.val() || {})
+            .map(([id, val]) => ({...val, id}))
+            .sort(sortByName)
+        }))
 
         doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
         welcomeRef().on('value', data => this.setState({welcome: data.val()}))
@@ -71,10 +72,7 @@ export default class HomeView extends Component {
         codesRef().on('child_removed', onChildRemoved('codes'))  
 
         scansRef().on('value', data => {
-          this.setState({scans: data.val() || {}})
-          setTimeout(() => {
-            this.setState({done: true})
-          },500)
+          this.setState({scans: data.val() || {}, done: true})
         })
       }
 
@@ -112,7 +110,7 @@ export default class HomeView extends Component {
     return (
       <View style={s.container}>
         <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
-        { scans === null && done === null
+        { scans === null && done === false
           ? <Text>Loading...</Text>
           : !welcomeDismissed && !anyScans
             ? this.renderWelcome()
@@ -141,7 +139,7 @@ export default class HomeView extends Component {
                         </View>
                       ))
                     }
-                    { categoriesToShow.length === 0 && scans !== null && done !== null ? <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> : null }
+                    { categoriesToShow.length === 0 && scans !== null && done ? <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> : null }
                   </ScrollView>
                   <View style={s.buttons}>
                     { (categoriesToShow.length > 0 && !isDone) && <TouchableOpacity style={s.button} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> }

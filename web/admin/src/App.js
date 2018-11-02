@@ -56,7 +56,9 @@ export default class App extends Component {
     attendeeSearchValue: "",
     activeEdit: "",
     exportList: [],
-    exporting: false
+    exporting: false,
+    exportListCode: [],
+    exportingCode: false
   }
 
   componentDidMount() {
@@ -241,7 +243,9 @@ export default class App extends Component {
                     {attendees.length ? null : <h2 className="emptyBoxText">No Results</h2>}
                   </ul>
                   <div className="csvLinkBox">
-                    <button className="csvButton" onClick={this.formatDataForExport}>Export List of Attendees</button>
+                    <button className="csvButton" onClick={this.formatDataForExportCode}>Export List by Code</button>
+                    {this.state.exportingCode ? <CSVDownload data={this.state.exportListCode} target="_blank" /> : null}
+                    <button className="csvButton" onClick={this.formatDataForExport}>Export List by Category</button>
                     {this.state.exporting ? <CSVDownload data={this.state.exportList} target="_blank" /> : null}
                   </div>
                 </div> : null}
@@ -251,6 +255,27 @@ export default class App extends Component {
         }
       </div>
     )
+  }
+
+  formatDataForExportCode = () => {
+    let parsedData = []
+    this.state.attendees.forEach(attendee => {
+      if (this.state.allCodesByUser[attendee.id]) {
+        if (this.state.allCodesByUser[attendee.id].scans){
+        const scans = Object.keys(this.state.allCodesByUser[attendee.id].scans)
+        let parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company}
+          scans.forEach(scan => {
+            const originalData = this.state.codes.find(code => code.id === scan)
+            if (originalData) {
+              parsedUser[originalData.name] = "Scanned"
+            }
+          })
+        parsedData.push(parsedUser)
+        }
+      }
+    })
+    this.setState({exportingCode: true, exportListCode: parsedData})
+    setTimeout(()=>this.setState({exportingCode: false}), 3000)
   }
 
   formatDataForExport = () => {
