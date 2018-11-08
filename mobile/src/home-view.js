@@ -20,9 +20,12 @@ import Checkmark from './Checkmark'
 import Star from './Star'
 import Scanner from './Scanner'
 import md5 from 'md5'
-import client, { TitleBar } from '@doubledutch/rn-client'
+import client, { TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
 import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
+import i18n from './i18n'
 import firebase from 'firebase/app'
+
+useStrings(i18n)
 
 class HomeView extends PureComponent {
   scansRef = () => this.props.fbc.database.private.adminableUserRef('scans')
@@ -107,9 +110,9 @@ class HomeView extends PureComponent {
     const categoriesToShow = categories.filter(cat => cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory) && cat.scansRequired > 0)
     return (
       <View style={s.container}>
-        <TitleBar title={title || "Challenge"} client={client} signin={this.signin} />
+        <TitleBar title={title || t("challenge")} client={client} signin={this.signin} />
         { scans === null && done === false
-          ? <Text>Loading...</Text>
+          ? <Text>{t("loading")}</Text>
           : !welcomeDismissed && !anyScans
             ? this.renderWelcome()
             : showScanner
@@ -121,7 +124,7 @@ class HomeView extends PureComponent {
                           <View style={s.categoryHeader}>
                             <View style={{flexDirection: "row"}}>
                               <Text style={s.category}>{cat.name}</Text>
-                              <Text style={s.categoryRight}>{(codesByCategory[cat.id] || {}).count || 0} of {cat.scansRequired} complete</Text>
+                              <Text style={s.categoryRight}>{t("complete", {current: (codesByCategory[cat.id] || {}).count || 0, total: cat.scansRequired})}</Text>
                             </View>
                             {cat.description ? <Text style={s.categoryDes}>{cat.description}</Text> : null}
                           </View>
@@ -137,11 +140,11 @@ class HomeView extends PureComponent {
                         </View>
                       ))
                     }
-                    { categoriesToShow.length === 0 && scans !== null && done ? <View style={s.helpTextContainer}><Text style={s.helpText}>No categories have been added to begin the game.</Text></View> : null }
+                    { categoriesToShow.length === 0 && scans !== null && done ? <View style={s.helpTextContainer}><Text style={s.helpText}>{t("helpTextCat")}</Text></View> : null }
                   </ScrollView>
                   <View style={s.buttons}>
-                    { (categoriesToShow.length > 0 && !isDone) && <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.scanCode}><Text style={s.buttonText}>Scan Code</Text></TouchableOpacity> }
-                    { isAdmin && <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.addCode}><Text style={s.buttonText}>Add Code (Admin)</Text></TouchableOpacity> }
+                    { (categoriesToShow.length > 0 && !isDone) && <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.scanCode}><Text style={s.buttonText}>{t("scan")}</Text></TouchableOpacity> }
+                    { isAdmin && <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.addCode}><Text style={s.buttonText}>{t("add")}</Text></TouchableOpacity> }
                   </View>
                 </View>
         }
@@ -178,7 +181,7 @@ class HomeView extends PureComponent {
           <Text style={s.welcomeTitle}>{this.state.title}</Text>
           <Text style={s.welcomeText}>{this.state.welcome}</Text>
           <View style={s.buttons}>
-            <TouchableOpacity style={s.button} onPress={this.dismissWelcome}><Text style={s.buttonText}>LET&#39;S PLAY!</Text></TouchableOpacity>
+            <TouchableOpacity style={s.button} onPress={this.dismissWelcome}><Text style={s.buttonText}>{t("play")}</Text></TouchableOpacity>
           </View>
         </View>
       </View>
@@ -189,7 +192,7 @@ class HomeView extends PureComponent {
     return (
       <TouchableOpacity style={s.done} onPress={this.dismissDone}>
         <Star style={s.star} />
-        <Text style={s.doneTitle}>You did it!</Text>
+        <Text style={s.doneTitle}>{t("done")}</Text>
         <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
       </TouchableOpacity>
     )
@@ -217,13 +220,13 @@ class HomeView extends PureComponent {
     const namedCode = this.state.codes.find(c => c.id === hash)
     if (namedCode) {
       if (this.state.scans[hash]) {
-        this.dismissScannerWithAlert('Already scanned', 'It looks like you already scanned this QR code!')
+        this.dismissScannerWithAlert(t("alertDup"))
       } else {
         this.scansRef().child(hash).set(true)
-        this.dismissScannerWithAlert('Congrats!', `You scanned ${namedCode.name}`)
+        this.dismissScannerWithAlert(t("alertComplete", {name: namedCode.name}))
       }
     } else {
-      this.dismissScannerWithAlert('Oops!', 'It looks like this QR code is not part of the challenge!')
+      this.dismissScannerWithAlert(t("alertWrong"))
     }
   }
 

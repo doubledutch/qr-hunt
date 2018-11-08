@@ -16,6 +16,7 @@
 
 import React, { Component } from 'react'
 import './App.css'
+import {translate as t} from '@doubledutch/admin-client'
 import ReactTooltip from "react-tooltip"
 import AlertIcon from "./alerticon.png"
 
@@ -63,11 +64,11 @@ export default class CategoryCell extends Component {
         <li key={id}>
           <p className="cellName">{name}</p>&nbsp;
           <p className="cellName">{description}</p>&nbsp;
-          <p>{scansRequired || 0} {scansRequired === 1 ? "scan" : "scans"} required</p>
+          <p>{t("catReq", {requiredNum: scansRequired || 0, scan: scansRequired === 1 ? "scan" : "scans"})}</p>
           {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
-          <button className="noBorderButton" onClick={this.toggleEdit}>Edit</button>&nbsp;
-          <button className="noBorderButton" onClick={this.props.removeCategory(this.props.category)}>Remove</button>&nbsp;
+          <button className="noBorderButton" onClick={this.toggleEdit}>{t("edit")}</button>&nbsp;
+          <button className="noBorderButton" onClick={this.props.removeCategory(this.props.category)}>{t("remove")}</button>&nbsp;
           <ReactTooltip multiline={true}/>
         </li>
       )
@@ -75,13 +76,13 @@ export default class CategoryCell extends Component {
     else {
       return (
         <li key={id}>
-          <input className="catNameText" autoFocus type="text" value={this.state.catName} placeholder="Category Name" onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
-          <input className="catNameText" type="text" value={this.state.catDes} placeholder="Description (Optional)" onChange={(e) => this.setState({catDes: e.target.value, isError: false})} />&nbsp;
-          <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />&nbsp;{scansRequired === 1 ? "scan" : "scans"} required
+          <input className="catNameText" autoFocus type="text" value={this.state.catName} placeholder={t("catNamePlaceholder")} onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
+          <input className="catNameText" type="text" value={this.state.catDes} placeholder={t("catDesPlaceholder")} onChange={(e) => this.setState({catDes: e.target.value, isError: false})} />&nbsp;
+          <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />{t("catReq", {requiredNum: "", scan: scansRequired === 1 ? "scan" : "scans"})}
           {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
           { this.renderSaveButton() }
-          <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
+          <button className="noBorderButton" onClick={this.cancelEdits}>{t("cancel")}</button>&nbsp;
           <ReactTooltip multiline={true}/>
         </li>
       )
@@ -91,7 +92,7 @@ export default class CategoryCell extends Component {
   renderNeedsMoreCatCodes = () => {
     const total = this.props.codes.filter(code => code.categoryId === this.props.category.id)
     if (this.props.category.scansRequired && total.length < this.props.category.scansRequired) {
-      return <img data-tip="More QR codes are required than are available. <br /> The category will remain hidden for attendees <br /> until there are enough codes to complete the category." className="box-icon" src={AlertIcon} alt="alert"/>
+      return <img data-tip={t("catTip")} className="box-icon" src={AlertIcon} alt="alert"/>
     }
     else {
       return null
@@ -101,12 +102,12 @@ export default class CategoryCell extends Component {
   renderSaveButton = () => {
     if (this.state.isError) {
       return (
-        <button className="noBorderButtonRed" onClick={this.saveEdit}>Rename</button>
+        <button className="noBorderButtonRed" onClick={this.saveEdit}>{t("rename")}</button>
       )
     }
     else if (this.state.catName.trim().length){
       return (
-        <button className="noBorderButton" onClick={this.saveEdit}>Save</button>
+        <button className="noBorderButton" onClick={this.saveEdit}>{t("save")}</button>
       ) 
     }
     else {
