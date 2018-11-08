@@ -17,7 +17,7 @@
 import React, {PureComponent} from 'react'
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import QRCodeScanner from 'react-native-qrcode-scanner'
-import client from '@doubledutch/rn-client'
+import client, { translate as t } from '@doubledutch/rn-client'
 
 export default class Scanner extends PureComponent {
   render() {
@@ -25,15 +25,15 @@ export default class Scanner extends PureComponent {
     return (
       <View style={s.container}>
           { client._b.isEmulated
-          ? <Text>No scanner in emulator</Text>
+          ? <Text>{t("noScanner")}</Text>
           : 
             <QRCodeScanner
               onRead={onScan}
-              permissionDialogTitle="Camera Permission"
-              permissionDialogMessage="Required to scan QR codes"
+              permissionDialogTitle={t("permission")}
+              permissionDialogMessage={t("required")}
             />  
           }
-        <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={onCancel}><Text style={s.buttonText}>CANCEL</Text></TouchableOpacity>
+        <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={onCancel}><Text style={s.buttonText}>{t("cancel")}</Text></TouchableOpacity>
       </View>      
     )
   }

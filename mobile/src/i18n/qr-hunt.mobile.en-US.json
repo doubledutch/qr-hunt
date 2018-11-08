@@ -1,0 +1,17 @@
+{
+  "loading": "Loading...",
+  "complete": "${current} of ${total} complete",
+  "helpTextCat": "No categories have been added to begin the game.",
+  "scan": "Scan Code",
+  "add": "Add Code (Admin)",
+  "play": "LET'S PLAY!",
+  "done": "You did it!",
+  "alertDup":"Already scanned', 'It looks like you already scanned this QR code!",
+  "alertWrong": "Oops!', 'It looks like this QR code is not part of the challenge!",
+  "alertComplete": "Congrats!', `You scanned ${name}",
+  "challenge": "Challenge",
+  "cancel": "CANCEL",
+  "noScanner": "No scanner in emulator",
+  "permission": "Camera Permission",
+  "required": "Required to scan QR codes"
+}
