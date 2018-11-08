@@ -16,6 +16,7 @@
 
 import React, { Component } from 'react'
 import './App.css'
+import {translate as t} from '@doubledutch/admin-client'
 
 export default class CodeCell extends Component {
   constructor() {
@@ -60,10 +61,10 @@ export default class CodeCell extends Component {
       return (
         <li key={id}>
           <p className="cellName">{name}</p>&nbsp;
-          <p>{cat ? cat.name : "unavailable"}</p>
+          <p>{cat ? cat.name : t("unavailable")}</p>
           <div style={{flex:1}}/>
-          <button className="noBorderButton" onClick={this.letEdit}>Edit</button>&nbsp;
-          <button className="noBorderButton" onClick={this.props.removeCode(this.props.code)}>Remove</button>&nbsp;
+          <button className="noBorderButton" onClick={this.letEdit}>{t("edit")}</button>&nbsp;
+          <button className="noBorderButton" onClick={this.props.removeCode(this.props.code)}>{t("remove")}</button>&nbsp;
         </li>
       )
     }
@@ -72,12 +73,12 @@ export default class CodeCell extends Component {
         <li key={id}>
           <input className="catNameText" autoFocus type="text" value={this.state.codeName} placeholder="QR Code Name" onChange={e => this.setState({codeName: e.target.value, isError: false})} />&nbsp;
           <select value={this.state.codeCat} onChange={e => this.setState({codeCat: e.target.value})}>
-            <option>--Select category--</option>
+            <option>{t("selectCat")}</option>
             { this.props.categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>) }
           </select>&nbsp;
           <div style={{flex:1}}/>
           { this.renderSaveButton() }
-          <button className="noBorderButton" onClick={this.cancelEdits}>Cancel</button>&nbsp;
+          <button className="noBorderButton" onClick={this.cancelEdits}>{t("cancel")}</button>&nbsp;
         </li>
       )
     }
@@ -86,12 +87,12 @@ export default class CodeCell extends Component {
   renderSaveButton = () => {
     if (this.state.isError) {
       return (
-        <button className="noBorderButtonRed" onClick={this.saveEdit}>Rename</button>
+        <button className="noBorderButtonRed" onClick={this.saveEdit}>{t("rename")}</button>
       )
     }
     else if (this.state.codeName.trim().length){
       return (
-        <button className="noBorderButton" onClick={this.saveEdit}>Save</button>
+        <button className="noBorderButton" onClick={this.saveEdit}>{t("save")}</button>
       ) 
     }
     else {
