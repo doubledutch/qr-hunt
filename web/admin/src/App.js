@@ -286,7 +286,7 @@ class App extends PureComponent {
         if (this.state.allCodesByUser[attendee.id].scans){
           let gameWinningUser = completed.find(user => user.id === attendee.id)
           const gameWinner = gameWinningUser ? "True" : null
-          let parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company, Game_Winner: gameWinner}
+          let parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company, CompletedAllCategories: gameWinner}
           this.state.categories.forEach(cat => {
             const totalCatScans =`Scans for ${cat.name}`
             const completedCat = `Completed ${cat.name}`
