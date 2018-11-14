@@ -197,7 +197,7 @@ class App extends PureComponent {
               <div className="sectionContainer">
                 <div className="containerRow">
                   <div className="nameRow">
-                    <h2>{t("qrCodeCat")}</h2>
+                    <h2>{t("QRCodeCat")}</h2>
                     {this.state.isCategoryBoxDisplay ? <button onClick={this.newCategory} className="dd-bordered secondary">{t("addCat")}</button> : null}
                   </div>
                   {categories.filter(c=> c.id === this.state.activeEdit).length ? null : <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? t("hideSection") : t("viewSection"))}</button>}

@@ -70,6 +70,7 @@ html, body, select{
   border-radius: 5px;
   padding: 10px;
   margin-left: 20px;
+  background-color: white;
 }
 
 .csvLinkBox{

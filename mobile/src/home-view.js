@@ -181,7 +181,7 @@ class HomeView extends PureComponent {
           <Text style={s.welcomeTitle}>{this.state.title}</Text>
           <Text style={s.welcomeText}>{this.state.welcome}</Text>
           <View style={s.buttons}>
-            <TouchableOpacity style={s.button} onPress={this.dismissWelcome}><Text style={s.buttonText}>{t("play")}</Text></TouchableOpacity>
+            <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.dismissWelcome}><Text style={s.buttonText}>{t("play")}</Text></TouchableOpacity>
           </View>
         </View>
       </View>
