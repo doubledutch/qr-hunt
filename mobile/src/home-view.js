@@ -39,8 +39,8 @@ class HomeView extends PureComponent {
     super(props)
 
     this.signin = props.fbc.signin()
-      .then(user => this.user = user)
-      .catch(err => console.error(err))
+
+    this.signin.catch(err => console.error(err))
   }
 
   state = {scans: null, categories: [], codes: [], done: false, primaryColor: null}
