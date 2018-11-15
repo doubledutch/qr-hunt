@@ -43,7 +43,7 @@ class HomeView extends PureComponent {
     this.signin.catch(err => console.error(err))
   }
 
-  state = {scans: null, categories: [], codes: [], done: false}
+  state = {scans: null, categories: [], codes: [], done: false, primaryColor: null}
 
   componentDidMount() {
     const {fbc} = this.props
@@ -181,7 +181,7 @@ class HomeView extends PureComponent {
           <Text style={s.welcomeTitle}>{this.state.title}</Text>
           <Text style={s.welcomeText}>{this.state.welcome}</Text>
           <View style={s.buttons}>
-            <TouchableOpacity style={s.button} onPress={this.dismissWelcome}><Text style={s.buttonText}>{t("play")}</Text></TouchableOpacity>
+            <TouchableOpacity style={[s.button, {backgroundColor: this.state.primaryColor}]} onPress={this.dismissWelcome}><Text style={s.buttonText}>{t("play")}</Text></TouchableOpacity>
           </View>
         </View>
       </View>

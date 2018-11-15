@@ -33,7 +33,7 @@ export default class CategoryCell extends Component {
   }
 
   componentDidMount() {
-    this.setState({catName: this.props.category.name, catValue: this.props.category.scansRequired})
+    this.setState({catName: this.props.category.name, catValue: this.props.category.scansRequired, catDes: this.props.category.description || ""})
   }
 
   toggleEdit = () => {

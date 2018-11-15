@@ -197,7 +197,7 @@ class App extends PureComponent {
               <div className="sectionContainer">
                 <div className="containerRow">
                   <div className="nameRow">
-                    <h2>{t("qrCodeCat")}</h2>
+                    <h2>{t("QRCodeCat")}</h2>
                     {this.state.isCategoryBoxDisplay ? <button onClick={this.newCategory} className="dd-bordered secondary">{t("addCat")}</button> : null}
                   </div>
                   {categories.filter(c=> c.id === this.state.activeEdit).length ? null : <button className="displayButton" onClick={() => this.handleChange("isCategoryBoxDisplay", !this.state.isCategoryBoxDisplay)}>{(this.state.isCategoryBoxDisplay ? t("hideSection") : t("viewSection"))}</button>}
@@ -286,7 +286,7 @@ class App extends PureComponent {
         if (this.state.allCodesByUser[attendee.id].scans){
           let gameWinningUser = completed.find(user => user.id === attendee.id)
           const gameWinner = gameWinningUser ? "True" : null
-          let parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company, Game_Winner: gameWinner}
+          let parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company, CompletedAllCategories: gameWinner}
           this.state.categories.forEach(cat => {
             const totalCatScans =`Scans for ${cat.name}`
             const completedCat = `Completed ${cat.name}`

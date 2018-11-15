@@ -61,7 +61,7 @@ export default class CodeCell extends Component {
       return (
         <li key={id}>
           <p className="cellName">{name}</p>&nbsp;
-          <p>{cat ? cat.name : t("unavailable")}</p>
+          <p className="cellName">{cat ? cat.name : t("unavailable")}</p>
           <div style={{flex:1}}/>
           <button className="noBorderButton" onClick={this.letEdit}>{t("edit")}</button>&nbsp;
           <button className="noBorderButton" onClick={this.props.removeCode(this.props.code)}>{t("remove")}</button>&nbsp;

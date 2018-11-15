@@ -17,7 +17,7 @@
   "hideSection": "Hide Section",
   "viewSection": "View Section",
   "admins": "Admins",
-  "codesInstructions": "To add a QR code, first designate yourself or another organizer as an admin. Next, open up the QR Hunt section in the mobile app and scan any QR code. The QR code will then be added to the section below where it can be assigned a name and category.",
+  "codeInstructions": "To add a QR code, first designate yourself or another organizer as an admin. Next, open up the QR Hunt section in the mobile app and scan any QR code. The QR code will then be added to the section below where it can be assigned a name and category.",
   "codes": "QR Codes",
   "attendees": "Attendees",
   "loading": "Loading...",
@@ -39,5 +39,6 @@
   "catReq": "${requiredNum} ${scan} required",
   "selectCat": "--Select category--",
   "search": "Search",
+  "scansRequired": "Scans Required",
   "unavailable": "unavailable"
 }
