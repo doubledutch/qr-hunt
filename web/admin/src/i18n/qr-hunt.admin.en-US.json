@@ -39,5 +39,6 @@
   "catReq": "${requiredNum} ${scan} required",
   "selectCat": "--Select category--",
   "search": "Search",
+  "scansRequired": "Scans Required",
   "unavailable": "unavailable"
 }
