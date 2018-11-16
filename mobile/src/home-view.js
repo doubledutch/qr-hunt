@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,25 +16,30 @@
 
 import React, { PureComponent } from 'react'
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import md5 from 'md5'
+import client, { TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
+import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
+import firebase from 'firebase/app'
 import Checkmark from './Checkmark'
 import Star from './Star'
 import Scanner from './Scanner'
-import md5 from 'md5'
-import client, { TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
-import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import i18n from './i18n'
-import firebase from 'firebase/app'
 
 useStrings(i18n)
 
 class HomeView extends PureComponent {
   scansRef = () => this.props.fbc.database.private.adminableUserRef('scans')
+
   categoriesRef = () => this.props.fbc.database.public.adminRef('categories')
+
   codesRef = () => this.props.fbc.database.public.adminRef('codes')
+
   doneDescriptionRef = () => this.props.fbc.database.public.adminRef('doneDescription')
+
   welcomeRef = () => this.props.fbc.database.public.adminRef('welcome')
+
   titleRef = () => this.props.fbc.database.public.adminRef('title')
-  
+
   constructor(props) {
     super(props)
 
@@ -43,36 +48,51 @@ class HomeView extends PureComponent {
     this.signin.catch(err => console.error(err))
   }
 
-  state = {scans: null, categories: [], codes: [], done: false, primaryColor: null}
+  state = { scans: null, categories: [], codes: [], done: false, primaryColor: null }
 
   componentDidMount() {
-    const {fbc} = this.props
-    client.getPrimaryColor().then(primaryColor => this.setState({primaryColor}))
+    const { fbc } = this.props
+    client.getPrimaryColor().then(primaryColor => this.setState({ primaryColor }))
     this.signin.then(() => {
       const wireListeners = () => {
+        const onChildAdded = (stateProp, sort) => data =>
+          this.setState(state => ({
+            [stateProp]: [...state[stateProp], { ...data.val(), id: data.key }].sort(sort),
+          }))
+        const onChildChanged = (stateProp, sort) => data =>
+          this.setState(state => ({
+            [stateProp]: [
+              ...state[stateProp].filter(x => x.id !== data.key),
+              { ...data.val(), id: data.key },
+            ].sort(sort),
+          }))
+        const onChildRemoved = stateProp => data =>
+          this.setState(state => ({ [stateProp]: state[stateProp].filter(c => c.id !== data.key) }))
 
-        const onChildAdded = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp], {...data.val(), id: data.key}].sort(sort)}))
-        const onChildChanged = (stateProp, sort) => data => this.setState(state => ({[stateProp]: [...state[stateProp].filter(x => x.id !== data.key), {...data.val(), id: data.key}].sort(sort)}))
-        const onChildRemoved = stateProp => data => this.setState(state => ({[stateProp]: state[stateProp].filter(c => c.id !== data.key)}))
+        this.categoriesRef().on('value', data =>
+          this.setState({
+            categories: Object.entries(data.val() || {})
+              .map(([id, val]) => ({ ...val, id }))
+              .sort(sortByName),
+          }),
+        )
 
-        this.categoriesRef().on('value', data => this.setState({
-          categories: Object.entries(data.val() || {})
-            .map(([id, val]) => ({...val, id}))
-            .sort(sortByName)
-        }))
+        this.doneDescriptionRef().on('value', data =>
+          this.setState({ doneDescription: data.val() }),
+        )
+        this.welcomeRef().on('value', data => this.setState({ welcome: data.val() }))
+        this.titleRef().on('value', data => this.setState({ title: data.val() }))
 
-        this.doneDescriptionRef().on('value', data => this.setState({doneDescription: data.val()}))
-        this.welcomeRef().on('value', data => this.setState({welcome: data.val()}))
-        this.titleRef().on('value', data => this.setState({title: data.val()}))
-
-        this.scansRef().on('value', data => {this.setState({scans: data.val() || {}})})
+        this.scansRef().on('value', data => {
+          this.setState({ scans: data.val() || {} })
+        })
 
         this.codesRef().on('child_added', onChildAdded('codes', sortByName))
         this.codesRef().on('child_changed', onChildChanged('codes', sortByName))
-        this.codesRef().on('child_removed', onChildRemoved('codes'))  
+        this.codesRef().on('child_removed', onChildRemoved('codes'))
 
         this.scansRef().on('value', data => {
-          this.setState({scans: data.val() || {}, done: true})
+          this.setState({ scans: data.val() || {}, done: true })
         })
       }
 
@@ -84,7 +104,7 @@ class HomeView extends PureComponent {
           client.longLivedToken = longLivedToken
           await fbc.signinAdmin()
           console.log('Re-logged in as admin')
-          this.setState({isAdmin: true})
+          this.setState({ isAdmin: true })
         }
         wireListeners()
       })
@@ -92,83 +112,128 @@ class HomeView extends PureComponent {
   }
 
   render() {
-    const {codes, isAdmin, scans, showScanner, title, doneDismissed, welcomeDismissed, done, primaryColor} = this.state
+    const {
+      codes,
+      isAdmin,
+      scans,
+      showScanner,
+      title,
+      doneDismissed,
+      welcomeDismissed,
+      done,
+      primaryColor,
+    } = this.state
     if (!primaryColor) return null
 
     const categories = this.state.categories.filter(c => c.name)
     const codesByCategory = codes.reduce((cbc, code) => {
-      if (!cbc[code.categoryId]) cbc[code.categoryId] = {count: 0}
+      if (!cbc[code.categoryId]) cbc[code.categoryId] = { count: 0 }
       const isScanned = scans[code.id]
-      cbc[code.categoryId][code.id] = {...code, isScanned}
+      cbc[code.categoryId][code.id] = { ...code, isScanned }
       if (isScanned) cbc[code.categoryId].count++
       return cbc
     }, {})
 
     const anyScans = !!scans && !!Object.keys(scans).length
-    const isDone = anyScans && categories.length > 0 && !categories.find(cat =>
-      (codesByCategory[cat.id] || {count:0}).count < cat.scansRequired)
-    const categoriesToShow = categories.filter(cat => cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory) && cat.scansRequired > 0)
+    const isDone =
+      anyScans &&
+      categories.length > 0 &&
+      !categories.find(cat => (codesByCategory[cat.id] || { count: 0 }).count < cat.scansRequired)
+    const categoriesToShow = categories.filter(
+      cat =>
+        cat.scansRequired <= this.findTotalCatCodes(cat, codesByCategory) && cat.scansRequired > 0,
+    )
     return (
       <View style={s.container}>
-        <TitleBar title={title || t("challenge")} client={client} signin={this.signin} />
-        { scans === null && done === false
-          ? <Text>{t("loading")}</Text>
-          : !welcomeDismissed && !anyScans
-            ? this.renderWelcome()
-            : showScanner
-              ? <Scanner onScan={this.onScan} onCancel={this.cancelScan} primaryColor={primaryColor} />
-              : <View style={s.container}>
-                  <ScrollView style={s.scroll}>
-                    { categoriesToShow.map(cat => (
-                        <View key={cat.id} style={s.categoryContainer}>
-                          <View style={s.categoryHeader}>
-                            <View style={{flexDirection: "row"}}>
-                              <Text style={s.category}>{cat.name}</Text>
-                              <Text style={s.categoryRight}>{t("complete", {current: (codesByCategory[cat.id] || {}).count || 0, total: cat.scansRequired})}</Text>
-                            </View>
-                            {cat.description ? <Text style={s.categoryDes}>{cat.description}</Text> : null}
-                          </View>
-                          { Object.values(codesByCategory[cat.id] || {}).filter(code => code.isScanned).sort(sortByName).map(code => (
-                            <View key={code.id} style={s.scan}>
-                              <View style={[s.circle, s.completeCircle, {backgroundColor: primaryColor}]}>
-                                <Checkmark size={circleSize * 0.6} />
-                              </View>
-                              <Text style={s.codeTitle}>{code.name}</Text>
-                            </View>)
-                          )}
-                          {this.renderScanPlaceholders(codesByCategory[cat.id], cat.scansRequired)}
-                        </View>
-                      ))
-                    }
-                    { categoriesToShow.length === 0 && scans !== null && done ? <View style={s.helpTextContainer}><Text style={s.helpText}>{t("helpTextCat")}</Text></View> : null }
-                  </ScrollView>
-                  <View style={s.buttons}>
-                    { (categoriesToShow.length > 0 && !isDone) && <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.scanCode}><Text style={s.buttonText}>{t("scan")}</Text></TouchableOpacity> }
-                    { isAdmin && <TouchableOpacity style={[s.button, {backgroundColor: primaryColor}]} onPress={this.addCode}><Text style={s.buttonText}>{t("add")}</Text></TouchableOpacity> }
+        <TitleBar title={title || t('challenge')} client={client} signin={this.signin} />
+        {scans === null && done === false ? (
+          <Text>{t('loading')}</Text>
+        ) : !welcomeDismissed && !anyScans ? (
+          this.renderWelcome()
+        ) : showScanner ? (
+          <Scanner onScan={this.onScan} onCancel={this.cancelScan} primaryColor={primaryColor} />
+        ) : (
+          <View style={s.container}>
+            <ScrollView style={s.scroll}>
+              {categoriesToShow.map(cat => (
+                <View key={cat.id} style={s.categoryContainer}>
+                  <View style={s.categoryHeader}>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Text style={s.category}>{cat.name}</Text>
+                      <Text style={s.categoryRight}>
+                        {t('complete', {
+                          current: (codesByCategory[cat.id] || {}).count || 0,
+                          total: cat.scansRequired,
+                        })}
+                      </Text>
+                    </View>
+                    {cat.description ? <Text style={s.categoryDes}>{cat.description}</Text> : null}
                   </View>
+                  {Object.values(codesByCategory[cat.id] || {})
+                    .filter(code => code.isScanned)
+                    .sort(sortByName)
+                    .map(code => (
+                      <View key={code.id} style={s.scan}>
+                        <View
+                          style={[s.circle, s.completeCircle, { backgroundColor: primaryColor }]}
+                        >
+                          <Checkmark size={circleSize * 0.6} />
+                        </View>
+                        <Text style={s.codeTitle}>{code.name}</Text>
+                      </View>
+                    ))}
+                  {this.renderScanPlaceholders(codesByCategory[cat.id], cat.scansRequired)}
                 </View>
-        }
-        { isDone && anyScans && !doneDismissed && this.renderDone() }
+              ))}
+              {categoriesToShow.length === 0 && scans !== null && done ? (
+                <View style={s.helpTextContainer}>
+                  <Text style={s.helpText}>{t('helpTextCat')}</Text>
+                </View>
+              ) : null}
+            </ScrollView>
+            <View style={s.buttons}>
+              {categoriesToShow.length > 0 && !isDone && (
+                <TouchableOpacity
+                  style={[s.button, { backgroundColor: primaryColor }]}
+                  onPress={this.scanCode}
+                >
+                  <Text style={s.buttonText}>{t('scan')}</Text>
+                </TouchableOpacity>
+              )}
+              {isAdmin && (
+                <TouchableOpacity
+                  style={[s.button, { backgroundColor: primaryColor }]}
+                  onPress={this.addCode}
+                >
+                  <Text style={s.buttonText}>{t('add')}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
+        {isDone && anyScans && !doneDismissed && this.renderDone()}
       </View>
     )
   }
 
   findTotalCatCodes = (cat, codesByCategory) => {
-    //when you convert these objects to keys it includes the count object which needs to be filtered out in determining accurate amount of codes
+    // when you convert these objects to keys it includes the count object which needs to be filtered out in determining accurate amount of codes
     const number = codesByCategory[cat.id] ? Object.keys(codesByCategory[cat.id]).length - 1 : 0
     return number
   }
 
   renderScanPlaceholders(codesInCategory, numRequired) {
     const numScanned = codesInCategory.count || 0
-    let remainingNames = Object.values(codesInCategory).filter(x => x && x.name && !x.isScanned).map(x => x.name)
+    let remainingNames = Object.values(codesInCategory)
+      .filter(x => x && x.name && !x.isScanned)
+      .map(x => x.name)
     if (remainingNames.length > numRequired - numScanned) {
       remainingNames = range(numScanned + 1, numRequired + 1).map(num => `Scan #${num}`)
     }
 
     return remainingNames.map((name, i) => (
       <View key={i} style={s.scan}>
-        <View style={[s.circle, s.placeholderCircle, {borderColor: this.state.primaryColor}]} />
+        <View style={[s.circle, s.placeholderCircle, { borderColor: this.state.primaryColor }]} />
         <Text style={s.codeTitle}>{name}</Text>
       </View>
     ))
@@ -181,7 +246,12 @@ class HomeView extends PureComponent {
           <Text style={s.welcomeTitle}>{this.state.title}</Text>
           <Text style={s.welcomeText}>{this.state.welcome}</Text>
           <View style={s.buttons}>
-            <TouchableOpacity style={[s.button, {backgroundColor: this.state.primaryColor}]} onPress={this.dismissWelcome}><Text style={s.buttonText}>{t("play")}</Text></TouchableOpacity>
+            <TouchableOpacity
+              style={[s.button, { backgroundColor: this.state.primaryColor }]}
+              onPress={this.dismissWelcome}
+            >
+              <Text style={s.buttonText}>{t('play')}</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -192,27 +262,31 @@ class HomeView extends PureComponent {
     return (
       <TouchableOpacity style={s.done} onPress={this.dismissDone}>
         <Star style={s.star} />
-        <Text style={s.doneTitle}>{t("done")}</Text>
+        <Text style={s.doneTitle}>{t('done')}</Text>
         <Text style={s.doneDesc}>{this.state.doneDescription}</Text>
       </TouchableOpacity>
     )
   }
 
-  scanCode = () => this.setState({
-    showScanner: true,
-    isAdminScan: false
-  })
-  
-  addCode = () => this.setState({
-    showScanner: true,
-    isAdminScan: true
-  })
+  scanCode = () =>
+    this.setState({
+      showScanner: true,
+      isAdminScan: false,
+    })
 
-  onScan = (code) => this.state.isAdminScan ? this.onCodeAdded(code) : this.onCodeScanned(code)
+  addCode = () =>
+    this.setState({
+      showScanner: true,
+      isAdminScan: true,
+    })
+
+  onScan = code => (this.state.isAdminScan ? this.onCodeAdded(code) : this.onCodeScanned(code))
 
   onCodeAdded = code => {
-    this.codesRef().child(md5(code.data)).set({value: code.data, name: 'Added @ ' + new Date().toString()})
-    this.setState({showScanner: false})
+    this.codesRef()
+      .child(md5(code.data))
+      .set({ value: code.data, name: `Added @ ${new Date().toString()}` })
+    this.setState({ showScanner: false })
   }
 
   onCodeScanned = code => {
@@ -220,27 +294,40 @@ class HomeView extends PureComponent {
     const namedCode = this.state.codes.find(c => c.id === hash)
     if (namedCode) {
       if (this.state.scans[hash]) {
-        this.dismissScannerWithAlert(t("alertDup"))
+        this.dismissScannerWithAlert(t('alertDup'))
       } else {
-        this.scansRef().child(hash).set(true)
-        this.dismissScannerWithAlert(t("alertComplete", {name: namedCode.name}))
+        this.scansRef()
+          .child(hash)
+          .set(true)
+        this.dismissScannerWithAlert(t('alertComplete', { name: namedCode.name }))
       }
     } else {
-      this.dismissScannerWithAlert(t("alertWrong"))
+      this.dismissScannerWithAlert(t('alertWrong'))
     }
   }
 
   dismissScannerWithAlert = (title, message) => {
-    Alert.alert(title, message, [{ text: 'OK', onPress: () => this.setState({showScanner: false}) }], { cancelable: false })
+    Alert.alert(
+      title,
+      message,
+      [{ text: 'OK', onPress: () => this.setState({ showScanner: false }) }],
+      { cancelable: false },
+    )
   }
 
-  cancelScan = () => this.setState({showScanner: false})
+  cancelScan = () => this.setState({ showScanner: false })
 
-  dismissWelcome = () => this.setState({welcomeDismissed: true})
-  dismissDone = () => this.setState({doneDismissed: true})
+  dismissWelcome = () => this.setState({ welcomeDismissed: true })
+
+  dismissDone = () => this.setState({ doneDismissed: true })
 }
 
-export default provideFirebaseConnectorToReactComponent(client, 'qrhunt', (props, fbc) => <HomeView {...props} fbc={fbc} />, PureComponent)
+export default provideFirebaseConnectorToReactComponent(
+  client,
+  'qrhunt',
+  (props, fbc) => <HomeView {...props} fbc={fbc} />,
+  PureComponent,
+)
 
 function sortByName(a, b) {
   return (a.name || '').toLowerCase() < (b.name || '').toLowerCase() ? -1 : 1
@@ -263,18 +350,18 @@ const s = StyleSheet.create({
   },
   categoryHeader: {
     marginTop: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   scroll: {
     flex: 1,
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   category: {
     fontSize: 16,
     textAlign: 'left',
     color: charcoal,
     flex: 1,
-    fontWeight: "bold"
+    fontWeight: 'bold',
   },
   categoryDes: {
     fontSize: 14,
@@ -286,12 +373,12 @@ const s = StyleSheet.create({
     fontSize: 14,
     textAlign: 'right',
     color: charcoal,
-    flex: 1
+    flex: 1,
   },
   categoryContainer: {
     marginBottom: 20,
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 10
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
   },
   scan: {
     paddingBottom: 15,
@@ -299,20 +386,20 @@ const s = StyleSheet.create({
     alignItems: 'center',
   },
   helpTextContainer: {
-    flex: 1, 
-    alignItems: "center", 
-    justifyContent: "center"
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   helpText: {
-    fontSize: 20, 
-    marginTop: 150, 
-    textAlign: "center"
+    fontSize: 20,
+    marginTop: 150,
+    textAlign: 'center',
   },
   codeTitle: {
     fontSize: 18,
     color: charcoal,
     flex: 1,
-    flexWrap: "wrap",
+    flexWrap: 'wrap',
   },
   circle: {
     height: circleSize,
@@ -343,7 +430,7 @@ const s = StyleSheet.create({
     textAlign: 'center',
   },
   welcomeBox: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     marginVertical: 10,
   },
   welcomeTitle: {
@@ -356,7 +443,7 @@ const s = StyleSheet.create({
     color: charcoal,
     fontSize: 16,
     paddingVertical: 10,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   done: {
     position: 'absolute',
