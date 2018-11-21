@@ -201,15 +201,18 @@ ul li {
   border-radius: 5px;
 }
 
-ul li .name {
+.name {
   margin: 0px;
   padding: 5px;
   margin-top: 2px;
   font-size: 14px;
-  width: 150px;
   overflow:hidden;
   white-space:nowrap;
   text-overflow:ellipsis;
+}
+
+.nameBox {
+  width: 150px;
 }
 
 textarea {

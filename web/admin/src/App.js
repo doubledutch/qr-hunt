@@ -180,21 +180,8 @@ class App extends PureComponent {
             <p>{t('scansRequired')}</p>
           </div>
           <ul className="categoryList">
-            {categories.map(category => (
-              <CategoryCell
-                categories={categories}
-                codes={this.state.codes}
-                key={category.id}
-                isHidden={!this.state.isCategoryBoxDisplay}
-                setCurrentEdit={this.setCurrentEdit}
-                activeEdit={this.state.activeEdit}
-                category={category}
-                setCatName={this.setCatName}
-                setCatDes={this.setCatDes}
-                setCatNumb={this.setCatNumb}
-                removeCategory={this.removeCategory}
-              />
-            ))}
+            {categories.map(category => <CategoryCell categories={categories} codes={this.state.codes} key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatDes={this.setCatDes} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/> 
+            )}
             {categories.length ? null : <h2 className="emptyBoxText">{t('noCats')}</h2>}
           </ul>
         </div>
@@ -211,21 +198,8 @@ class App extends PureComponent {
             <p>{t('category')}</p>
           </div>
           <ul className="qrCodeList">
-            {codes.map(code => (
-              <CodeCell
-                key={code.id}
-                code={code}
-                codes={this.state.codes}
-                isHidden={!this.state.isCodeBoxDisplay}
-                setCurrentEdit={this.setCurrentEdit}
-                activeEdit={this.state.activeEdit}
-                setCodeName={this.setCodeName}
-                resetCodeName={this.resetCodeName}
-                setCodeNumb={this.setCodeNumb}
-                removeCode={this.removeCode}
-                categories={categories}
-              />
-            ))}
+            {codes.map(code => <CodeCell key={code.id} code={code} codes={this.state.codes} isHidden={!this.state.isCodeBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
+            )}
             {codes.length ? null : <h2 className="emptyBoxText">{t('noCodes')}</h2>}
           </ul>
         </div>
@@ -508,10 +482,7 @@ class App extends PureComponent {
         <div>
           <Avatar user={user} size={30} />
         </div>
-        <span className="name">
-          {' '}
-          {firstName} {lastName}
-        </span>
+        <div className="nameBox"><p className="name">{firstName} {lastName}</p></div>
         {this.state.categories.map(cat => (
           <span className="catScans" key={cat.id}>
             {cat.name}: {this.categoryScansForUser(cat.id, user.id)}
