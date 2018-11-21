@@ -180,8 +180,21 @@ class App extends PureComponent {
             <p>{t('scansRequired')}</p>
           </div>
           <ul className="categoryList">
-            {categories.map(category => <CategoryCell categories={categories} codes={this.state.codes} key={category.id} isHidden={!this.state.isCategoryBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} category={category} setCatName={this.setCatName} setCatDes={this.setCatDes} setCatNumb={this.setCatNumb} removeCategory={this.removeCategory}/> 
-            })}
+            {categories.map(category => (
+              <CategoryCell
+                categories={categories}
+                codes={this.state.codes}
+                key={category.id}
+                isHidden={!this.state.isCategoryBoxDisplay}
+                setCurrentEdit={this.setCurrentEdit}
+                activeEdit={this.state.activeEdit}
+                category={category}
+                setCatName={this.setCatName}
+                setCatDes={this.setCatDes}
+                setCatNumb={this.setCatNumb}
+                removeCategory={this.removeCategory}
+              />
+            ))}
             {categories.length ? null : <h2 className="emptyBoxText">{t('noCats')}</h2>}
           </ul>
         </div>
@@ -198,8 +211,21 @@ class App extends PureComponent {
             <p>{t('category')}</p>
           </div>
           <ul className="qrCodeList">
-            {codes.map(code => <CodeCell key={code.id} code={code} codes={this.state.codes} isHidden={!this.state.isCodeBoxDisplay} setCurrentEdit={this.setCurrentEdit} activeEdit={this.state.activeEdit} setCodeName={this.setCodeName} resetCodeName={this.resetCodeName} setCodeNumb={this.setCodeNumb} removeCode={this.removeCode} categories={categories}/>
-            })}
+            {codes.map(code => (
+              <CodeCell
+                key={code.id}
+                code={code}
+                codes={this.state.codes}
+                isHidden={!this.state.isCodeBoxDisplay}
+                setCurrentEdit={this.setCurrentEdit}
+                activeEdit={this.state.activeEdit}
+                setCodeName={this.setCodeName}
+                resetCodeName={this.resetCodeName}
+                setCodeNumb={this.setCodeNumb}
+                removeCode={this.removeCode}
+                categories={categories}
+              />
+            ))}
             {codes.length ? null : <h2 className="emptyBoxText">{t('noCodes')}</h2>}
           </ul>
         </div>
@@ -350,7 +376,13 @@ class App extends PureComponent {
       if (this.state.allCodesByUser[attendee.id]) {
         if (this.state.allCodesByUser[attendee.id].scans) {
           const scans = Object.keys(this.state.allCodesByUser[attendee.id].scans)
-        const parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company}
+          const parsedUser = {
+            First_Name: attendee.firstName,
+            Last_Name: attendee.lastName,
+            Email: attendee.email,
+            Title: attendee.title,
+            Company: attendee.company,
+          }
           scans.forEach(scan => {
             const originalData = this.state.codes.find(code => code.id === scan)
             if (originalData) {
@@ -409,15 +441,14 @@ class App extends PureComponent {
   getCustomAttendeeList = () => {
     const queryText = this.state.attendeeSearchValue.toLowerCase()
     if (queryText.length > 0) {
-      const queryResult = this.state.attendees.filter(s => { 
-        const name = s.firstName.toLowerCase() + " " + s.lastName.toLowerCase()
+      const queryResult = this.state.attendees.filter(s => {
+        const name = `${s.firstName.toLowerCase()} ${s.lastName.toLowerCase()}`
         return name.includes(queryText)
       })
       return queryResult
     }
-    
-      return this.state.attendees
-    
+
+    return this.state.attendees
   }
 
   onAdminSelected = attendee => {
