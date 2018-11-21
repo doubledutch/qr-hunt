@@ -220,13 +220,13 @@ class HomeView extends PureComponent {
     const namedCode = this.state.codes.find(c => c.id === hash)
     if (namedCode) {
       if (this.state.scans[hash]) {
-        this.dismissScannerWithAlert(t("alertDup"))
+        this.dismissScannerWithAlert(t("alertDupTitle"), t("alertDup"))
       } else {
         this.scansRef().child(hash).set(true)
-        this.dismissScannerWithAlert(t("alertComplete", {name: namedCode.name}))
+        this.dismissScannerWithAlert(t("alertCompleteTitle"), t("alertComplete", {name: namedCode.name}))
       }
     } else {
-      this.dismissScannerWithAlert(t("alertWrong"))
+      this.dismissScannerWithAlert(t("alertWrongTitle"), t("alertWrong"))
     }
   }
 

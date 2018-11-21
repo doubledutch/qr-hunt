@@ -79,11 +79,9 @@ export default class CategoryCell extends Component {
           <input className="catNameText" autoFocus type="text" value={this.state.catName} placeholder={t("catNamePlaceholder")} onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
           <input className="catNameText" type="text" value={this.state.catDes} placeholder={t("catDesPlaceholder")} onChange={(e) => this.setState({catDes: e.target.value, isError: false})} />&nbsp;
           <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />{t("catReq", {requiredNum: "", scan: scansRequired === 1 ? "scan" : "scans"})}
-          {this.renderNeedsMoreCatCodes()}
           <div style={{flex:1}}/>
           { this.renderSaveButton() }
           <button className="noBorderButton" onClick={this.cancelEdits}>{t("cancel")}</button>&nbsp;
-          <ReactTooltip multiline={true}/>
         </li>
       )
     }
