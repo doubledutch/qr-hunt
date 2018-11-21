@@ -350,7 +350,13 @@ class App extends PureComponent {
       if (this.state.allCodesByUser[attendee.id]) {
         if (this.state.allCodesByUser[attendee.id].scans) {
           const scans = Object.keys(this.state.allCodesByUser[attendee.id].scans)
-        const parsedUser = {First_Name: attendee.firstName, Last_Name: attendee.lastName, Email: attendee.email, Title: attendee.title, Company: attendee.company}
+          const parsedUser = {
+            First_Name: attendee.firstName,
+            Last_Name: attendee.lastName,
+            Email: attendee.email,
+            Title: attendee.title,
+            Company: attendee.company,
+          }
           scans.forEach(scan => {
             const originalData = this.state.codes.find(code => code.id === scan)
             if (originalData) {
@@ -409,15 +415,14 @@ class App extends PureComponent {
   getCustomAttendeeList = () => {
     const queryText = this.state.attendeeSearchValue.toLowerCase()
     if (queryText.length > 0) {
-      const queryResult = this.state.attendees.filter(s => { 
-        const name = s.firstName.toLowerCase() + " " + s.lastName.toLowerCase()
+      const queryResult = this.state.attendees.filter(s => {
+        const name = `${s.firstName.toLowerCase()} ${s.lastName.toLowerCase()}`
         return name.includes(queryText)
       })
       return queryResult
     }
-    
-      return this.state.attendees
-    
+
+    return this.state.attendees
   }
 
   onAdminSelected = attendee => {
