@@ -454,7 +454,7 @@ class App extends PureComponent {
       })
       return completedTime
     }
-    else return completedTime
+    else return null
   }
 
   updateList = value => {
