@@ -413,14 +413,26 @@ class App extends PureComponent {
             Company: attendee.company,
             CompletedAllCategories: gameWinner,
           }
+          let allDates = []
           this.state.categories.forEach(cat => {
             const totalCatScans = `Scans for ${cat.name}`
             const completedCat = `Completed ${cat.name}`
+            const completedCatTime = `Completed ${cat.name} Time`
             const completedScans = this.categoryScansForUser(cat.id, attendee.id)
             parsedUser[totalCatScans] = completedScans
             parsedUser[completedCat] =
               completedScans >= cat.scansRequired && completedScans > 0 ? 'True' : ''
+            const lastDate = this.findCompletedCategoryTime(completedScans, cat, this.state.allCodesByUser[attendee.id].scans)  
+            parsedUser[completedCatTime] = lastDate
+            
+            //store dates to allow us to determine when the challenge was completed
+            if (lastDate) allDates.push(new Date(lastDate).getTime())       
           })
+          //sort by oldest first thus completed event time
+          allDates = allDates.sort((a, b) => b - a)
+          let completedEventTime = allDates[0]
+          completedEventTime = new Date(completedEventTime).toString()
+          parsedUser["Completed Event Time"] = completedEventTime
           parsedData.push(parsedUser)
         }
       }
@@ -429,6 +441,20 @@ class App extends PureComponent {
     setTimeout(() => this.setState({ exporting: false }), 3000)
   }
 
+  findCompletedCategoryTime = (completedScans, cat, allScans) => {
+    if (completedScans >= cat.scansRequired && completedScans > 0 ) {
+      const scans = Object.values(allScans).sort((a, b) => a - b)
+      let completedTime = ""
+      scans.forEach((item, i) => {
+        if (i === cat.scansRequired - 1){
+          completedTime = new Date(item).toString()
+        }
+      })
+      return completedTime
+    }
+    else return null
+  }
+  
   updateList = value => {
     this.setState({ attendeeSearch: value.length > 0, attendeeSearchValue: value })
   }
