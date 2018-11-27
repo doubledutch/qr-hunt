@@ -430,9 +430,11 @@ class App extends PureComponent {
           })
           //sort by oldest first thus completed event time
           allDates = allDates.sort((a, b) => b - a)
-          let completedEventTime = allDates[0]
-          completedEventTime = new Date(completedEventTime).toString()
-          parsedUser["Completed Event Time"] = completedEventTime
+          let completedEventTime = allDates.length ? allDates[0] : null
+          if (completedEventTime){
+            completedEventTime = new Date(completedEventTime).toString()
+            parsedUser["Completed Event Time"] = completedEventTime
+          }
           parsedData.push(parsedUser)
         }
       }
@@ -444,17 +446,17 @@ class App extends PureComponent {
   findCompletedCategoryTime = (completedScans, cat, allScans) => {
     if (completedScans >= cat.scansRequired && completedScans > 0 ) {
       const scans = Object.values(allScans).sort((a, b) => a - b)
-      let completedTime = ""
+      let completedTime = null
       scans.forEach((item, i) => {
-        if (i === cat.scansRequired - 1){
+        if (item !== true && i === cat.scansRequired - 1){
           completedTime = new Date(item).toString()
         }
       })
       return completedTime
     }
-    else return null
+    else return completedTime
   }
-  
+
   updateList = value => {
     this.setState({ attendeeSearch: value.length > 0, attendeeSearchValue: value })
   }
