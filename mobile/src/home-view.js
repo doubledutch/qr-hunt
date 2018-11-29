@@ -200,18 +200,6 @@ class HomeView extends PureComponent {
                   <Text style={s.buttonText}>{t('scan')}</Text>
                 </TouchableOpacity>
               )}
-                              <TouchableOpacity
-                  style={[s.button, { backgroundColor: primaryColor }]}
-                  onPress={this.fakeScan}
-                >
-                  <Text style={s.buttonText}>{"Fake"}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[s.button, { backgroundColor: primaryColor }]}
-                  onPress={this.fakeScanAdd}
-                >
-                  <Text style={s.buttonText}>{"FakeAdd"}</Text>
-                </TouchableOpacity>
               {isAdmin && (
                 <TouchableOpacity
                   style={[s.button, { backgroundColor: primaryColor }]}
@@ -314,18 +302,6 @@ class HomeView extends PureComponent {
     } else {
       this.dismissScannerWithAlert(t("alertWrongTitle"), t("alertWrong"))
     }
-  }
-
-  fakeScanAdd = () => {
-    const hash = "34ece19d03b13341172f35f9e0a98061a"
-    this.codesRef()
-    .child(hash)
-    .set({ value: hash, name: `Added @ ${new Date().toString()}` })
-  }
-
-  fakeScan = () => {
-    const hash = "4ece19d03b13341172f35f9e0a98061a"
-    this.scansRef().child(hash).set(new Date().getTime())
   }
 
   dismissScannerWithAlert = (title, message) => {
