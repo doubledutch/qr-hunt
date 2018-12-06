@@ -112,6 +112,7 @@ class HomeView extends PureComponent {
   }
 
   render() {
+    const { suggestedTitle } = this.props
     const {
       codes,
       isAdmin,
@@ -145,7 +146,7 @@ class HomeView extends PureComponent {
     )
     return (
       <View style={s.container}>
-        <TitleBar title={title || t('challenge')} client={client} signin={this.signin} />
+        <TitleBar title={title || suggestedTitle || t('challenge')} client={client} signin={this.signin} />
         {scans === null && done === false ? (
           <Text>{t('loading')}</Text>
         ) : !welcomeDismissed && !anyScans ? (
