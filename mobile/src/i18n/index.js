@@ -1,5 +1,5 @@
-import enUS from './qr-hunt.mobile.en-US.json'
-// import deDE from './qr-hunt.mobile.de-DE.json'
+import enUS from './en-us/qr-hunt.mobile.json'
+// import deDE from './de-de/qr-hunt.mobile.json'
 
 export default (strings = {
   '': enUS,
