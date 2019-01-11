@@ -437,7 +437,7 @@ class App extends PureComponent {
           let completedEventTime = allDates.length ? allDates[0] : null
           if (completedEventTime) {
             completedEventTime = new Date(completedEventTime).toString()
-            parsedUser['Completed Event Time'] = completedEventTime
+            parsedUser['Completed All Categories Time'] = completedEventTime
           }
           parsedData.push(parsedUser)
         }

@@ -83,24 +83,26 @@ export default class CategoryCell extends Component {
         <li key={id}>
           <p className="cellName">{name}</p>&nbsp;
           <p className="cellName">{description}</p>&nbsp;
-          <p>{t("catReq", {requiredNum: scansRequired || 0, scan: scansRequired === 1 ? "scan" : "scans"})}</p>
+          <p>
+            {t('catReq', {
+              requiredNum: scansRequired || 0,
+              scan: scansRequired === 1 ? 'scan' : 'scans',
+            })}
+          </p>
           {this.renderNeedsMoreCatCodes()}
-          <div style={{flex:1}}/>
-          <button className="noBorderButton" onClick={this.toggleEdit}>{t("edit")}</button>&nbsp;
-          <button className="noBorderButton" onClick={this.props.removeCategory(this.props.category)}>{t("remove")}</button>&nbsp;
-          <ReactTooltip multiline={true}/>
-        </li>
-      )
-    }
-    else {
-      return (
-        <li key={id}>
-          <input className="catNameText" autoFocus type="text" value={this.state.catName} placeholder={t("catNamePlaceholder")} onChange={(e) => this.setState({catName: e.target.value, isError: false})} />&nbsp;
-          <input className="catNameText" type="text" value={this.state.catDes} placeholder={t("catDesPlaceholder")} onChange={(e) => this.setState({catDes: e.target.value, isError: false})} />&nbsp;
-          <input className="catNumbText" type="number" value={this.state.catValue || 0} onChange={(e) => this.setState({catValue: +e.target.value})} min={0} max={100} />{t("catReq", {requiredNum: "", scan: scansRequired === 1 ? "scan" : "scans"})}
-          <div style={{flex:1}}/>
-          { this.renderSaveButton() }
-          <button className="noBorderButton" onClick={this.cancelEdits}>{t("cancel")}</button>&nbsp;
+          <div style={{ flex: 1 }} />
+          <button className="noBorderButton" onClick={this.toggleEdit}>
+            {t('edit')}
+          </button>
+          &nbsp;
+          <button
+            className="noBorderButton"
+            onClick={this.props.removeCategory(this.props.category)}
+          >
+            {t('remove')}
+          </button>
+          &nbsp;
+          <ReactTooltip multiline />
         </li>
       )
     }
@@ -133,14 +135,12 @@ export default class CategoryCell extends Component {
           max={100}
         />
         {t('catReq', { requiredNum: '', scan: scansRequired === 1 ? 'scan' : 'scans' })}
-        {this.renderNeedsMoreCatCodes()}
         <div style={{ flex: 1 }} />
         {this.renderSaveButton()}
         <button className="noBorderButton" onClick={this.cancelEdits}>
           {t('cancel')}
         </button>
         &nbsp;
-        <ReactTooltip multiline />
       </li>
     )
   }
