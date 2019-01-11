@@ -422,18 +422,22 @@ class App extends PureComponent {
             parsedUser[totalCatScans] = completedScans
             parsedUser[completedCat] =
               completedScans >= cat.scansRequired && completedScans > 0 ? 'True' : ''
-            const lastDate = this.findCompletedCategoryTime(completedScans, cat, this.state.allCodesByUser[attendee.id].scans)  
+            const lastDate = this.findCompletedCategoryTime(
+              completedScans,
+              cat,
+              this.state.allCodesByUser[attendee.id].scans,
+            )
             parsedUser[completedCatTime] = lastDate
-            
-            //store dates to allow us to determine when the challenge was completed
-            if (lastDate) allDates.push(new Date(lastDate).getTime())       
+
+            // store dates to allow us to determine when the challenge was completed
+            if (lastDate) allDates.push(new Date(lastDate).getTime())
           })
-          //sort by oldest first thus completed event time
+          // sort by oldest first thus completed event time
           allDates = allDates.sort((a, b) => b - a)
           let completedEventTime = allDates.length ? allDates[0] : null
-          if (completedEventTime){
+          if (completedEventTime) {
             completedEventTime = new Date(completedEventTime).toString()
-            parsedUser["Completed Event Time"] = completedEventTime
+            parsedUser['Completed All Categories Time'] = completedEventTime
           }
           parsedData.push(parsedUser)
         }
@@ -444,17 +448,17 @@ class App extends PureComponent {
   }
 
   findCompletedCategoryTime = (completedScans, cat, allScans) => {
-    if (completedScans >= cat.scansRequired && completedScans > 0 ) {
+    if (completedScans >= cat.scansRequired && completedScans > 0) {
       const scans = Object.values(allScans).sort((a, b) => a - b)
       let completedTime = null
       scans.forEach((item, i) => {
-        if (item !== true && i === cat.scansRequired - 1){
+        if (item !== true && i === cat.scansRequired - 1) {
           completedTime = new Date(item).toString()
         }
       })
       return completedTime
     }
-    else return null
+    return null
   }
 
   updateList = value => {
