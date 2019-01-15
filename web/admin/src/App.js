@@ -448,12 +448,16 @@ class App extends PureComponent {
   }
 
   findCompletedCategoryTime = (completedScans, cat, allScans) => {
+    const filteredScanKeys = Object.keys(allScans).filter(scanId => {
+      const isCode = this.state.codes.find(code => code.id === scanId && code.categoryId === cat.id)
+      return isCode
+    })
     if (completedScans >= cat.scansRequired && completedScans > 0) {
-      const scans = Object.values(allScans).sort((a, b) => a - b)
+      const scanKeys = filteredScanKeys.sort((a, b) => allScans[a] - allScans[b])
       let completedTime = null
-      scans.forEach((item, i) => {
-        if (item !== true && i === cat.scansRequired - 1) {
-          completedTime = new Date(item).toString()
+      scanKeys.forEach((id, i) => {
+        if (allScans[id] !== true && i === cat.scansRequired - 1) {
+          completedTime = new Date(allScans[id]).toString()
         }
       })
       return completedTime
