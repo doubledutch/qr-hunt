@@ -37,7 +37,6 @@
     "jest": "23.6.0",
     "metro-react-native-babel-preset": "0.50.0",
     "prettier": "^1.15.2",
-    "react-test-renderer": "16.6.1",
-    "rnpm": "^1.9.0"
+    "react-test-renderer": "16.6.1"
   }
 }
