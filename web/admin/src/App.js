@@ -459,9 +459,9 @@ class App extends PureComponent {
       .sort((a, b) => a - b)
     if (completedScans >= cat.scansRequired && completedScans > 0) {
       let completedTime = null
-      filteredScans.forEach((id, i) => {
-        if (id !== true && i === cat.scansRequired - 1) {
-          completedTime = new Date(id).toString()
+      filteredScans.forEach((scan, i) => {
+        if (scan !== true && i === cat.scansRequired - 1) {
+          completedTime = new Date(scan).toString()
         }
       })
       return completedTime
