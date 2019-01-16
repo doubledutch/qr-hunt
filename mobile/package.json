@@ -3,14 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "react-native start --port 8081",
-    "clean": "watchman watch-del-all && rm -rf node_modules && rm -fr $TMPDIR/react-* && rm -rf ios/build && (yarn || npm i)"
+    "start": "(sleep 5 ; echo ; echo ===================== ; echo Launch the DoubleDutch Simulator to connect. See https://github.com/doubledutch/simulator#doubledutch-extension-simulator ; echo ===================== ) & react-native start --port 8081",
+    "clean": "watchman watch-del-all && rm -rf node_modules && rm -rf /tmp/metro-bundler-cache-* && rm -rf /tmp/haste-map-react-native-packager-* && (yarn || npm i)"
   },
   "dependencies": {
     "@doubledutch/firebase-connector": "^4.1.0",
-    "@doubledutch/rn-client": "^5.0.0-alpha",
+    "@doubledutch/rn-client": "5.0.1-alpha",
     "md5": "^2.2.1",
     "react": "16.6.1",
+    "react-addons-update": "~15.6.0",
     "react-native": "0.57.5",
     "react-native-cached-image": "^1.3.5",
     "react-native-camera": "1.4.3",
@@ -34,7 +35,7 @@
     "eslint-plugin-react": "^7.11.1",
     "eslint-plugin-react-native": "^3.5.0",
     "jest": "23.6.0",
-    "metro-react-native-babel-preset": "0.49.2",
+    "metro-react-native-babel-preset": "0.50.0",
     "prettier": "^1.15.2",
     "react-test-renderer": "16.6.1"
   }
