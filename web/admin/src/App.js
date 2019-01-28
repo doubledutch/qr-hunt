@@ -15,7 +15,7 @@
  */
 
 import React, { PureComponent } from 'react'
-import { CSVDownload } from 'react-csv'
+import { CSVDownload } from '@doubledutch/react-csv'
 import client, { translate as t, useStrings } from '@doubledutch/admin-client'
 import i18n from './i18n'
 import '@doubledutch/react-components/lib/base.css'
@@ -350,13 +350,13 @@ class App extends PureComponent {
                       {t('exportCode')}
                     </button>
                     {this.state.exportingCode ? (
-                      <CSVDownload data={this.state.exportListCode} target="_blank" />
+                      <CSVDownload data={this.state.exportListCode} filename="results.csv" target="_blank" />
                     ) : null}
                     <button className="csvButton" onClick={this.formatDataForExport}>
                       {t('exportCat')}
                     </button>
                     {this.state.exporting ? (
-                      <CSVDownload data={this.state.exportList} target="_blank" />
+                      <CSVDownload data={this.state.exportList} filename="results.csv" target="_blank" />
                     ) : null}
                   </div>
                 </div>
@@ -445,6 +445,10 @@ class App extends PureComponent {
     })
     this.setState({ exporting: true, exportList: parsedData })
     setTimeout(() => this.setState({ exporting: false }), 3000)
+  }
+
+  scratch() {
+    const obj = { a: 1, b: 2 }
   }
 
   findCompletedCategoryTime = (completedScans, cat, allScans) => {
