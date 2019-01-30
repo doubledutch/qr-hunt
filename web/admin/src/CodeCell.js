@@ -104,6 +104,7 @@ export default class CodeCell extends Component {
         <select
           value={this.state.codeCat}
           onChange={e => this.setState({ codeCat: e.target.value })}
+          className="selectBox"
         >
           <option>{t('selectCat')}</option>
           {this.props.categories.map(c => (
