@@ -253,6 +253,10 @@ select {
   color: #4A4A4A;
 }
 
+.selectBox {
+  width: 200px; 
+}
+
 .catNumbText {
   width: 30px;
   border: none;
