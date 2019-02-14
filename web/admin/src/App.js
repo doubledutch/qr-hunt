@@ -350,13 +350,21 @@ class App extends PureComponent {
                       {t('exportCode')}
                     </button>
                     {this.state.exportingCode ? (
-                      <CSVDownload data={this.state.exportListCode} filename="results.csv" target="_blank" />
+                      <CSVDownload
+                        data={this.state.exportListCode}
+                        filename="results.csv"
+                        target="_blank"
+                      />
                     ) : null}
                     <button className="csvButton" onClick={this.formatDataForExport}>
                       {t('exportCat')}
                     </button>
                     {this.state.exporting ? (
-                      <CSVDownload data={this.state.exportList} filename="results.csv" target="_blank" />
+                      <CSVDownload
+                        data={this.state.exportList}
+                        filename="results.csv"
+                        target="_blank"
+                      />
                     ) : null}
                   </div>
                 </div>
@@ -435,7 +443,7 @@ class App extends PureComponent {
           // sort by oldest first thus completed event time
           allDates = allDates.sort((a, b) => b - a)
           let completedEventTime = allDates.length ? allDates[0] : null
-          if (completedEventTime) {
+          if (completedEventTime && completed.find(user => user.id === attendee.id)) {
             completedEventTime = new Date(completedEventTime).toString()
             parsedUser['Completed All Categories Time'] = completedEventTime
           }
