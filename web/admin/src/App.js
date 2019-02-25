@@ -401,8 +401,10 @@ class App extends PureComponent {
         }
       }
     })
-    this.setState({ exportingCode: true, exportListCode: parsedData })
-    setTimeout(() => this.setState({ exportingCode: false }), 3000)
+    if (parsedData.length) {
+      this.setState({ exportingCode: true, exportListCode: parsedData })
+      setTimeout(() => this.setState({ exportingCode: false }), 3000)
+    }
   }
 
   formatDataForExport = () => {
@@ -451,8 +453,10 @@ class App extends PureComponent {
         }
       }
     })
-    this.setState({ exporting: true, exportList: parsedData })
-    setTimeout(() => this.setState({ exporting: false }), 3000)
+    if (parsedData.length) {
+      this.setState({ exporting: true, exportList: parsedData })
+      setTimeout(() => this.setState({ exporting: false }), 3000)
+    }
   }
 
   scratch() {
