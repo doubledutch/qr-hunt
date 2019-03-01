@@ -1,0 +1,20 @@
+{
+  "loading" : "読み込んでいます…",
+  "complete" : "${total} / ${current}完了",
+  "helpTextCat" : "ゲームを開始する前にカテゴリーを追加してください。",
+  "scan" : "コードをスキャン",
+  "add" : "コードを追加（管理者）",
+  "play" : "プレイ",
+  "done" : "お疲れ様でした！",
+  "alertDupTitle" : "スキャン済",
+  "alertDup" : "このQRコードは既にスキャンされています。",
+  "alertWrongTitle" : "ご確認ください！",
+  "alertWrong" : "このQRコードは、チャレンジ対象に含まれていません。",
+  "alertCompleteTitle" : "おめでとうございます！",
+  "alertComplete" : "${name}をスキャンしました",
+  "challenge" : "チャレンジ",
+  "cancel" : "キャンセル",
+  "noScanner" : "エミュレータにスキャナが存在しません",
+  "permission" : "カメラの許可",
+  "required" : "QRコードのスキャンが必要です"
+}
