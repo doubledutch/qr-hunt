@@ -403,6 +403,8 @@ class App extends PureComponent {
     if (parsedData.length) {
       this.setState({ exportingCode: true, exportListCode: parsedData })
       setTimeout(() => this.setState({ exportingCode: false }), 3000)
+    } else {
+      window.alert(t('noData'))
     }
   }
 
@@ -456,7 +458,7 @@ class App extends PureComponent {
       this.setState({ exporting: true, exportList: parsedData })
       setTimeout(() => this.setState({ exporting: false }), 3000)
     } else {
-      window.alert('There is no data available to export')
+      window.alert(t('noData'))
     }
   }
 
