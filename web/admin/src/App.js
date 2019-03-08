@@ -558,7 +558,9 @@ class App extends PureComponent {
   }
 
   renderUser = user => {
-    const disableDelete = !this.state.scansPerUserPerCategory[user.id]
+    const disableDelete = this.state.scansPerUserPerCategory[user.id]
+      ? !Object.keys(this.state.scansPerUserPerCategory[user.id]).length
+      : true
     const { id, firstName, lastName } = user
     return (
       <li key={id} className={this.isDone(user.id) ? 'is-done' : 'not-done'}>
