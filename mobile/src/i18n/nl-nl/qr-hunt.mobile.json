@@ -1,0 +1,20 @@
+{
+  "loading" : "Laden...",
+  "complete" : "${current} van ${total} voltooid",
+  "helpTextCat" : "Er zijn geen categorieën toegevoegd om het spel te beginnen.",
+  "scan" : "Code scannen",
+  "add" : "Code toevoegen (beheerder)",
+  "play" : "LATEN WE HET SPEL BEGINNEN!",
+  "done" : "Klaar",
+  "alertDupTitle" : "Al gescand",
+  "alertDup" : "Het lijkt erop dat u deze QR-code al hebt gescand!",
+  "alertWrongTitle" : "Helaas...",
+  "alertWrong" : "Het lijkt erop dat deze QR-code geen deel uitmaakt van de speurtocht!",
+  "alertCompleteTitle" : "Proficiat!",
+  "alertComplete" : "U hebt ${name} gescand",
+  "challenge" : "Speurtocht",
+  "cancel" : "Annuleren",
+  "noScanner" : "Geen scanner in emulator",
+  "permission" : "Toestemming voor gebruik camera",
+  "required" : "Vereist om QR-codes te scannen"
+}

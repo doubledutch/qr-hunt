@@ -1,0 +1,20 @@
+{
+  "loading" : "Cargando…",
+  "complete" : "${current} de ${total} completos",
+  "helpTextCat" : "No se han añadido categorías para comenzar el juego.",
+  "scan" : "Escanear código",
+  "add" : "Añadir código (administrador)",
+  "play" : "¡JUGUEMOS!",
+  "done" : "¡Lo has conseguido!",
+  "alertDupTitle" : "Ya escaneado",
+  "alertDup" : "¡Parece que ya has escaneado este código QR!",
+  "alertWrongTitle" : "¡Vaya!",
+  "alertWrong" : "¡Parece que este código QR no es parte del desafío!",
+  "alertCompleteTitle" : "¡Felicidades!",
+  "alertComplete" : "Has escaneado ${name}",
+  "challenge" : "Desafío",
+  "cancel" : "Cancelar",
+  "noScanner" : "No hay escáner en el emulador",
+  "permission" : "Permiso de la cámara",
+  "required" : "Requerido para escanear códigos QR"
+}

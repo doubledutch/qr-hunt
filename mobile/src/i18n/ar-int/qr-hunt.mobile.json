@@ -1,0 +1,20 @@
+{
+  "loading" : "جار التحميل...",
+  "complete" : "${current} من ${total} كاملة",
+  "helpTextCat" : "لم يتم إضافة أي فئات لبدء اللعبة.",
+  "scan" : "كود المسح",
+  "add" : "إضافة الرمز (المشرف)",
+  "play" : "هيا بنا نلعب!",
+  "done" : "تم",
+  "alertDupTitle" : "تم المسح بالفعل",
+  "alertDup" : "يبدو أنك قد فحصت رمز QR هذا بالفعل!",
+  "alertWrongTitle" : "عذراً!",
+  "alertWrong" : "يبدو أن رمز QR هذا ليس جزءًا من التحدي!",
+  "alertCompleteTitle" : "مبروك!",
+  "alertComplete" : "لقد قمت بمسح ${name}",
+  "challenge" : "التحدي",
+  "cancel" : "إلغاء",
+  "noScanner" : "لا يوجد ماسح ضوئي في المحاكي",
+  "permission" : "تصريح الكاميرا",
+  "required" : "مطلوب لمسح رموز QR"
+}
