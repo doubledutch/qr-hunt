@@ -236,7 +236,6 @@ class App extends PureComponent {
   render() {
     const { codes, categories } = this.state
     const attendees = this.getCustomAttendeeList()
-
     return (
       <div className="App">
         {attendees ? (
@@ -456,11 +455,9 @@ class App extends PureComponent {
     if (parsedData.length) {
       this.setState({ exporting: true, exportList: parsedData })
       setTimeout(() => this.setState({ exporting: false }), 3000)
+    } else {
+      window.alert('There is no data available to export')
     }
-  }
-
-  scratch() {
-    const obj = { a: 1, b: 2 }
   }
 
   findCompletedCategoryTime = (completedScans, cat, allScans) => {
