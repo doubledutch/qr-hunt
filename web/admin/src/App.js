@@ -236,7 +236,6 @@ class App extends PureComponent {
   render() {
     const { codes, categories } = this.state
     const attendees = this.getCustomAttendeeList()
-
     return (
       <div className="App">
         {attendees ? (
@@ -401,8 +400,12 @@ class App extends PureComponent {
         }
       }
     })
-    this.setState({ exportingCode: true, exportListCode: parsedData })
-    setTimeout(() => this.setState({ exportingCode: false }), 3000)
+    if (parsedData.length) {
+      this.setState({ exportingCode: true, exportListCode: parsedData })
+      setTimeout(() => this.setState({ exportingCode: false }), 3000)
+    } else {
+      window.alert(t('noData'))
+    }
   }
 
   formatDataForExport = () => {
@@ -451,12 +454,12 @@ class App extends PureComponent {
         }
       }
     })
-    this.setState({ exporting: true, exportList: parsedData })
-    setTimeout(() => this.setState({ exporting: false }), 3000)
-  }
-
-  scratch() {
-    const obj = { a: 1, b: 2 }
+    if (parsedData.length) {
+      this.setState({ exporting: true, exportList: parsedData })
+      setTimeout(() => this.setState({ exporting: false }), 3000)
+    } else {
+      window.alert(t('noData'))
+    }
   }
 
   findCompletedCategoryTime = (completedScans, cat, allScans) => {
@@ -554,6 +557,9 @@ class App extends PureComponent {
   }
 
   renderUser = user => {
+    const disableDelete = this.state.scansPerUserPerCategory[user.id]
+      ? !Object.keys(this.state.scansPerUserPerCategory[user.id]).length
+      : true
     const { id, firstName, lastName } = user
     return (
       <li key={id} className={this.isDone(user.id) ? 'is-done' : 'not-done'}>
@@ -571,7 +577,11 @@ class App extends PureComponent {
           </span>
         ))}
         <div className="flex" />
-        <button className="dd-bordered" onClick={() => this.deleteUserScans(user)}>
+        <button
+          className="dd-bordered"
+          onClick={() => this.deleteUserScans(user)}
+          disabled={disableDelete}
+        >
           {t('deleteScans')}
         </button>
       </li>

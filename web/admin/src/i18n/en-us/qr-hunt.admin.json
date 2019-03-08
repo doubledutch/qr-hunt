@@ -40,5 +40,6 @@
   "selectCat": "--Select category--",
   "search": "Search",
   "scansRequired": "Scans Required",
-  "unavailable": "unavailable"
+  "unavailable": "unavailable",
+  "noData": "There is no data available for export"
 }
