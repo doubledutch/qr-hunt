@@ -146,7 +146,11 @@ class HomeView extends PureComponent {
     )
     return (
       <View style={s.container}>
-        <TitleBar title={title || suggestedTitle || t('challenge')} client={client} signin={this.signin} />
+        <TitleBar
+          title={title || suggestedTitle || t('challenge')}
+          client={client}
+          signin={this.signin}
+        />
         {scans === null && done === false ? (
           <Text>{t('loading')}</Text>
         ) : !welcomeDismissed && !anyScans ? (
@@ -243,18 +247,20 @@ class HomeView extends PureComponent {
   renderWelcome() {
     return (
       <View style={s.container}>
-        <View style={s.welcomeBox}>
-          <Text style={s.welcomeTitle}>{this.state.title}</Text>
-          <Text style={s.welcomeText}>{this.state.welcome}</Text>
-          <View style={s.buttons}>
-            <TouchableOpacity
-              style={[s.button, { backgroundColor: this.state.primaryColor }]}
-              onPress={this.dismissWelcome}
-            >
-              <Text style={s.buttonText}>{t('play')}</Text>
-            </TouchableOpacity>
+        <ScrollView style={s.scroll}>
+          <View style={s.welcomeBox}>
+            <Text style={s.welcomeTitle}>{this.state.title}</Text>
+            <Text style={s.welcomeText}>{this.state.welcome}</Text>
+            <View style={s.buttons}>
+              <TouchableOpacity
+                style={[s.button, { backgroundColor: this.state.primaryColor }]}
+                onPress={this.dismissWelcome}
+              >
+                <Text style={s.buttonText}>{t('play')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
     )
   }
@@ -435,7 +441,6 @@ const s = StyleSheet.create({
   },
   welcomeBox: {
     backgroundColor: '#FFFFFF',
-    marginVertical: 10,
   },
   welcomeTitle: {
     color: charcoal,
