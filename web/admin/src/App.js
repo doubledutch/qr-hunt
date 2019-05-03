@@ -63,6 +63,7 @@ class App extends PureComponent {
     exportList: [],
     exporting: false,
     exportListCode: [],
+    exportListHeaders: null,
     exportingCode: false,
   }
 
@@ -351,6 +352,7 @@ class App extends PureComponent {
                     {this.state.exportingCode ? (
                       <CSVDownload
                         data={this.state.exportListCode}
+                        headers={this.state.exportListHeaders}
                         filename="results.csv"
                         target="_blank"
                       />
@@ -379,21 +381,31 @@ class App extends PureComponent {
 
   formatDataForExportCode = () => {
     const parsedData = []
+    const headers = [
+      { label: 'First Name', key: 'firstName' },
+      { label: 'Last Name', key: 'lastName' },
+      { label: 'Email', key: 'email' },
+      { label: 'Title', key: 'title' },
+      { label: 'Company', key: 'company' },
+    ]
+    this.state.codes.forEach(code => {
+      headers.push({ label: code.name, key: code.id })
+    })
     this.state.attendees.forEach(attendee => {
       if (this.state.allCodesByUser[attendee.id]) {
         if (this.state.allCodesByUser[attendee.id].scans) {
           const scans = Object.keys(this.state.allCodesByUser[attendee.id].scans)
           const parsedUser = {
-            First_Name: attendee.firstName,
-            Last_Name: attendee.lastName,
-            Email: attendee.email,
-            Title: attendee.title,
-            Company: attendee.company,
+            firstName: attendee.firstName,
+            lastName: attendee.lastName,
+            email: attendee.email,
+            title: attendee.title,
+            company: attendee.company,
           }
           scans.forEach(scan => {
             const originalData = this.state.codes.find(code => code.id === scan)
             if (originalData) {
-              parsedUser[originalData.name] = 'Scanned'
+              parsedUser[originalData.id] = 'Scanned'
             }
           })
           parsedData.push(parsedUser)
@@ -401,7 +413,7 @@ class App extends PureComponent {
       }
     })
     if (parsedData.length) {
-      this.setState({ exportingCode: true, exportListCode: parsedData })
+      this.setState({ exportingCode: true, exportListCode: parsedData, exportListHeaders: headers })
       setTimeout(() => this.setState({ exportingCode: false }), 3000)
     } else {
       window.alert(t('noData'))
