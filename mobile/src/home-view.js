@@ -19,7 +19,6 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import md5 from 'md5'
 import client, { TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
 import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
-import firebase from 'firebase/app'
 import Checkmark from './Checkmark'
 import Star from './Star'
 import Scanner from './Scanner'
@@ -99,12 +98,19 @@ class HomeView extends PureComponent {
       fbc.database.private.adminableUserRef('adminToken').once('value', async data => {
         const longLivedToken = data.val()
         if (longLivedToken) {
-          console.log('Attendee appears to be admin.  Logging out and logging in w/ admin token.')
-          await firebase.auth().signOut()
-          client.longLivedToken = longLivedToken
-          await fbc.signinAdmin()
-          console.log('Re-logged in as admin')
-          this.setState({ isAdmin: true })
+          try {
+            console.log('Attendee appears to be admin.  Logging out and logging in w/ admin token.')
+            await fbc.firebase.auth().signOut()
+            client.longLivedToken = longLivedToken
+            await fbc.signinAdmin()
+            console.log('Re-logged in as admin')
+            this.setState({ isAdmin: true })
+          } catch (e) {
+            // Failed to log in as admin.
+            alert(`Failed to authenticate as admin: ${e.message}`)
+            client.longLivedToken = null
+            await fbc.signin()
+          }
         }
         wireListeners()
       })
