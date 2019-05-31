@@ -25,6 +25,7 @@
   "exportCode": "Export List by Code",
   "exportCat": "Export List by Category",
   "deleteScans": "Delete Scans",
+  "confirmAddition": "Are you sure you want to add this scan for the user?",
   "confirmDelete": "Are you sure you want to delete the users scans?",
   "confirmDeleteCat": "Are you sure you want to remove the QR code category ${name}?",
   "confirmDeleteCode": "Are you sure you want to remove the QR code ${name}?",
