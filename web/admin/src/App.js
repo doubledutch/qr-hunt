@@ -20,6 +20,7 @@ import client, { translate as t, useStrings } from '@doubledutch/admin-client'
 import i18n from './i18n'
 import '@doubledutch/react-components/lib/base.css'
 import './App.css'
+import UserSelect from './UserSelect'
 import CategoryCell from './CategoryCell'
 import CodeCell from './CodeCell'
 import SearchBar from './SearchBar'
@@ -65,6 +66,7 @@ class App extends PureComponent {
     exportListCode: [],
     exportListHeaders: null,
     exportingCode: false,
+    assignUser: null,
   }
 
   componentDidMount() {
@@ -222,6 +224,7 @@ class App extends PureComponent {
                 activeEdit={this.state.activeEdit}
                 setCodeName={this.setCodeName}
                 resetCodeName={this.resetCodeName}
+                assignUser={this.assignUser}
                 setCodeNumb={this.setCodeNumb}
                 removeCode={this.removeCode}
                 categories={categories}
@@ -239,6 +242,13 @@ class App extends PureComponent {
     const attendees = this.getCustomAttendeeList()
     return (
       <div className="App">
+        <UserSelect
+          user={this.state.assignUser}
+          codes={codes}
+          categories={categories}
+          closeModal={() => this.setState({ assignUser: null })}
+          addUserCode={this.addUserCode}
+        />
         {attendees ? (
           <div>
             <div className="sectionContainer">
@@ -377,6 +387,10 @@ class App extends PureComponent {
         )}
       </div>
     )
+  }
+
+  assignUser = user => {
+    this.setState({ assignUser: user })
   }
 
   formatDataForExportCode = () => {
@@ -589,6 +603,9 @@ class App extends PureComponent {
           </span>
         ))}
         <div className="flex" />
+        <button className="dd-bordered" onClick={() => this.assignUser(user)}>
+          Add Scans
+        </button>
         <button
           className="dd-bordered"
           onClick={() => this.deleteUserScans(user)}
@@ -598,6 +615,16 @@ class App extends PureComponent {
         </button>
       </li>
     )
+  }
+
+  addUserCode = (user, code) => {
+    if (window.confirm(t('confirmAddition'))) {
+      this.props.fbc.database.private
+        .adminableUsersRef(user.id)
+        .child('scans')
+        .child(code.value)
+        .set(true)
+    }
   }
 
   deleteUserScans = user => {

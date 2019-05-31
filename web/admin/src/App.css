@@ -49,6 +49,54 @@ html, body, select{
   width: 40px;
 }
 
+.Modal {
+  position: absolute;
+  width: 600px;
+  height: 400px;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5);
+  background-color: #FFFFFF;
+}
+
+.Overlay {
+  position: fixed;
+  left: 29%;
+  top: 20px; 
+  background-color: gray;
+}
+
+.modalTitle{
+  font-weight: 300;
+}
+
+
+.closeModalButton {
+  color: lightgray;
+  background-color: #ffffff;
+  border: none;
+  font-family: Helvetica;
+  font-weight: 600;
+}
+
+
+.modalTop {
+  display: flex;
+  flex: 1;
+  flex-flow: nowrap;
+  border-bottom: 1px solid #E3ECF8;
+  padding: 0px 0px 0px 20px;
+  align-items: center;
+}
+
+.modalBottom {
+  flex: 1;
+  flex-flow: nowrap;
+  border-top: 1px solid #E3ECF8;
+  padding: 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end
+}
+
 .titleText {
   margin-top: 5px;
 }
@@ -172,6 +220,15 @@ ul.userList {
   border-radius: 5px;
   background-color: #FCFCFC;
   overflow-x: auto;
+}
+
+ul.modalList {
+  height: 250px;
+  width: 580px;
+  margin: 10px;
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  background-color: #FCFCFC;
 }
 
 .flex {
