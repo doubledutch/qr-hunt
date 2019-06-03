@@ -13,13 +13,7 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode }) => {
       overlayClassName="Overlay"
     >
       <div className="modalTop">
-        <h1 className="modalTitle">{`Add For ${
-          user ? `${user.firstName} ${user.firstName}` : ''
-        }`}</h1>
-        <div style={{ flex: 1 }} />
-        <button className="closeModalButton" onClick={closeModal}>
-          X
-        </button>
+        <h1 className="modalTitle">{user ? `${user.firstName} ${user.lastName}` : ''}</h1>
       </div>
       <div>
         <ul className="modalList">
@@ -32,6 +26,11 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode }) => {
             />
           ))}
         </ul>
+        <div className="modalBottom">
+          <button onClick={closeModal} className="formButton">
+            {t('close')}
+          </button>
+        </div>
       </div>
     </Modal>
   )

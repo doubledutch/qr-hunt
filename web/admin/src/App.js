@@ -603,8 +603,8 @@ class App extends PureComponent {
           </span>
         ))}
         <div className="flex" />
-        <button className="dd-bordered" onClick={() => this.assignUser(user)}>
-          Add Scans
+        <button className="dd-bordered space" onClick={() => this.assignUser(user)}>
+          {t('addScans')}
         </button>
         <button
           className="dd-bordered"

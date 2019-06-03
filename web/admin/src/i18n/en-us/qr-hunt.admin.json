@@ -42,5 +42,7 @@
   "search": "Search",
   "scansRequired": "Scans Required",
   "unavailable": "unavailable",
-  "noData": "There is no data available for export"
+  "noData": "There is no data available for export",
+  "addScans": "Add Scans",
+  "close": "Close"
 }
