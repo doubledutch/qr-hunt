@@ -622,7 +622,7 @@ class App extends PureComponent {
       this.props.fbc.database.private
         .adminableUsersRef(user.id)
         .child('scans')
-        .child(code.value)
+        .child(code.id)
         .set(true)
     }
   }
@@ -669,7 +669,7 @@ class App extends PureComponent {
     }
     this.state.attendees.forEach(attendee => {
       if (this.state.allCodesByUser[attendee.id]) {
-        const scans = this.state.allCodesByUser[attendee.id].scans
+        const { scans } = this.state.allCodesByUser[attendee.id]
         if (scans) {
           if (scans[code.id]) {
             this.props.fbc.database.private

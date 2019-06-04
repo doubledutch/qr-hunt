@@ -224,7 +224,7 @@ ul.userList {
   border: 1px solid #E3ECF8;
   border-radius: 5px;
   background-color: #FCFCFC;
-  overflow-x: auto;
+  overflow: auto;
 }
 
 ul.modalList {
@@ -393,4 +393,9 @@ select {
 
 .is-done {
   background-color: #58dd63;
+  padding: 5px;
+}
+
+.not-done {
+  padding: 5px;
 }
