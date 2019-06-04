@@ -49,12 +49,17 @@ html, body, select{
   width: 40px;
 }
 
+.space {
+  margin-right: 5px;
+}
+
 .Modal {
   position: absolute;
   width: 600px;
-  height: 400px;
+  height: 410px;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5);
   background-color: #FFFFFF;
+  border-radius: 5px;
 }
 
 .Overlay {
@@ -219,7 +224,7 @@ ul.userList {
   border: 1px solid #E3ECF8;
   border-radius: 5px;
   background-color: #FCFCFC;
-  overflow-x: auto;
+  overflow: auto;
 }
 
 ul.modalList {
@@ -229,6 +234,35 @@ ul.modalList {
   border: 1px solid #E3ECF8;
   border-radius: 5px;
   background-color: #FCFCFC;
+}
+
+.closeModalButton {
+  color: lightgray;
+  background-color: #ffffff;
+  border: none;
+  font-family: Helvetica;
+  font-weight: 600;
+}
+
+.formButton{
+  border-radius: 5px;
+  width: 100px;
+  height: 37px;
+  color: white;
+  background-color: #4E91E0;
+  margin: 15px 20px 15px 0px;
+  float: right;
+  border: none;
+}
+
+.modalBottom {
+  flex: 1;
+  flex-flow: nowrap;
+  border-top: 1px solid #E3ECF8;
+  padding: 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end
 }
 
 .flex {
@@ -359,4 +393,9 @@ select {
 
 .is-done {
   background-color: #58dd63;
+  padding: 5px;
+}
+
+.not-done {
+  padding: 5px;
 }
