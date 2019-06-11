@@ -586,6 +586,7 @@ class App extends PureComponent {
     const disableDelete = this.state.scansPerUserPerCategory[user.id]
       ? !Object.keys(this.state.scansPerUserPerCategory[user.id]).length
       : true
+    const disableAdd = this.state.codes.len
     const { id, firstName, lastName } = user
     return (
       <li key={id} className={this.isDone(user.id) ? 'is-done' : 'not-done'}>
@@ -603,7 +604,11 @@ class App extends PureComponent {
           </span>
         ))}
         <div className="flex" />
-        <button className="dd-bordered space" onClick={() => this.assignUser(user)}>
+        <button
+          className="dd-bordered space"
+          disabled={!this.state.codes.length}
+          onClick={() => this.assignUser(user)}
+        >
           {t('addScans')}
         </button>
         <button
