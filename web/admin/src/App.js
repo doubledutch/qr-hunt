@@ -65,6 +65,7 @@ class App extends PureComponent {
     exporting: false,
     exportListCode: [],
     exportListHeaders: null,
+    exportListCatHeaders: null,
     exportingCode: false,
     assignUser: null,
   }
@@ -373,6 +374,7 @@ class App extends PureComponent {
                     {this.state.exporting ? (
                       <CSVDownload
                         data={this.state.exportList}
+                        headers={this.state.exportListCatHeaders}
                         filename="results.csv"
                         target="_blank"
                       />
@@ -436,6 +438,22 @@ class App extends PureComponent {
 
   formatDataForExport = () => {
     const parsedData = []
+    const headers = [
+      { label: 'First Name', key: 'firstName' },
+      { label: 'Last Name', key: 'lastName' },
+      { label: 'Email', key: 'email' },
+      { label: 'Title', key: 'title' },
+      { label: 'Company', key: 'company' },
+      { label: 'Completed All Categories', key: 'CompletedAllCategories' },
+    ]
+    this.state.categories.forEach(cat => {
+      headers.push(
+        { label: cat.name, key: cat.id },
+        { label: `Scans for ${cat.name}`, key: `totalCatScans${cat.id}` },
+        { label: `Completed ${cat.name}`, key: `completedCat${cat.id}` },
+        { label: `Completed ${cat.name} Time`, key: `completedCatTime${cat.id}` },
+      )
+    })
     const completed = this.state.attendees.filter(a => this.isDone(a.id))
     this.state.attendees.forEach(attendee => {
       if (this.state.allCodesByUser[attendee.id]) {
@@ -443,18 +461,18 @@ class App extends PureComponent {
           const gameWinningUser = completed.find(user => user.id === attendee.id)
           const gameWinner = gameWinningUser ? 'True' : null
           const parsedUser = {
-            First_Name: attendee.firstName,
-            Last_Name: attendee.lastName,
-            Email: attendee.email,
-            Title: attendee.title,
-            Company: attendee.company,
-            CompletedAllCategories: gameWinner,
+            firstName: attendee.firstName,
+            lastName: attendee.lastName,
+            email: attendee.email,
+            title: attendee.title,
+            company: attendee.company,
+            completedAllCategories: gameWinner,
           }
           let allDates = []
           this.state.categories.forEach(cat => {
-            const totalCatScans = `Scans for ${cat.name}`
-            const completedCat = `Completed ${cat.name}`
-            const completedCatTime = `Completed ${cat.name} Time`
+            const totalCatScans = `totalCatScans${cat.id}`
+            const completedCat = `completedCat${cat.id}`
+            const completedCatTime = `completedCatTime${cat.id}`
             const completedScans = this.categoryScansForUser(cat.id, attendee.id)
             parsedUser[totalCatScans] = completedScans
             parsedUser[completedCat] =
@@ -481,7 +499,7 @@ class App extends PureComponent {
       }
     })
     if (parsedData.length) {
-      this.setState({ exporting: true, exportList: parsedData })
+      this.setState({ exporting: true, exportList: parsedData, exportListCatHeaders: headers })
       setTimeout(() => this.setState({ exporting: false }), 3000)
     } else {
       window.alert(t('noData'))
@@ -586,7 +604,6 @@ class App extends PureComponent {
     const disableDelete = this.state.scansPerUserPerCategory[user.id]
       ? !Object.keys(this.state.scansPerUserPerCategory[user.id]).length
       : true
-    const disableAdd = this.state.codes.len
     const { id, firstName, lastName } = user
     return (
       <li key={id} className={this.isDone(user.id) ? 'is-done' : 'not-done'}>
