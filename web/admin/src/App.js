@@ -448,7 +448,6 @@ class App extends PureComponent {
     ]
     this.state.categories.forEach(cat => {
       headers.push(
-        { label: cat.name, key: cat.id },
         { label: `Scans for ${cat.name}`, key: `totalCatScans${cat.id}` },
         { label: `Completed ${cat.name}`, key: `completedCat${cat.id}` },
         { label: `Completed ${cat.name} Time`, key: `completedCatTime${cat.id}` },
