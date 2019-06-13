@@ -36,7 +36,7 @@ export default class CodeCell extends Component {
   letEdit = () => {
     this.setState({
       isEditing: !this.state.isEditing,
-      catName: this.props.code.name,
+      codeName: this.props.code.name,
       codeCat: this.props.code.categoryId,
     })
     this.props.setCurrentEdit(this.props.code.id)
