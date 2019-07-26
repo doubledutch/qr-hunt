@@ -444,7 +444,8 @@ class App extends PureComponent {
       { label: 'Email', key: 'email' },
       { label: 'Title', key: 'title' },
       { label: 'Company', key: 'company' },
-      { label: 'Completed All Categories', key: 'CompletedAllCategories' },
+      { label: 'Completed All Categories', key: 'completedAllCategories' },
+      { label: 'Completed All Categories Time', key: 'completedAllCategoriesTime' },
     ]
     this.state.categories.forEach(cat => {
       headers.push(
@@ -491,7 +492,7 @@ class App extends PureComponent {
           let completedEventTime = allDates.length ? allDates[0] : null
           if (completedEventTime && completed.find(user => user.id === attendee.id)) {
             completedEventTime = new Date(completedEventTime).toString()
-            parsedUser['Completed All Categories Time'] = completedEventTime
+            parsedUser.completedAllCategoriesTime = completedEventTime
           }
           parsedData.push(parsedUser)
         }
