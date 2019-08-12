@@ -239,7 +239,7 @@ class App extends PureComponent {
   }
 
   render() {
-    const { codes, categories } = this.state
+    const { codes, categories, allCodesByUser } = this.state
     const attendees = this.getCustomAttendeeList()
     return (
       <div className="App">
@@ -249,6 +249,7 @@ class App extends PureComponent {
           categories={categories}
           closeModal={() => this.setState({ assignUser: null })}
           addUserCode={this.addUserCode}
+          allCodesByUser={allCodesByUser}
         />
         {attendees ? (
           <div>

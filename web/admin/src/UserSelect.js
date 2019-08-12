@@ -3,7 +3,16 @@ import './App.css'
 import { translate as t } from '@doubledutch/admin-client'
 import Modal from 'react-modal'
 
-const UserSelect = ({ user, codes, closeModal, categories, addUserCode }) => {
+const UserSelect = ({ user, codes, closeModal, categories, addUserCode, allCodesByUser }) => {
+  let scans = {}
+  if (user && allCodesByUser) {
+    if (allCodesByUser[user.id]) {
+      if (allCodesByUser[user.id].scans) scans = allCodesByUser[user.id].scans
+    }
+  }
+  console.log(codes)
+  console.log(Object.keys(scans))
+
   return (
     <Modal
       ariaHideApp={false}
@@ -17,14 +26,16 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode }) => {
       </div>
       <div>
         <ul className="modalList">
-          {codes.map(code => (
-            <CodeAddCell
-              code={code}
-              categories={categories}
-              addUserCode={addUserCode}
-              user={user}
-            />
-          ))}
+          {codes
+            .filter(code => !scans[code.id])
+            .map(code => (
+              <CodeAddCell
+                code={code}
+                categories={categories}
+                addUserCode={addUserCode}
+                user={user}
+              />
+            ))}
         </ul>
         <div className="modalBottom">
           <button onClick={closeModal} className="formButton">
