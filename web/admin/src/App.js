@@ -689,21 +689,21 @@ class App extends PureComponent {
       this.codesRef()
         .child(code.id)
         .remove()
-    }
-    this.state.attendees.forEach(attendee => {
-      if (this.state.allCodesByUser[attendee.id]) {
-        const { scans } = this.state.allCodesByUser[attendee.id]
-        if (scans) {
-          if (scans[code.id]) {
-            this.props.fbc.database.private
-              .adminableUsersRef(attendee.id)
-              .child('scans')
-              .child(code.id)
-              .remove()
+      this.state.attendees.forEach(attendee => {
+        if (this.state.allCodesByUser[attendee.id]) {
+          const { scans } = this.state.allCodesByUser[attendee.id]
+          if (scans) {
+            if (scans[code.id]) {
+              this.props.fbc.database.private
+                .adminableUsersRef(attendee.id)
+                .child('scans')
+                .child(code.id)
+                .remove()
+            }
           }
         }
-      }
-    })
+      })
+    }
   }
 
   isAdmin(id) {
