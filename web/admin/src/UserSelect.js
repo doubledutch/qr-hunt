@@ -10,8 +10,6 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode, allCodes
       if (allCodesByUser[user.id].scans) scans = allCodesByUser[user.id].scans
     }
   }
-  console.log(codes)
-  console.log(Object.keys(scans))
 
   return (
     <Modal
@@ -58,7 +56,6 @@ const CodeAddCell = ({ user, code, categories, addUserCode }) => {
       <button className="noBorderButton" onClick={() => addUserCode(user, code)}>
         +
       </button>
-      &nbsp;
     </li>
   )
 }
