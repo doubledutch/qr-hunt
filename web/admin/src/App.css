@@ -239,6 +239,12 @@ ul.modalList {
   background-color: #FCFCFC;
 }
 
+.modalHelpText {
+  flex: 1;
+  text-align: center;
+  margin-top: 120px;
+}
+
 .closeModalButton {
   color: lightgray;
   background-color: #ffffff;

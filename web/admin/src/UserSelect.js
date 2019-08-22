@@ -11,6 +11,8 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode, allCodes
     }
   }
 
+  const unscannedCodes = codes.filter(code => !scans[code.id])
+
   return (
     <Modal
       ariaHideApp={false}
@@ -24,16 +26,15 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode, allCodes
       </div>
       <div>
         <ul className="modalList">
-          {codes
-            .filter(code => !scans[code.id])
-            .map(code => (
-              <CodeAddCell
-                code={code}
-                categories={categories}
-                addUserCode={addUserCode}
-                user={user}
-              />
-            ))}
+          {unscannedCodes.map(code => (
+            <CodeAddCell
+              code={code}
+              categories={categories}
+              addUserCode={addUserCode}
+              user={user}
+            />
+          ))}
+          {unscannedCodes.length === 0 && <p className="modalHelpText">{t('noMoreCodes')}</p>}
         </ul>
         <div className="modalBottom">
           <button onClick={closeModal} className="formButton">

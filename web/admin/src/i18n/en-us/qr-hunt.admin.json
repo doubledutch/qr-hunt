@@ -44,5 +44,6 @@
   "unavailable": "unavailable",
   "noData": "There is no data available for export",
   "addScans": "Add Scans",
-  "close": "Close"
+  "close": "Close",
+  "noMoreCodes": "No Additional Codes To Add"
 }
