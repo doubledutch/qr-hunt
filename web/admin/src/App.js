@@ -239,7 +239,7 @@ class App extends PureComponent {
   }
 
   render() {
-    const { codes, categories } = this.state
+    const { codes, categories, allCodesByUser } = this.state
     const attendees = this.getCustomAttendeeList()
     return (
       <div className="App">
@@ -249,6 +249,7 @@ class App extends PureComponent {
           categories={categories}
           closeModal={() => this.setState({ assignUser: null })}
           addUserCode={this.addUserCode}
+          allCodesByUser={allCodesByUser}
         />
         {attendees ? (
           <div>
@@ -688,21 +689,21 @@ class App extends PureComponent {
       this.codesRef()
         .child(code.id)
         .remove()
-    }
-    this.state.attendees.forEach(attendee => {
-      if (this.state.allCodesByUser[attendee.id]) {
-        const { scans } = this.state.allCodesByUser[attendee.id]
-        if (scans) {
-          if (scans[code.id]) {
-            this.props.fbc.database.private
-              .adminableUsersRef(attendee.id)
-              .child('scans')
-              .child(code.id)
-              .remove()
+      this.state.attendees.forEach(attendee => {
+        if (this.state.allCodesByUser[attendee.id]) {
+          const { scans } = this.state.allCodesByUser[attendee.id]
+          if (scans) {
+            if (scans[code.id]) {
+              this.props.fbc.database.private
+                .adminableUsersRef(attendee.id)
+                .child('scans')
+                .child(code.id)
+                .remove()
+            }
           }
         }
-      }
-    })
+      })
+    }
   }
 
   isAdmin(id) {

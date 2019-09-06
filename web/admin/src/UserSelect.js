@@ -3,7 +3,16 @@ import './App.css'
 import { translate as t } from '@doubledutch/admin-client'
 import Modal from 'react-modal'
 
-const UserSelect = ({ user, codes, closeModal, categories, addUserCode }) => {
+const UserSelect = ({ user, codes, closeModal, categories, addUserCode, allCodesByUser }) => {
+  let scans = {}
+  if (user && allCodesByUser) {
+    if (allCodesByUser[user.id]) {
+      if (allCodesByUser[user.id].scans) scans = allCodesByUser[user.id].scans
+    }
+  }
+
+  const unscannedCodes = codes.filter(code => !scans[code.id])
+
   return (
     <Modal
       ariaHideApp={false}
@@ -17,7 +26,7 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode }) => {
       </div>
       <div>
         <ul className="modalList">
-          {codes.map(code => (
+          {unscannedCodes.map(code => (
             <CodeAddCell
               code={code}
               categories={categories}
@@ -25,6 +34,7 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode }) => {
               user={user}
             />
           ))}
+          {unscannedCodes.length === 0 && <p className="modalHelpText">{t('noMoreCodes')}</p>}
         </ul>
         <div className="modalBottom">
           <button onClick={closeModal} className="formButton">
@@ -47,7 +57,6 @@ const CodeAddCell = ({ user, code, categories, addUserCode }) => {
       <button className="noBorderButton" onClick={() => addUserCode(user, code)}>
         +
       </button>
-      &nbsp;
     </li>
   )
 }
