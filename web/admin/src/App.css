@@ -291,6 +291,8 @@ ul.modalList {
 
 ul li {
   height: 39px;
+  min-width: 100%;
+  float: left;
   padding: 0px 3px 0px 20px;
   flex: 1;
   display: flex;

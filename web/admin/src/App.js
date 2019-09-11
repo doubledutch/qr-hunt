@@ -611,9 +611,11 @@ class App extends PureComponent {
         <div>
           <Avatar user={user} size={30} />
         </div>
-        <p className="name">
-          {firstName} {lastName}
-        </p>
+        <div>
+          <p className="name">
+            {firstName} {lastName}
+          </p>
+        </div>
         {this.state.categories.map(cat => (
           <span className="catScans" key={cat.id}>
             {cat.name}: {this.categoryScansForUser(cat.id, user.id)}
