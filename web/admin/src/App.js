@@ -539,7 +539,7 @@ class App extends PureComponent {
   }
 
   getCustomAttendeeList = () => {
-    const queryText = this.state.attendeeSearchValue.toLowerCase()
+    const queryText = this.state.attendeeSearchValue.toLowerCase().trim()
     if (queryText.length > 0) {
       const queryResult = this.state.attendees.filter(s => {
         const name = `${s.firstName.toLowerCase()} ${s.lastName.toLowerCase()}`
