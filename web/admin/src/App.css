@@ -302,6 +302,7 @@ ul li {
 }
 
 .name {
+  width: 150px;
   margin: 0px;
   padding: 5px;
   margin-top: 2px;
@@ -309,10 +310,6 @@ ul li {
   overflow:hidden;
   white-space:nowrap;
   text-overflow:ellipsis;
-}
-
-.nameBox {
-  width: 150px;
 }
 
 textarea {
