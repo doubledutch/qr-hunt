@@ -332,6 +332,12 @@ textarea {
 
 .catScans {
   padding: 0 0.7em;
+  align-items: center;
+  display: flex;
+}
+
+.catNum {
+  width: 20px;
 }
 
 .box-icon{

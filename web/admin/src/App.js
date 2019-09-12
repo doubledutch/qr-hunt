@@ -617,9 +617,14 @@ class App extends PureComponent {
           </p>
         </div>
         {this.state.categories.map(cat => (
-          <span className="catScans" key={cat.id}>
-            {cat.name}: {this.categoryScansForUser(cat.id, user.id)}
-          </span>
+          <div className="catScans">
+            <span key={cat.id}>
+              {cat.name}:
+            </span>
+            <p className="catNum">
+              {this.categoryScansForUser(cat.id, user.id)}
+            </p>
+          </div>
         ))}
         <div className="flex" />
         <button
