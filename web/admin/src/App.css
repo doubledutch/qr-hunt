@@ -230,6 +230,11 @@ ul.userList {
   overflow: auto;
 }
 
+ul.userList li {
+  min-width: 100%;
+  float: left;
+}
+
 ul.modalList {
   height: 250px;
   width: 580px;
@@ -291,8 +296,6 @@ ul.modalList {
 
 ul li {
   height: 39px;
-  min-width: 100%;
-  float: left;
   padding: 0px 3px 0px 20px;
   flex: 1;
   display: flex;
