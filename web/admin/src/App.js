@@ -675,7 +675,6 @@ class App extends PureComponent {
 
   newCategory = () => {
     const activeCat = this.state.categories.find(cat => cat.id === this.state.activeEdit)
-
     if (!activeCat) {
       this.categoriesRef().push({ name: 'New QR Code Category' })
     }
