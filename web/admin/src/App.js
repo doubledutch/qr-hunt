@@ -539,7 +539,7 @@ class App extends PureComponent {
   }
 
   getCustomAttendeeList = () => {
-    const queryText = this.state.attendeeSearchValue.toLowerCase()
+    const queryText = this.state.attendeeSearchValue.toLowerCase().trim()
     if (queryText.length > 0) {
       const queryResult = this.state.attendees.filter(s => {
         const name = `${s.firstName.toLowerCase()} ${s.lastName.toLowerCase()}`
@@ -611,15 +611,20 @@ class App extends PureComponent {
         <div>
           <Avatar user={user} size={30} />
         </div>
-        <div className="nameBox">
+        <div>
           <p className="name">
             {firstName} {lastName}
           </p>
         </div>
         {this.state.categories.map(cat => (
-          <span className="catScans" key={cat.id}>
-            {cat.name}: {this.categoryScansForUser(cat.id, user.id)}
-          </span>
+          <div className="catScans">
+            <span key={cat.id}>
+              {cat.name}:
+            </span>
+            <p className="catNum">
+              {this.categoryScansForUser(cat.id, user.id)}
+            </p>
+          </div>
         ))}
         <div className="flex" />
         <button
@@ -670,7 +675,6 @@ class App extends PureComponent {
 
   newCategory = () => {
     const activeCat = this.state.categories.find(cat => cat.id === this.state.activeEdit)
-
     if (!activeCat) {
       this.categoriesRef().push({ name: 'New QR Code Category' })
     }

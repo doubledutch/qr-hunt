@@ -28,6 +28,7 @@ const UserSelect = ({ user, codes, closeModal, categories, addUserCode, allCodes
         <ul className="modalList">
           {unscannedCodes.map(code => (
             <CodeAddCell
+              key={code.id}
               code={code}
               categories={categories}
               addUserCode={addUserCode}

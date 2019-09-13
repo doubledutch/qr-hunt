@@ -230,6 +230,11 @@ ul.userList {
   overflow: auto;
 }
 
+ul.userList li {
+  min-width: 100%;
+  float: left;
+}
+
 ul.modalList {
   height: 250px;
   width: 580px;
@@ -302,6 +307,7 @@ ul li {
 }
 
 .name {
+  width: 150px;
   margin: 0px;
   padding: 5px;
   margin-top: 2px;
@@ -309,10 +315,6 @@ ul li {
   overflow:hidden;
   white-space:nowrap;
   text-overflow:ellipsis;
-}
-
-.nameBox {
-  width: 150px;
 }
 
 textarea {
@@ -330,6 +332,12 @@ textarea {
 
 .catScans {
   padding: 0 0.7em;
+  align-items: center;
+  display: flex;
+}
+
+.catNum {
+  width: 20px;
 }
 
 .box-icon{
